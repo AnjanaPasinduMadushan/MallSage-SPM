@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -9,33 +10,74 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, MenuItem, InputLabel, Select } from '@mui/material';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import Copyright from '../../components/copyright';
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit">
-        MallSage
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+<Copyright />
 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+  const [inputs, setInputs] = useState({
+    name: "",
+    mobile: "",
+    email: "",
+    password: "",
+    role: "",
+  })
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    setInputs((previousState) => ({
+      ...previousState,
+      [name]: value
+    }))
+  }
+
+  const sendData = async () => {
+
+    try {
+      const res = await axios.post("http://localhost:5000/user/signup", {
+        name: inputs.name,
+        mobile: inputs.mobile,
+        email: inputs.email,
+        role: inputs.role,
+        password: inputs.password
+      })
+
+      const data = await res.data;
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: `${JSON.stringify(data.message)}`,
+      })
+      return data;
+    } catch (err) {
+      console.log(err)
+      if (err.response) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: `${JSON.stringify(err.response.data.message)}`,
+        });
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.log(err.message);
+      }
+    }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      sendData();
+    } catch (err) {
+      console.error(err)
+    }
   };
 
   return (
@@ -61,22 +103,26 @@ export default function SignUp() {
               <Grid item xs={15}>
                 <TextField
                   autoComplete="given-name"
-                  name="Name"
+                  name="name"
                   required
                   fullWidth
                   id="name"
                   label="Name"
+                  value={inputs.name}
+                  onChange={handleChange}
                   autoFocus
                 />
               </Grid>
               <Grid item xs={15}>
                 <TextField
                   autoComplete="given-mobile"
-                  name="Mobile"
+                  name="mobile"
                   required
                   fullWidth
                   id="mobile"
                   label="Mobile"
+                  value={inputs.mobile}
+                  onChange={handleChange}
                   autoFocus
                 />
               </Grid>
@@ -86,6 +132,8 @@ export default function SignUp() {
                   fullWidth
                   id="email"
                   label="Email Address"
+                  value={inputs.email}
+                  onChange={handleChange}
                   name="email"
                   autoComplete="email"
                 />
@@ -96,10 +144,13 @@ export default function SignUp() {
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    label="Age"
+                    label="role"
+                    value={inputs.role}
+                    onChange={handleChange}
+                    name="role"
                   >
-                    <MenuItem>Admin</MenuItem>
-                    <MenuItem>Customer</MenuItem>
+                    <MenuItem value="admin">Admin</MenuItem>
+                    <MenuItem value="customer">Customer</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -109,6 +160,8 @@ export default function SignUp() {
                   fullWidth
                   name="password"
                   label="Password"
+                  value={inputs.password}
+                  onChange={handleChange}
                   type="password"
                   id="password"
                   autoComplete="new-password"
