@@ -1,4 +1,5 @@
 import jsonwebtoken from 'jsonwebtoken'
+import { createToken } from '../controller/user-controller.js';
 
 const jwt = jsonwebtoken;
 
@@ -37,6 +38,39 @@ const checkToken = async (req, res, next) => {
 
 }
 
+const refreshToken = (req, res, next) => {
+
+  const cookie = req.headers.cookie;
+  const prevToken = cookie.split("=")[1];
+  if (!prevToken) {
+    return res.status(400).json({ messege: "Could not find any previous tokens." })
+  }
+  jwt.verify(token, process.env.secret, (err, user) => {
+    if (err) {
+      console.error(err);
+      return res.status(403).json({ message: "Authentication is failed!!!" })
+    }
+    res.clearCookie(`${user.id}`);
+    req.cookie[`${user.id}`] = "";
+
+    const token = createToken(user._id, user.role);
+
+    //Create and setting a cookie with the user's ID and token
+    res.cookie(String(user._id), token, {
+      path: "/",
+      expires: new Date(Date.now() + 1000 * 60 * 60),
+      httpOnly: true,//if this option isn't here cookie will be visible to the frontend
+      sameSite: "lax"
+    })
+
+    req.userId = decode._id;
+
+    req.roleIs = decode.role;
+
+    next();
+  });
+}
+
 const checkAdmin = async (req, res, next) => {
 
   try {
@@ -52,4 +86,4 @@ const checkAdmin = async (req, res, next) => {
 
 }
 
-export { checkToken }
+export { checkToken, checkAdmin, refreshToken }

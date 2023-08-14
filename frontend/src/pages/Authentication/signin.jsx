@@ -8,8 +8,12 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom';
+import { useState } from 'react';
 import Copyright from '../../components/copyright';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 <Copyright />
 
@@ -17,13 +21,70 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+  const navigate = useNavigate()
+
+  const [inputs, setInputs] = useState({
+    email: "",
+    password: ""
+  })
+
+  const handleChange = (e) => {
+    setInputs((previousState) => ({
+      ...previousState,
+      [e.target.name]: e.target.value
+    }))
+  }
+
+  const sendData = async () => {
+
+    try {
+      const res = await axios.post("http://localhost:5000/User/login", {
+        email: inputs.email,
+        password: inputs.password
+      })
+
+      const data = await res.data;
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: `${JSON.stringify(data.message)}`,
+      })
+      console.log(data)
+      return data;
+    } catch (err) {
+      console.log(err)
+      if (err.response) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: `${JSON.stringify(err.response.data.message)}`,
+        });
+      } else if (err.request) {
+        console.log(err.request);
+      } else {
+        console.log(err.message);
+      }
+    }
+
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await sendData();
+      if (data.User.role === "admin") {
+        navigate('/adminhome')
+      } else if (data.User.role === "customer") {
+        navigate('/')
+      }
+
+    } catch (err) {
+      console.error(err)
+    }
   };
 
   return (
@@ -69,6 +130,7 @@ export default function SignIn() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                onChange={handleChange}
                 autoFocus
               />
               <TextField
@@ -80,6 +142,7 @@ export default function SignIn() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                onChange={handleChange}
               />
               <Button
                 type="submit"
