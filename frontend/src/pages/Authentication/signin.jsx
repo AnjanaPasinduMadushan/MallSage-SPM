@@ -14,6 +14,8 @@ import Copyright from '../../components/copyright';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { autheticationActions } from '../../components/store';
 
 <Copyright />
 
@@ -21,7 +23,8 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [inputs, setInputs] = useState({
     email: "",
@@ -81,7 +84,7 @@ export default function SignIn() {
       } else if (data.User.role === "customer") {
         navigate('/')
       }
-
+      dispatch(autheticationActions.login());
     } catch (err) {
       console.error(err)
     }

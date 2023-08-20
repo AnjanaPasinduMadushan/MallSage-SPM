@@ -12,54 +12,20 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { autheticationActions } from '../store';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 axios.defaults.withCredentials = true;
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Admin', 'Add_Products', 'Add_Shops'];
 const settings = ['Profile', 'Logout'];
 const auth = ['Login', 'Sign Up'];
 
-function Header() {
-
+function AdminHeader() {
   const navigate = useNavigate();
-
-  const isLogged = useSelector(state => state.isLogged)
-
   const dispatch = useDispatch();
-
-  const sendLogoutReq = async () => {
-    const res = await axios.post("http://localhost:5000/User/logout", null, {
-      withCredentials: true,
-    }); //null means we don't have anything to add with this api
-    if (res.status === 200) {
-      return res;
-    }
-    return new Error("Unable To Logout. Please try again");
-  };
-  const handleLogout = (setting) => {
-    console.log(setting)
-    if (setting === settings[0]) {
-      alert("go to profile")
-    } else if (setting === settings[1]) {
-      sendLogoutReq().then(() => dispatch(autheticationActions.logOut()))
-        .then(() => navigate("/signIn"));
-    } else {
-      alert("Pagr is not found")
-    }
-  };
-
-  const navigateButton = (auths) => {
-    console.log(auths)
-    if (auths === auth[0]) {
-      navigate('/signIn')
-    }
-    if (auths === auth[1]) {
-      navigate('/signUp')
-    }
-  }
+  const isLogged = useSelector(state => state.isLogged)
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -78,6 +44,39 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const sendLogoutReq = async () => {
+    const res = await axios.post('http://localhost:5000/User/logout', null, {
+      withCredentials: true,
+    });
+
+    if (res.status === 200) {
+      return res;
+    }
+    return new Error("Unable To Logout. Please try again");
+  }
+
+  const handleLogout = (setting) => {
+    console.log(setting)
+    if (setting === settings[0]) {
+      alert("go to profile")
+    } else if (setting === settings[1]) {
+      sendLogoutReq().then(() => dispatch(autheticationActions.logOut()))
+        .then(() => navigate("/signIn"));
+    } else {
+      alert("Page is not found")
+    }
+  }
+
+  const navigateButton = (auths) => {
+    console.log(auths)
+    if (auths === auth[0]) {
+      navigate('/signIn')
+    }
+    if (auths === auth[1]) {
+      navigate('/signUp')
+    }
+  }
 
   return (
     <AppBar position="static">
@@ -216,4 +215,4 @@ function Header() {
     </AppBar >
   );
 }
-export default Header;
+export default AdminHeader;
