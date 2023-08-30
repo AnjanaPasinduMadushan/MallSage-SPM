@@ -104,12 +104,13 @@ const login = async (req, res) => {
     const token = createToken(loggedUser._id, loggedUser.role)
 
     //Create and setting a cookie with the user's ID and token
-    res.cookie(String(loggedUser._id), token, {
+    const cook = res.cookie(String(loggedUser._id), token, {
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60),
       httpOnly: true,//if this option isn't here cookie will be visible to the frontend
       sameSite: "lax"
     })
+    console.log(cook);
 
     //we send this msg along with the token and user details
     return res.status(200).json({ message: "Successfully logged in", User: loggedUser, token })
@@ -148,6 +149,66 @@ const logout = (req, res) => {
   });
 };
 
-export { signUp }
-export { login }
-export { logout }
+
+const getOwnAcc = async (req, res) => {
+
+  const userId = req.userId;
+
+  try {
+
+    const user = await User.findById(userId, "-password")
+
+    if (!user) {
+      return res.status(404).json({ message: "User is not found" })
+    }
+    else {
+      res.status(200).json({ user })
+    }
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "Error in getting your Account" })
+  }
+}
+
+
+const updateAcc = async (req, res) => {
+  const userId = req.userId;
+  const { name, mobile, email } = req.body;
+
+  //validation
+  if (!checkingMobileValidation(mobile)) {
+    return res.status(400).json({ message: "Please provide valid mobile Number with 10 digits" })
+  }
+  else if (!validateEmail(email)) {
+    return res.status(400).json({ message: "Please provide valid Email" })
+  }
+
+  try {
+    // Check if email or mobile already exist for another user
+    const existingUser = await User.findOne({ $or: [{ mobile: mobile }, { email: email }] });
+    if (existingUser && existingUser._id != userId) {
+      if (Number(existingUser.mobile) === Number(mobile)) {
+        return res.status(401).json({ message: "This mobile is already exists. use a different mobile " });
+      } else if (existingUser.email === email) {
+        return res.status(402).json({ message: "This email is already exists. use a different email " });
+      }
+    }
+
+    // Update user account
+    const user = await User.findByIdAndUpdate(userId,
+      {
+        name,
+        mobile,
+        email
+      }, { new: true });
+    if (!user) {
+      return res.status(404).json({ message: "User is not found!!!" });
+    }
+    return res.status(200).json({ message: "User is successfully updated!", user });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error in updating user" });
+  }
+};
+
+export { signUp, login, logout, getOwnAcc, updateAcc, createToken }
