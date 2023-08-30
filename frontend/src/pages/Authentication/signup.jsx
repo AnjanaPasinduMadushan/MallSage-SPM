@@ -1,18 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import { useDispatch, useSelector } from 'react-redux';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, MenuItem, InputLabel, Select } from '@mui/material';
 import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import axios from 'axios';
+import { signUpAction } from '../../Redux/auth/authAction';
+// import Swal from 'sweetalert2';
+// import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Copyright from '../../components/copyright';
 
 <Copyright />
@@ -29,6 +32,12 @@ export default function SignUp() {
     role: "",
   })
 
+  const isLoggedrole = useSelector((state) => state.auth.User.role);
+  console.log("isLoggedrole",isLoggedrole);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setInputs((previousState) => ({
@@ -37,45 +46,76 @@ export default function SignUp() {
     }))
   }
 
-  const sendData = async () => {
+  // const sendData = async () => {
 
-    try {
-      const res = await axios.post("http://localhost:5000/user/signup", {
-        name: inputs.name,
-        mobile: inputs.mobile,
-        email: inputs.email,
-        role: inputs.role,
-        password: inputs.password
-      })
+  //   try {
+  //     const res = await axios.post("http://localhost:5000/user/signup", {
+  //       name: inputs.name,
+  //       mobile: inputs.mobile,
+  //       email: inputs.email,
+  //       role: inputs.role,
+  //       password: inputs.password
+  //     })
 
-      const data = await res.data;
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: `${JSON.stringify(data.message)}`,
-      })
-      return data;
-    } catch (err) {
-      console.log(err)
-      if (err.response) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: `${JSON.stringify(err.response.data.message)}`,
-        });
-      } else if (err.request) {
-        console.log(err.request);
-      } else {
-        console.log(err.message);
+  //     const data = await res.data;
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Success',
+  //       text: `${JSON.stringify(data.message)}`,
+  //     })
+  //     return data;
+  //   } catch (err) {
+  //     console.log(err)
+  //     if (err.response) {
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Error',
+  //         text: `${JSON.stringify(err.response.data.message)}`,
+  //       });
+  //     } else if (err.request) {
+  //       console.log(err.request);
+  //     } else {
+  //       console.log(err.message);
+  //     }
+  //   }
+  // }
+
+  //UseEffect for checking logged role
+  useEffect( 
+    () => {
+      if (isLoggedrole) {
+        console.log("isLoggedrole",isLoggedrole);
+        //        history.push("/dashboard");
+        if (isLoggedrole === "admin") {
+          navigate("/adminhome", { replace: true });
+        } else if( isLoggedrole === "customer") {
+          navigate("/", { replace: true });
+          //          window.location.reload();
+        }else{
+          navigate("/", { replace: true });
+        }
       }
-    }
-  }
+    },
+  )
 
-  const handleSubmit = (e) => {
+  //Handle Submit
+  const handleSubmit = async (e) => {
+    console.log("sdsdad");
+    console.log("isLoggedrole",isLoggedrole);
     e.preventDefault();
     try {
-      sendData();
+     dispatch(signUpAction(inputs?.name,inputs?.mobile,inputs?.email, inputs?.password,inputs?.role));
+      // const data = await sendData();
+      if (isLoggedrole?.role=== "admin") {
+        console.log("isLoggedrole",isLoggedrole);
+        navigate('/adminhome')
+      } else if (isLoggedrole?.role === "customer") {
+        console.log("isLoggedrole",isLoggedrole);
+        navigate('/')
+      }
+      // dispatch(autheticationActions.login());
     } catch (err) {
+      console.log("isLoggedrole",isLoggedrole);
       console.error(err)
     }
   };

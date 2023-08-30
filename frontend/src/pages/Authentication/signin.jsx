@@ -9,13 +9,15 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Copyright from '../../components/copyright';
-import Swal from 'sweetalert2';
-import axios from 'axios';
+// import Swal from 'sweetalert2';
+// import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { autheticationActions } from '../../components/store';
+import { useDispatch, useSelector } from 'react-redux';
+// import { autheticationActions } from '../../components/store';
+import { loginAction } from '../../Redux/auth/authAction';
+
 
 <Copyright />
 
@@ -25,6 +27,10 @@ export default function SignIn() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const isLoggedrole = useSelector((state) => state.auth.User.role);
+  console.log("isLoggedrole",isLoggedrole);
+
 
   const [inputs, setInputs] = useState({
     email: "",
@@ -38,54 +44,79 @@ export default function SignIn() {
     }))
   }
 
-  const sendData = async () => {
+  // const sendData = async () => {
 
-    try {
-      const res = await axios.post("http://localhost:5000/User/login", {
-        email: inputs.email,
-        password: inputs.password
-      })
+  //   try {
+  //     const res = await axios.post("http://localhost:5000/User/login", {
+  //       email: inputs.email,
+  //       password: inputs.password
+  //     })
 
-      const data = await res.data;
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: `${JSON.stringify(data.message)}`,
-      })
-      console.log(data)
-      return data;
-    } catch (err) {
-      console.log(err)
-      if (err.response) {
-        console.log(err.response.data);
-        console.log(err.response.status);
-        console.log(err.response.headers);
+  //     const data = await res.data;
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Success',
+  //       text: `${JSON.stringify(data.message)}`,
+  //     })
+  //     console.log(data)
+  //     return data;
+  //   } catch (err) {
+  //     console.log(err)
+  //     if (err.response) {
+  //       console.log(err.response.data);
+  //       console.log(err.response.status);
+  //       console.log(err.response.headers);
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: `${JSON.stringify(err.response.data.message)}`,
-        });
-      } else if (err.request) {
-        console.log(err.request);
-      } else {
-        console.log(err.message);
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Error',
+  //         text: `${JSON.stringify(err.response.data.message)}`,
+  //       });
+  //     } else if (err.request) {
+  //       console.log(err.request);
+  //     } else {
+  //       console.log(err.message);
+  //     }
+  //   }
+
+  // }
+
+    //UseEffect for checking logged role
+  useEffect( 
+    () => {
+      if (isLoggedrole) {
+        console.log("isLoggedrole",isLoggedrole);
+        //        history.push("/dashboard");
+        if (isLoggedrole === "admin") {
+          navigate("/adminhome", { replace: true });
+        } else if( isLoggedrole === "customer") {
+          navigate("/", { replace: true });
+          //          window.location.reload();
+        }else{
+          navigate("/", { replace: true });
+        }
       }
-    }
+    },
+  )
 
-  }
-
+  //Handle Submit
   const handleSubmit = async (e) => {
+    console.log("sdsdad");
+    console.log("isLoggedrole",isLoggedrole);
     e.preventDefault();
     try {
-      const data = await sendData();
-      if (data.User.role === "admin") {
+     dispatch(loginAction(inputs?.email, inputs?.password));
+      // const data = await sendData();
+      if (isLoggedrole?.role=== "admin") {
+        console.log("isLoggedrole",isLoggedrole);
         navigate('/adminhome')
-      } else if (data.User.role === "customer") {
+      } else if (isLoggedrole?.role === "customer") {
+        console.log("isLoggedrole",isLoggedrole);
         navigate('/')
       }
-      dispatch(autheticationActions.login());
+      // dispatch(autheticationActions.login());
     } catch (err) {
+      console.log("isLoggedrole",isLoggedrole);
       console.error(err)
     }
   };

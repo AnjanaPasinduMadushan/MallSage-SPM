@@ -14,8 +14,10 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import { autheticationActions } from '../store';
+// import { autheticationActions } from '../store';
 import { useNavigate } from 'react-router-dom';
+import authSlice from '../../Redux/auth/authSlice';
+import { signOutAction } from '../../Redux/auth/authAction';
 axios.defaults.withCredentials = true;
 
 const pages = ['Products', 'Pricing', 'Blog'];
@@ -26,25 +28,24 @@ function Header() {
 
   const navigate = useNavigate();
 
-  const isLogged = useSelector(state => state.isLogged)
 
   const dispatch = useDispatch();
-
-  const sendLogoutReq = async () => {
-    const res = await axios.post("http://localhost:5000/User/logout", null, {
-      withCredentials: true,
-    }); //null means we don't have anything to add with this api
-    if (res.status === 200) {
-      return res;
-    }
-    return new Error("Unable To Logout. Please try again");
-  };
-  const handleLogout = (setting) => {
+  const isLoggedrole = useSelector((state) => state.auth.User.role);
+  // const sendLogoutReq = async () => {
+  //   const res = await axios.post("http://localhost:5000/User/logout", null, {
+  //     withCredentials: true,
+  //   }); //null means we don't have anything to add with this api
+  //   if (res.status === 200) {
+  //     return res;
+  //   }
+  //   return new Error("Unable To Logout. Please try again");
+  // };
+  const handleLogout = async (setting) => {
     console.log(setting)
     if (setting === settings[0]) {
       alert("go to profile")
     } else if (setting === settings[1]) {
-      sendLogoutReq().then(() => dispatch(autheticationActions.logOut()))
+      await  dispatch(signOutAction())
         .then(() => navigate("/signIn"));
     } else {
       alert("Pagr is not found")
@@ -169,7 +170,7 @@ function Header() {
             ))}
           </Box>
 
-          {isLogged ? (<Box sx={{ flexGrow: 0 }}>
+          {isLoggedrole ? (<Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
