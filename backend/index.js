@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 
 //Routes file paths
 import user_router from './router/user-routes.js';
-
+import admin_router from './router/admin-router.js';
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 //routes are declared here
 app.use('/user', user_router);
-
+app.use('/sub-admin', admin_router);
 
 //db connection
 db();
