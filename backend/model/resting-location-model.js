@@ -12,8 +12,14 @@ const locationSchema = new Schema({
   locationPlaced: {
     type: String,
     required: true
+  },
+
+  locationFeatures: {
+    type: [String],
+    required: true
   }
-})
+
+});
 
 const RestingLocations = mongoose.model("RestingLocations", locationSchema);
 
