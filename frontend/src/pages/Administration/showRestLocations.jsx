@@ -5,8 +5,8 @@ const ShowRestLocations = () => {
 
   const navigate = useNavigate();
 
-  const navigatePage = (locationName) => {
-    navigate(`/RestLocation/${locationName}`)
+  const navigatePage = (locationId) => {
+    navigate(`/RestLocation/${locationId}`)
   }
 
   return (

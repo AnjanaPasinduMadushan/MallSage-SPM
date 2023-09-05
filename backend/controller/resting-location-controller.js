@@ -88,6 +88,7 @@ const updateLocation = async (req, res, next) => {
     console.log(err)
   }
 
+  console.log(location);
   if (!location) {
     return res.status(404).json({ message: "Unable to update Location details or location is not added" })
   }

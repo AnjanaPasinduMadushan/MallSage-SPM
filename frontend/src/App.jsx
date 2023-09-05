@@ -25,7 +25,7 @@ function App() {
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
         <Route path="/shopper/showAllLocations" element={<ViewRestLocations />} />
         <Route path="/admin/addRestLocation" element={<AddRestLocations />} />
-        <Route path="/RestLocation/:locationName" element={<ViewLocation />} />
+        <Route path="/RestLocation/:id" element={<ViewLocation />} />
         <Route path="/Shopper/RestLocation/:locationName" element={<ViewRestLocation />} />
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />

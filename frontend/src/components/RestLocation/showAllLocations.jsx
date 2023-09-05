@@ -42,7 +42,7 @@ const ShowAllLocations = ({ handleOnClick }) => {
                 <div>{location.locationFeatures.map((feature, key) => (
                   <h2 key={key}>{feature}</h2>
                 ))}</div>
-                <Button onClick={() => handleOnClick(location.locationName)}>View</Button>
+                <Button onClick={() => handleOnClick(location._id)}>View</Button>
               </Item>
             </Grid>
           ))}
