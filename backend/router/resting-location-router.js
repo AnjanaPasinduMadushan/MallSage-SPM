@@ -4,8 +4,8 @@ import express from 'express';
 
 const location_router = express.Router();
 
-location_router.post("/addRestingLocation", checkToken, checkAdmin, addLocation);
-location_router.get("/", checkToken, getLocations);
+location_router.post("/addRestingLocation", addLocation);
+location_router.get("/", getLocations);
 location_router.get("/:locationId", checkToken, getOneLocation);
 location_router.patch("/:id", checkToken, checkAdmin, updateLocation);
 location_router.delete("/:id", checkToken, checkAdmin, deleteLocation);

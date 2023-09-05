@@ -14,13 +14,11 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import { autheticationActions } from '../store';
 import { useDispatch, useSelector } from 'react-redux';
-import authSlice from '../../Redux/auth/authSlice';
 import { signOutAction } from '../../Redux/auth/authAction';
 axios.defaults.withCredentials = true;
 
-const pages = ['Admin', 'Add_Products', 'Add_Shops'];
+const pages = ['Admin', 'Add Resting Locations', 'Add_Shops'];
 const settings = ['Profile', 'Logout'];
 const auth = ['Login', 'Sign Up'];
 
@@ -52,10 +50,10 @@ function AdminHeader() {
     if (setting === settings[0]) {
       alert("go to profile")
     } else if (setting === settings[1]) {
-      await  dispatch(signOutAction())
+      await dispatch(signOutAction())
         .then(() => navigate("/signIn"));
     } else {
-      alert("Pagr is not found")
+      alert("Page is not found")
     }
   };
 
@@ -66,6 +64,13 @@ function AdminHeader() {
     }
     if (auths === auth[1]) {
       navigate('/signUp')
+    }
+  }
+
+  const navigatePage = (page) => {
+    console.log(page)
+    if (page === pages[1]) {
+      navigate('/admin/addRestLocation')
     }
   }
 
@@ -151,7 +156,7 @@ function AdminHeader() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => { navigatePage(page) }}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}

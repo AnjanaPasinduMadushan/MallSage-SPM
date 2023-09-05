@@ -9,7 +9,6 @@ const checkToken = async (req, res, next) => {
   try {
     const cookies = req.headers.cookie;
 
-    console.log(cookies)
     if (!cookies) {
       return res.status(403).json({ message: "Login first" })
     }

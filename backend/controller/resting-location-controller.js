@@ -3,9 +3,7 @@ import RestingLocations from "../model/resting-location-model.js";
 const addLocation = async (req, res) => {
   const { locationName, locationPlaced, locationFeatures } = req.body;
 
-  if (!locationName || !locationPlaced || !locationFeatures) {
-    console.log('All fields should be filled!')
-  }
+  console.log(req.body);
 
   try {
     const location = new RestingLocations({
@@ -13,7 +11,6 @@ const addLocation = async (req, res) => {
       locationPlaced,
       locationFeatures
     })
-
     await location.save();
     return res.status(201).json({ message: "Location is Added", RestingLocations: location })
   } catch (err) {
