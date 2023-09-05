@@ -23,6 +23,7 @@ const AddRestLocations = () => {
   const [inputs, setInputs] = useState({
     name: "",
     place: "",
+    availability: "",
     features: []
   })
 
@@ -54,6 +55,7 @@ const AddRestLocations = () => {
       const res = await axios.post('http://localhost:5000/restingLocation/addRestingLocation', {
         locationName: inputs.name,
         locationPlaced: inputs.place,
+        availability: inputs.availability,
         locationFeatures: inputs.features
       });
       const data = await res.data;
@@ -107,6 +109,19 @@ const AddRestLocations = () => {
                     id="place"
                     label="Location Placed"
                     value={inputs.place}
+                    onChange={handleChange}
+                    autoFocus
+                  />
+                </Grid>
+                <Grid item xs={15}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="availability"
+                    required
+                    fullWidth
+                    id="availability"
+                    label="Seats Availaility"
+                    value={inputs.availability}
                     onChange={handleChange}
                     autoFocus
                   />

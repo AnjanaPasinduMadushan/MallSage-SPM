@@ -21,6 +21,7 @@ const ViewLocation = () => {
   const [location, setLocation] = useState({
     locationName: '',
     locationPlaced: '',
+    availability: 0,
     locationFeatures: [],
   });
 
@@ -67,7 +68,8 @@ const ViewLocation = () => {
       const res = await axios.patch(`http://localhost:5000/restingLocation/${id}`, {
         locationName: location?.locationName,
         locationPlaced: location?.locationPlaced,
-        locationFeatures: location?.locationFeatures
+        locationFeatures: location?.locationFeatures,
+        availability: location?.availability
       })
 
       await res.data;
@@ -130,7 +132,19 @@ const ViewLocation = () => {
                     />
                   </Grid>
                   <Grid item xs={15}>
-
+                    <Grid item xs={15}>
+                      <TextField
+                        autoComplete="given-name"
+                        name="availability"
+                        required
+                        fullWidth
+                        id="availability"
+                        label="Seats Availaility"
+                        value={location?.availability}
+                        onChange={handleChange}
+                        autoFocus
+                      />
+                    </Grid>
                     <InputLabel id="demo-simple-select-label">Features Available</InputLabel>
                     <FormGroup>
                       <FormControlLabel onChange={handleChange}

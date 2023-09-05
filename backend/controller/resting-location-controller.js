@@ -1,7 +1,7 @@
 import RestingLocations from "../model/resting-location-model.js";
 
 const addLocation = async (req, res) => {
-  const { locationName, locationPlaced, locationFeatures } = req.body;
+  const { locationName, locationPlaced, locationFeatures, availability } = req.body;
 
   console.log(req.body);
 
@@ -9,7 +9,8 @@ const addLocation = async (req, res) => {
     const location = new RestingLocations({
       locationName,
       locationPlaced,
-      locationFeatures
+      locationFeatures,
+      availability
     })
     await location.save();
     return res.status(201).json({ message: "Location is Added", RestingLocations: location })
@@ -88,7 +89,6 @@ const updateLocation = async (req, res, next) => {
     console.log(err)
   }
 
-  console.log(location);
   if (!location) {
     return res.status(404).json({ message: "Unable to update Location details or location is not added" })
   }

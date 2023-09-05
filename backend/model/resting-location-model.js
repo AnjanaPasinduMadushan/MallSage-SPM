@@ -14,6 +14,11 @@ const locationSchema = new Schema({
     required: true
   },
 
+  availability: {
+    type: Number,
+    required: true
+  },
+
   locationFeatures: {
     type: [String],
     required: true

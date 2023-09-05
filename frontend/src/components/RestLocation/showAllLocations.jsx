@@ -38,6 +38,7 @@ const ShowAllLocations = ({ handleOnClick }) => {
               <Item>
                 <h1>{location.locationName}</h1>
                 <h1>{location.locationPlaced}</h1>
+                <h1>{location.availability}</h1>
                 <h1>Features</h1>
                 <div>{location.locationFeatures.map((feature, key) => (
                   <h2 key={key}>{feature}</h2>
