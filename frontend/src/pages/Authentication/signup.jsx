@@ -13,8 +13,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, MenuItem, InputLabel, Select } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { signUpAction } from '../../Redux/auth/authAction';
-// import Swal from 'sweetalert2';
-// import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Copyright from '../../components/copyright';
 
@@ -33,11 +31,11 @@ export default function SignUp() {
   })
 
   const isLoggedrole = useSelector((state) => state.auth.User.role);
-  console.log("isLoggedrole",isLoggedrole);
+  console.log("isLoggedrole", isLoggedrole);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setInputs((previousState) => ({
@@ -81,17 +79,17 @@ export default function SignUp() {
   // }
 
   //UseEffect for checking logged role
-  useEffect( 
+  useEffect(
     () => {
       if (isLoggedrole) {
-        console.log("isLoggedrole",isLoggedrole);
+        console.log("isLoggedrole", isLoggedrole);
         //        history.push("/dashboard");
         if (isLoggedrole === "admin") {
           navigate("/adminhome", { replace: true });
-        } else if( isLoggedrole === "customer") {
+        } else if (isLoggedrole === "customer") {
           navigate("/", { replace: true });
           //          window.location.reload();
-        }else{
+        } else {
           navigate("/", { replace: true });
         }
       }
@@ -101,21 +99,21 @@ export default function SignUp() {
   //Handle Submit
   const handleSubmit = async (e) => {
     console.log("sdsdad");
-    console.log("isLoggedrole",isLoggedrole);
+    console.log("isLoggedrole", isLoggedrole);
     e.preventDefault();
     try {
-     dispatch(signUpAction(inputs?.name,inputs?.mobile,inputs?.email, inputs?.password,inputs?.role));
+      dispatch(signUpAction(inputs?.name, inputs?.mobile, inputs?.email, inputs?.password, inputs?.role));
       // const data = await sendData();
-      if (isLoggedrole?.role=== "admin") {
-        console.log("isLoggedrole",isLoggedrole);
+      if (isLoggedrole?.role === "admin") {
+        console.log("isLoggedrole", isLoggedrole);
         navigate('/adminhome')
       } else if (isLoggedrole?.role === "customer") {
-        console.log("isLoggedrole",isLoggedrole);
+        console.log("isLoggedrole", isLoggedrole);
         navigate('/')
       }
       // dispatch(autheticationActions.login());
     } catch (err) {
-      console.log("isLoggedrole",isLoggedrole);
+      console.log("isLoggedrole", isLoggedrole);
       console.error(err)
     }
   };
