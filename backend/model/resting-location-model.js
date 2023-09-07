@@ -22,6 +22,10 @@ const locationSchema = new Schema({
   locationFeatures: {
     type: [String],
     required: true
+  },
+
+  noReserved: {
+    type: Number,
   }
 
 });

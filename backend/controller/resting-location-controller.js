@@ -97,4 +97,53 @@ const updateLocation = async (req, res, next) => {
 
 }
 
-export { addLocation, getOneLocation, getLocations, deleteLocation, updateLocation }
+
+const addNoReserved = async (req, res, next) => {
+
+  const id = req.params.id;
+  const noReserved = req.body.noReserved;
+  const noIntReserved = parseInt(noReserved);
+
+  let location;
+
+  try {
+    location = await RestingLocations.findByIdAndUpdate(id,
+      { $inc: { noReserved: noIntReserved } },
+      { new: true })
+  } catch (err) {
+    console.log(err)
+  }
+
+  if (!location) {
+    return res.status(404).json({ message: "Unable to update Location details or location is not added" })
+  }
+
+  return res.status(200).json({ message: "Location Updated successfully" })
+
+}
+
+const decreaseNoReserved = async (req, res, next) => {
+
+  const id = req.params.id;
+  const noReserved = req.body.noReserved;
+  const noIntReserved = parseInt(noReserved);
+
+  let location;
+
+  try {
+    location = await RestingLocations.findByIdAndUpdate(id,
+      { $inc: { noReserved: - noIntReserved } },
+      { new: true })
+  } catch (err) {
+    console.log(err)
+  }
+
+  if (!location) {
+    return res.status(404).json({ message: "Unable to update Location details or location is not added" })
+  }
+
+  return res.status(200).json({ message: "Location Updated successfully" })
+
+}
+
+export { addLocation, getOneLocation, getLocations, deleteLocation, updateLocation, addNoReserved, decreaseNoReserved }
