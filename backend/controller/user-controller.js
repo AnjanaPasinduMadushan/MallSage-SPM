@@ -31,7 +31,7 @@ const signUp = async (req, res) => {
     return res.status(400).json({ message: "Please provide valid Email" })
   }
   else if (!validatePWD(password)) {
-    console.log(password)
+    console.log(`invalid password format: ${password}`)
     return res.status(400).json({ message: "Please provide valid Password" })
   }
 
