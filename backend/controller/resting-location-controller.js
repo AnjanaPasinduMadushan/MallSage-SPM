@@ -127,7 +127,7 @@ const addNoReserved = async (req, res) => {
     const uniqueNo = Math.floor((1000 + Math.random() * 9000));
 
     const newReservation = location.Reserved.create({
-      isGetIn: firstIndex.isGetIn,
+      isGetIn: false,
       no: firstIndex.no,
       qrCode: uniqueNo,
     });
@@ -142,6 +142,32 @@ const addNoReserved = async (req, res) => {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
   }
+}
+
+//For update the getsIn function for reservations done by the admin
+const updateGetsIn = async (req, res) => {
+
+  const id = req.params.id;
+  const code = req.body.code;
+  try {
+    const location = await RestingLocations.findById(id);
+    const indexToChange = location.Reserved.findIndex((reservation) =>
+      reservation.qrCode === code
+    )
+
+    if (!(location.Reserved[indexToChange].isGetsIn)) {
+      location.Reserved[indexToChange].isGetsIn = true;
+    } else {
+      return res.status(400).json({ message: "Already Inside the Location." });
+    }
+
+    await location.save();
+    return res.status(200).json({ message: "Successfully Entered" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
 }
 
 const decreaseNoAndDeleteReserved = async (req, res) => {
@@ -183,4 +209,13 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
 
 }
 
-export { addLocation, getOneLocation, getLocations, deleteLocation, updateLocation, addNoReserved, decreaseNoAndDeleteReserved }
+export {
+  addLocation,
+  getOneLocation,
+  getLocations,
+  deleteLocation,
+  updateLocation,
+  addNoReserved,
+  decreaseNoAndDeleteReserved,
+  updateGetsIn
+}
