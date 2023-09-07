@@ -10,6 +10,7 @@ import ViewLocation from "./pages/Administration/viewLocation";
 import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
 import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import AdminHeader from "./components/Headers/adminHeader";
 
 function App() {
   //Use Selector to getv logged role
@@ -17,6 +18,7 @@ function App() {
 
   return (
     <BrowserRouter>
+          <AdminHeader />
       <Routes>
         {isLoggedrole === "admin" && (
           <Route path="/adminhome" element={<AdminHome />} />

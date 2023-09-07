@@ -26,7 +26,7 @@ export const AdminHome = () => {
 
   return (
     <>
-      <AdminHeader />
+      {/* <AdminHeader /> */}
       <center><h1>PLAY GROUND OF ADMINISTRATION</h1></center>
     </>
   )
