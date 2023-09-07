@@ -1,10 +1,15 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignUp from "./pages/Authentication/signup";
 import SignIn from "./pages/Authentication/signin";
 import Home from "./pages/home/home";
 import { AdminHome } from "./pages/home/admin-home";
+import AddRestLocations from "./pages/Administration/addRestLocations";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import ShowRestLocations from "./pages/Administration/showRestLocations";
+import ViewLocation from "./pages/Administration/viewLocation";
+import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
+import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
+
 function App() {
   //Use Selector to getv logged role
   const isLoggedrole = useSelector((state) => state.auth.User.role);
@@ -17,6 +22,11 @@ function App() {
         )}
         <Route path="/adminhome" element={<AdminHome />} />
         {isLoggedrole === "customer" && <Route path="/" element={<Home />} />}
+        <Route path="/showAllLocations" element={<ShowRestLocations />} />
+        <Route path="/shopper/showAllLocations" element={<ViewRestLocations />} />
+        <Route path="/admin/addRestLocation" element={<AddRestLocations />} />
+        <Route path="/RestLocation/:id" element={<ViewLocation />} />
+        <Route path="/Shopper/RestLocation/:id" element={<ViewRestLocation />} />
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
