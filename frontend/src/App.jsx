@@ -9,6 +9,7 @@ import ShowRestLocations from "./pages/Administration/showRestLocations";
 import ViewLocation from "./pages/Administration/viewLocation";
 import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
 import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   //Use Selector to getv logged role
