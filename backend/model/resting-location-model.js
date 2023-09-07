@@ -24,7 +24,12 @@ const locationSchema = new Schema({
     required: true
   },
 
-  noReserved: {
+  Reserved: [{
+    no: Number,
+    qrCode: Number
+  }],
+
+  currentNoReserved: {
     type: Number,
   }
 
