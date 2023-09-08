@@ -29,7 +29,7 @@ function App() {
         <Route path="/shopper/showAllLocations" element={<ViewRestLocations />} />
         <Route path="/admin/addRestLocation" element={<AddRestLocations />} />
         <Route path="/RestLocation/:id" element={<ViewLocation />} />
-        <Route path="/Shopper/RestLocation/:locationName" element={<ViewRestLocation />} />
+        <Route path="/Shopper/RestLocation/:id" element={<ViewRestLocation />} />
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />

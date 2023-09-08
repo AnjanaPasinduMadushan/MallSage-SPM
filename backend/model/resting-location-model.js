@@ -22,6 +22,16 @@ const locationSchema = new Schema({
   locationFeatures: {
     type: [String],
     required: true
+  },
+
+  Reserved: [{
+    isGetsIn: Boolean,
+    no: Number,
+    qrCode: Number
+  }],
+
+  currentNoReserved: {
+    type: Number,
   }
 
 });
