@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 import user_router from './router/user-routes.js';
 import admin_router from './router/admin-router.js';
 import location_router from './router/resting-location-router.js';
+import blog_router from './router/blog-router.js';
 import luggage_router from './router/luggage-router.js';
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use('/user', user_router);
 app.use('/sub-admin', admin_router);
 app.use('/restingLocation', location_router);
+app.use('/blog', blog_router);
 app.use('/luggage', luggage_router);
 
 //db connection
