@@ -2,6 +2,7 @@ import RestingLocations from "../model/resting-location-model.js";
 import _ from "lodash";
 import LuggageDTO from "../dto/LuggageDTO.js";
 import Luggage from "../model/luggage-model.js";
+import User from "../model/user-model.js";
 
 const addLuggage = async (req, res) => {
   const { LuggageDTO } = req.body;
@@ -28,6 +29,15 @@ const addLuggage = async (req, res) => {
 
     console.log("luggageDTO", LuggageDTO);
 
+     // Check if the CustomerEmail exists in the User collection
+     const userWithEmail = await User.findOne({
+      email: LuggageDTO.CustomerEmail,
+    });
+
+    if (!userWithEmail) {
+      return res.status(400).json({ message: "CustomerEmail does not exist" });
+    }
+
     const luggage = new Luggage({
       luggageID: randomLuggageID,
       CustomerID: LuggageDTO.CustomerID,
@@ -38,6 +48,9 @@ const addLuggage = async (req, res) => {
       SecurityCheckPoint: LuggageDTO.SecurityCheckPoint,
       SecurityID: LuggageDTO.SecurityID,
       SecurityAdminID: LuggageDTO.SecurityAdminID,
+      isComplete: LuggageDTO.isComplete,
+      isSecurityConfirmed: LuggageDTO.isSecurityConfirmed,
+      isCustomerConfirmed: LuggageDTO.isCustomerConfirmed,
     });
 
     await luggage.save();
