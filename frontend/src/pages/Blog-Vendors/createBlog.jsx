@@ -59,7 +59,7 @@ const CreateBlogPost = () => {
 
         for (let i = 0; i < selectedFiles.length; i++) {
             const file = selectedFiles[i];
-            
+
             const imageUrl = URL.createObjectURL(file);
             newImages.push({
                 id: Date.now() + i,
@@ -89,13 +89,10 @@ const CreateBlogPost = () => {
             const res = await createBlog(title, authorName, content, images);
 
             if (res) {
-                console.log({ msg: "success", data: res.data });
+                console.log({ msg: "success", data: res });
             } else {
-                console.error({ msg: "error", data: res.data });
+                console.error({ msg: "error", data: res });
             }
-
-
-            
         } catch (err) {
             console.error(err);
         }

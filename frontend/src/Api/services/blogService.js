@@ -15,7 +15,8 @@ export const createBlog = async (title, author, content, images) => {
   const response = await fetch('http://localhost:5000/blog/create', {
     method: 'POST',
     body: formData,
-    credentials:'include',
+    credentials: 'include',
   });
-  return response.data;
-};
+
+  return response.json
+}

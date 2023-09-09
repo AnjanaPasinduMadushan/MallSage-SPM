@@ -3,16 +3,16 @@ import Blog from "../model/blog-model.js";
 const createBlog = async (req, res) => {
   console.log("blog data received")
   const shop = req.userId;
-  const { 
+  const {
     title,
     content,
     author
   } = req.body;
 
-  console.log({title:title, content:content, author:author, files: req.files});
+  console.log({ title: title, content: content, author: author, files: req.files });
 
   let blog;
-  try{
+  try {
     blog = new Blog({
       title,
       content,
@@ -21,15 +21,15 @@ const createBlog = async (req, res) => {
       createdDate: Date.now(),
     })
     await blog.save();
-  }catch(err){
+  } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Unable to create blog", error: err });
   }
-  if(!blog){
+  if (!blog) {
     return res.status(500).json({ message: "Unable to create blog", error: err });
   }
 
-  return res.status(201).json("Blog successfully created!");
+  return res.status(201).json({ message: "Blog successfully created!" });
 };
 
 const getBlog = async (req, res) => {
@@ -39,7 +39,7 @@ const getBlog = async (req, res) => {
     const blog = await Blog.findById(blogId);
 
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found!", id: blogId})
+      return res.status(404).json({ message: "Blog not found!", id: blogId })
     } else {
       res.status(200).json({ blog })
     }
@@ -90,7 +90,7 @@ const updateBlog = async (req, res, next) => {
     blog = await Blog.findByIdAndUpdate(id, req.body, { new: true })
   } catch (err) {
     console.log(err)
-    return res.status(500).json({message: "error in updating blog!", error: err})
+    return res.status(500).json({ message: "error in updating blog!", error: err })
   }
 
   if (!blog) {
@@ -100,4 +100,4 @@ const updateBlog = async (req, res, next) => {
   return res.status(200).json({ message: "Blog Updated successfully" })
 }
 
-export {createBlog, getBlog, getBlogs, deleteBlog, updateBlog}
+export { createBlog, getBlog, getBlogs, deleteBlog, updateBlog }
