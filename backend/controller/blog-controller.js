@@ -6,10 +6,10 @@ const createBlog = async (req, res) => {
   const { 
     title,
     content,
-    author,
+    author
   } = req.body;
 
-  console.log({title:title, content:content, author:author});
+  console.log({title:title, content:content, author:author, files: req.files});
 
   let blog;
   try{
