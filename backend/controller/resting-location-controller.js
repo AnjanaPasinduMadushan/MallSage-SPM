@@ -127,7 +127,6 @@ const addNoReserved = async (req, res) => {
     const uniqueNo = Math.floor((1000 + Math.random() * 9000));
 
     const newReservation = location.Reserved.create({
-      isGetIn: false,
       no: firstIndex.no,
       qrCode: uniqueNo,
     });
@@ -150,17 +149,21 @@ const addNoReserved = async (req, res) => {
 const updateGetsIn = async (req, res) => {
 
   const id = req.params.id;
-  const code = req.body.code;
+  const code = req.body.qrCode;
   try {
     const location = await RestingLocations.findById(id);
+    console.log(location);
     const indexToChange = location.Reserved.findIndex((reservation) =>
       reservation.qrCode === code
     )
-
-    if (!(location.Reserved[indexToChange].isGetsIn)) {
+    console.log(indexToChange);
+    if (indexToChange === -1) {
+      return res.status(404).json({ message: "Invalid Status code!!!" });
+    } else if (!(location.Reserved[indexToChange].isGetsIn)) {
+      console.log(location.Reserved[indexToChange].isGetsIn)
       location.Reserved[indexToChange].isGetsIn = true;
     } else {
-      return res.status(400).json({ message: "Already Inside the Location." });
+      return res.status(400).json({ message: "Customer is already in the Location." });
     }
 
     await location.save();

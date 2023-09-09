@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Tooltip } from '@mui/material';
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
@@ -48,17 +49,22 @@ export default function FormDialog({ locationId, availability, onReservationComp
   }
 
   const isChecking = () => {
-    const checkingResult = availability === currentNoReserved;
-    return checkingResult;
+    if (availability === currentNoReserved) {
+      return false;
+    }
+    return true;
   }
 
   return (
-    <div>
-      <Button variant="outlined" onClick={handleClickOpen} disabled={!isChecking}>
-        Reserve
-      </Button>
+    <>
+      <Tooltip title="To add a shopper to the Location">
+        <Button variant="outlined" onClick={handleClickOpen} disabled={isChecking && isChecking === false} >
+          Hold
+        </Button>
+      </Tooltip>
+
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Reserve</DialogTitle>
+        <DialogTitle>Coming inside???</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -75,15 +81,15 @@ export default function FormDialog({ locationId, availability, onReservationComp
               shrink: true,
             }}
             inputProps={{
-              min: 1
+              min: 2
             }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Reserve</Button>
+          <Button onClick={handleClose}>Hold</Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 
 }

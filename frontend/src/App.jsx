@@ -7,7 +7,7 @@ import AddRestLocations from "./pages/Administration/addRestLocations";
 import { useSelector } from "react-redux";
 import ShowRestLocations from "./pages/Administration/showRestLocations";
 import ViewLocation from "./pages/Administration/viewLocation";
-import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
+import ViewRestLocation from "./pages/Rest-Customers/viewRestLocation";
 import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
 import 'react-toastify/dist/ReactToastify.css';
 import "bootstrap/dist/css/bootstrap.min.css";

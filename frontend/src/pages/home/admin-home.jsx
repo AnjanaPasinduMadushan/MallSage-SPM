@@ -55,7 +55,7 @@ export const AdminHome = () => {
       <Box m={15} sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <Item  onClick={() => navigate('/addEmployee')}>Add Employees<BadgeIcon /></Item>
+            <Item onClick={() => navigate('/addEmployee')}>Add Employees<BadgeIcon /></Item>
           </Grid>
           <Grid item xs={6}>
             <Item onClick={() => navigate('/showAllLocations')}>Resting Location Tracking System<InterestsIcon /></Item>
@@ -68,8 +68,6 @@ export const AdminHome = () => {
           </Grid>
         </Grid>
       </Box>
-      {/* <AdminHeader /> */}
-      <center><h1>PLAY GROUND OF ADMINISTRATION</h1></center>
     </>
   )
 }
