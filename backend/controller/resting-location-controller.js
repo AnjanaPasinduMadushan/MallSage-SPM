@@ -103,7 +103,7 @@ const addNoReserved = async (req, res) => {
 
   const id = req.params.id;
   const noReservedObject = req.body.Reserved;
-
+  console.log(req.body);
   let location;
 
   try {
@@ -132,12 +132,14 @@ const addNoReserved = async (req, res) => {
       qrCode: uniqueNo,
     });
 
-    location.Reserved.push(newReservation);
-
     location.currentNoReserved += firstIndex.no;
+    if (location.currentNoReserved > location.availability) {
+      return res.status(403).json({ message: "Currently, isnt have enough spaces for all of you!!!" })
+    }
+    location.Reserved.push(newReservation);
     await location.save();
 
-    return res.status(200).json({ message: "Location Updated successfully" });
+    return res.status(200).json({ message: "Location Updated successfully", uniqueNo });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
@@ -192,13 +194,17 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
       return res.status(404).json({ message: "QR code not found in reservations" });
     }
 
-    if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no)) {
+    if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no) && body.no != 0) {
       location.Reserved[indexToRemove].no -= body.no;
       location.currentNoReserved -= body.no;
+      console.log('not splice')
     } else {
+      location.currentNoReserved -= location.Reserved[indexToRemove].no;
       location.Reserved.splice(indexToRemove, 1);
+      console.log('splice')
     }
 
+    console.log(location.currentNoReserved);
     await location.save();
 
     return res.status(200).json({ message: "Location Updated successfully" })

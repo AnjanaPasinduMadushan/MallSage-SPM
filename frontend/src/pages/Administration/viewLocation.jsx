@@ -12,7 +12,8 @@ import InterestsIcon from '@mui/icons-material/Interests';
 import axios from "axios"
 import { useEffect, useState, useMemo } from "react"
 import { useParams } from "react-router-dom";
-
+import FormDialogAdmin from '../../components/style-Components/form-dialog-admin';
+import FormDialog from '../../components/style-Components/form-dialog';
 
 const defaultTheme = createTheme();
 
@@ -40,6 +41,12 @@ const ViewLocation = () => {
     getLocation();
   }, [id])
 
+  // eslint-disable-next-line no-unused-vars
+  const [qrCodeGenarated, setQrCodeGenarated] = useState(null);
+  const handleReservationData = (reservationData) => {
+    setQrCodeGenarated(reservationData.uniqueNo);
+    console.log("Reservation data:", reservationData.uniqueNo);
+  };
 
   const handleChange = async (e) => {
     const { name, value, checked } = e.target;
@@ -83,6 +90,11 @@ const ViewLocation = () => {
     return isChanged;
   }, [isChanged])
 
+  const handlePrint = () => {
+    // Use the browser's print functionality
+    window.print();
+  };
+
   return (
     <>
       <ThemeProvider theme={defaultTheme}>
@@ -96,6 +108,16 @@ const ViewLocation = () => {
               alignItems: 'center',
             }}
           >
+            <Grid>
+              {typeof qrCodeGenarated === 'number' && (
+                <Grid container spacing={2} columns={16} display="flex" justifyContent="center">
+                  <Typography>{qrCodeGenarated}</Typography>
+                  <Button variant="outlined" onClick={handlePrint}></Button>
+                </Grid>
+              )}
+            </Grid>
+            <FormDialogAdmin locationId={location._id} availability={location.availability} currentNoReserved={location.currentNoReserved} />
+            <FormDialog locationId={location._id} availability={location.availability} onReservationComplete={handleReservationData} currentNoReserved={location.currentNoReserved} />
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <InterestsIcon />
             </Avatar>
