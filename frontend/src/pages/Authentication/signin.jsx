@@ -92,6 +92,9 @@ export default function SignIn() {
         } else if( isLoggedrole === "customer") {
           navigate("/", { replace: true });
           //          window.location.reload();
+        } else if( isLoggedrole === "shop") {
+          navigate("/shopHome", { replace: true });
+          //          window.location.reload();
         }else{
           navigate("/", { replace: true });
         }
@@ -110,7 +113,10 @@ export default function SignIn() {
       if (isLoggedrole?.role=== "admin") {
         console.log("isLoggedrole",isLoggedrole);
         navigate('/adminhome')
-      } else if (isLoggedrole?.role === "customer") {
+      } else if( isLoggedrole === "shop") {
+        navigate("/shopHome", { replace: true });
+        //          window.location.reload();
+      }else if (isLoggedrole?.role === "customer") {
         console.log("isLoggedrole",isLoggedrole);
         navigate('/')
       }

@@ -24,9 +24,9 @@ const signUp = async (req, res) => {
   }
 
   //validation
-  if (!checkingMobileValidation(mobile)) {
-    return res.status(400).json({ message: "Please provide valid mobile Number with 10 digits" })
-  }
+  // if (!checkingMobileValidation(mobile)) {
+  //   return res.status(400).json({ message: "Please provide valid mobile Number with 10 digits" })
+  // }
   else if (!validateEmail(email)) {
     return res.status(400).json({ message: "Please provide valid Email" })
   }

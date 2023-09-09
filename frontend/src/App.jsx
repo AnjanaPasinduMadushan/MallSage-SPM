@@ -9,9 +9,15 @@ import ShowRestLocations from "./pages/Administration/showRestLocations";
 import ViewLocation from "./pages/Administration/viewLocation";
 import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
 import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
+import 'react-toastify/dist/ReactToastify.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import AdminHeader from "./components/Headers/adminHeader";
 import Header from "./components/Headers/header";
+import AddEmployee from "./pages/Employees/AddEmployee";
+import AddShop from "./pages/Employees/AddShop";
+import { ShopHome } from "./pages/Shop/ShopHome";
+import AddLuggage from "./pages/Luggage/AddLuggage";
+
 
 function App() {
   //Use Selector to getv logged role
@@ -21,14 +27,23 @@ function App() {
     <BrowserRouter>
       {isLoggedrole === "admin" && <AdminHeader />}
       {isLoggedrole === "customer" && <Header />}
-      {isLoggedrole === null && <Header />}
+      {isLoggedrole === "shop" && <shopHeader />}
+      {isLoggedrole !== "customer" && isLoggedrole !== "admin" && <Header />}
       <Routes>
         {isLoggedrole === "admin" && (
-          <Route path="/adminhome" element={<AdminHome />} />
+          <>
+            <Route path="/adminhome" element={<AdminHome />} />
+            <Route path="/addEmployee" element={<AddEmployee />} />
+          </>
         )}
         <Route path="/adminhome" element={<AdminHome />} />
+        <Route path="/addEmployee" element={<AddEmployee />} />
+        <Route path="/addShop" element={<AddShop />} />
         {isLoggedrole === "customer" && <Route path="/" element={<Home />} />}
+        {isLoggedrole === "shop" && <Route path="/shopHome" element={<ShopHome />} />}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
+        <Route path="/addluggage" element={<AddLuggage />} />
+        <Route path="/shopHome" element={<ShopHome />} />
         <Route
           path="/shopper/showAllLocations"
           element={<ViewRestLocations />}

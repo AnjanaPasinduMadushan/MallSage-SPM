@@ -1,4 +1,4 @@
-import BadgeIcon from '@mui/icons-material/Badge';
+// import BadgeIcon from '@mui/icons-material/Badge';
 import { useEffect } from "react"
 import axios from 'axios'
 axios.defaults.withCredentials = true;
@@ -6,10 +6,11 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 // import LuggageIcon from '@mui/icons-material/Luggage';
-import BookIcon from '@mui/icons-material/Book';
-import LocalParkingIcon from '@mui/icons-material/LocalParking';
-import InterestsIcon from '@mui/icons-material/Interests';
+// import BookIcon from '@mui/icons-material/Book';
+// import LocalParkingIcon from '@mui/icons-material/LocalParking';
+// import InterestsIcon from '@mui/icons-material/Interests';
 import { useNavigate } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -26,7 +27,7 @@ const Item = styled(Paper)(({ theme }) => ({
   fontSize: '25px',
   cursor: "pointer"
 }));
-export const AdminHome = () => {
+export const ShopHome = () => {
 
   const navigate = useNavigate();
 
@@ -55,9 +56,9 @@ export const AdminHome = () => {
       <Box m={15} sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <Item  onClick={() => navigate('/addEmployee')}>Add Employees<BadgeIcon /></Item>
+            <Item  onClick={() => navigate('/addluggage')}>Purchases Delivery<ShoppingBagIcon /></Item>
           </Grid>
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <Item onClick={() => navigate('/showAllLocations')}>Resting Location Tracking System<InterestsIcon /></Item>
           </Grid>
           <Grid item xs={6}>
@@ -65,11 +66,10 @@ export const AdminHome = () => {
           </Grid>
           <Grid item xs={6}>
             <Item>Promotional Bloging System<BookIcon /></Item>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
-      {/* <AdminHeader /> */}
-      <center><h1>PLAY GROUND OF ADMINISTRATION</h1></center>
+
     </>
   )
 }
