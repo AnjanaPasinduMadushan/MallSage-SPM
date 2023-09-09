@@ -6,7 +6,8 @@ export const login = async (email, password) => {
   const response = await apiClient.post(`user/login`, {
     email: email,
     password: password,
-  });
+  }, {withCredentials: true});
+
   return response.data;
 };
 
