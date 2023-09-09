@@ -8,6 +8,11 @@ const shopSchema = new Schema({
     required: true,
   },
 
+  BuisnessRegNumber: {
+    type: String,
+    required: true,
+  },
+
   Name: {
     type: String,
     required: true,
@@ -24,6 +29,11 @@ const shopSchema = new Schema({
   },
 
   NumerOfEmployees: {
+    type: String,
+    required: true,
+  },
+
+  userId: {
     type: String,
     required: true,
   },
