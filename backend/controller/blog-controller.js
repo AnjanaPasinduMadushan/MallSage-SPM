@@ -1,12 +1,15 @@
 import Blog from "../model/blog-model.js";
 
 const createBlog = async (req, res) => {
+  console.log("blog data received")
   const shop = req.userId;
   const { 
     title,
     content,
-    author
+    author,
   } = req.body;
+
+  console.log({title:title, content:content, author:author});
 
   let blog;
   try{
@@ -15,7 +18,7 @@ const createBlog = async (req, res) => {
       content,
       shop,
       author,
-      createdDate: Date.now()
+      createdDate: Date.now(),
     })
     await blog.save();
   }catch(err){

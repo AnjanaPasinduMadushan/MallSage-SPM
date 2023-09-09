@@ -11,6 +11,7 @@ import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
 import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AdminHeader from "./components/Headers/adminHeader";
+import CreateBlogPost from "./pages/Blog-Vendors/createBlog";
 import Header from "./components/Headers/header";
 
 function App() {
@@ -23,9 +24,7 @@ function App() {
       {isLoggedrole === "customer" && <Header />}
       {isLoggedrole === null && <Header />}
       <Routes>
-        {isLoggedrole === "admin" && (
-          <Route path="/adminhome" element={<AdminHome />} />
-        )}
+        {isLoggedrole === "admin" && <Route path="/adminhome" element={<AdminHome />} />}
         <Route path="/adminhome" element={<AdminHome />} />
         {isLoggedrole === "customer" && <Route path="/" element={<Home />} />}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
@@ -42,6 +41,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
+        <Route path="/createPost" element={<CreateBlogPost />} />
         {/* <Route path="*" element={<h1><center>Page Not Found</center></h1>} /> */}
       </Routes>
     </BrowserRouter>
