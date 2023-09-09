@@ -9,8 +9,9 @@ import ShowRestLocations from "./pages/Administration/showRestLocations";
 import ViewLocation from "./pages/Administration/viewLocation";
 import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
 import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import AdminHeader from "./components/Headers/adminHeader";
+import Header from "./components/Headers/header";
 
 function App() {
   //Use Selector to getv logged role
@@ -18,7 +19,9 @@ function App() {
 
   return (
     <BrowserRouter>
-          <AdminHeader />
+      {isLoggedrole === "admin" && <AdminHeader />}
+      {isLoggedrole === "customer" && <Header />}
+      {isLoggedrole === null && <Header />}
       <Routes>
         {isLoggedrole === "admin" && (
           <Route path="/adminhome" element={<AdminHome />} />
@@ -26,10 +29,16 @@ function App() {
         <Route path="/adminhome" element={<AdminHome />} />
         {isLoggedrole === "customer" && <Route path="/" element={<Home />} />}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
-        <Route path="/shopper/showAllLocations" element={<ViewRestLocations />} />
+        <Route
+          path="/shopper/showAllLocations"
+          element={<ViewRestLocations />}
+        />
         <Route path="/admin/addRestLocation" element={<AddRestLocations />} />
         <Route path="/RestLocation/:id" element={<ViewLocation />} />
-        <Route path="/Shopper/RestLocation/:locationName" element={<ViewRestLocation />} />
+        <Route
+          path="/Shopper/RestLocation/:id"
+          element={<ViewRestLocation />}
+        />
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />

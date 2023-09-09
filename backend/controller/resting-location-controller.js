@@ -1,4 +1,5 @@
 import RestingLocations from "../model/resting-location-model.js";
+import _ from 'lodash';
 
 const addLocation = async (req, res) => {
   const { locationName, locationPlaced, locationFeatures, availability } = req.body;
@@ -97,4 +98,124 @@ const updateLocation = async (req, res, next) => {
 
 }
 
-export { addLocation, getOneLocation, getLocations, deleteLocation, updateLocation }
+
+const addNoReserved = async (req, res) => {
+
+  const id = req.params.id;
+  const noReservedObject = req.body.Reserved;
+
+  let location;
+
+  try {
+    location = await RestingLocations.findById(id);
+
+    if (!location) {
+      return res.status(404).json({ message: "Unable to update Location details or location is not added" })
+    }
+
+    // Validate 'noReservedObject' and 'no' property
+    if (!_.isArray(noReservedObject) && noReservedObject.length === 0) {
+      return res.status(400).json({ message: "Invalid 'Reserved' data" });
+    }
+
+    const firstIndex = noReservedObject[0];
+
+    if (!_.isNumber(firstIndex.no) && !_.isNaN(firstIndex.no)) {
+      return res.status(400).json({ message: "Invalid 'no' value" });
+    }
+
+    const uniqueNo = Math.floor((1000 + Math.random() * 9000));
+
+    const newReservation = location.Reserved.create({
+      isGetIn: false,
+      no: firstIndex.no,
+      qrCode: uniqueNo,
+    });
+
+    location.Reserved.push(newReservation);
+
+    location.currentNoReserved += firstIndex.no;
+    await location.save();
+
+    return res.status(200).json({ message: "Location Updated successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+//For update the getsIn function for reservations done by the admin
+const updateGetsIn = async (req, res) => {
+
+  const id = req.params.id;
+  const code = req.body.code;
+  try {
+    const location = await RestingLocations.findById(id);
+    const indexToChange = location.Reserved.findIndex((reservation) =>
+      reservation.qrCode === code
+    )
+
+    if (!(location.Reserved[indexToChange].isGetsIn)) {
+      location.Reserved[indexToChange].isGetsIn = true;
+    } else {
+      return res.status(400).json({ message: "Already Inside the Location." });
+    }
+
+    await location.save();
+    return res.status(200).json({ message: "Successfully Entered" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+const decreaseNoAndDeleteReserved = async (req, res) => {
+
+  const id = req.params.id;
+  const body = req.body;
+  const qrCode = body.qrCode;
+  let location;
+
+  try {
+    location = await RestingLocations.findById(id);
+
+    if (!location) {
+      return res.status(404).json({ message: "Unable to update Location details or location is not added" })
+    }
+
+    const indexToRemove = location.Reserved.findIndex((reservation) =>
+      reservation.qrCode === qrCode
+    );
+
+    if (indexToRemove === -1) {
+      return res.status(404).json({ message: "QR code not found in reservations" });
+    }
+
+    if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no)) {
+      location.Reserved[indexToRemove].no -= body.no;
+      location.currentNoReserved -= body.no;
+    } else {
+      location.Reserved.splice(indexToRemove, 1);
+    }
+
+    await location.save();
+
+    return res.status(200).json({ message: "Location Updated successfully" })
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+export {
+  addLocation,
+  getOneLocation,
+  getLocations,
+  deleteLocation,
+  updateLocation,
+  addNoReserved,
+  decreaseNoAndDeleteReserved,
+  updateGetsIn
+}

@@ -25,7 +25,7 @@ const Home = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <center><h1>PLAY GROUND OF CUSTOMER</h1></center>
     </>
   )
