@@ -13,6 +13,13 @@ export const login = async (email, password) => {
 
 //Authentication SignUp
 export const signup = async (name, mobile, email, password, role) => {
+  console.log(
+    "name: " + name,
+    "mobile: " + mobile,
+    "email: " + email,
+    "password: " + password,
+    "role: " + role
+  )
   const response = await apiClient.post(`user/signup`, {
     name: name,
     mobile: mobile,
