@@ -10,7 +10,7 @@ const jwt = jsonwebtoken;
 
 //user id and user's role is passed with token
 const createToken = (_id, role) => {
-  console.log(process.env.SECRET)
+  // console.log(process.env.SECRET)
   return jwt.sign({ _id, role }, process.env.secret, { expiresIn: '1hr' })
 }
 
@@ -78,10 +78,8 @@ const signUp = async (req, res) => {
 }
 
 const login = async (req, res) => {
-
   const { email, password } = req.body;
-
-  console.log(email, password)
+  console.log({email: email, password: password})
 
   //checking whether pasword and login fields are filled or not 
   if (!email || !password) {
@@ -89,22 +87,22 @@ const login = async (req, res) => {
   }
 
   let loggedUser;
-
   try {
     loggedUser = await User.findOne({ email: email });
 
     if (!loggedUser) {
       return res.status(404).json({ message: "User is not found. Sign Up instead" })
     }
+
     //checking password and comare it with exist user's password in the db
     const isPasswordCorrect = bcrypt.compareSync(password, loggedUser.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid password" })
     }
-    const token = createToken(loggedUser._id, loggedUser.role)
 
     //Create and setting a cookie with the user's ID and token
-    const cook = res.cookie(String(loggedUser._id), token, {
+    const token = createToken(loggedUser._id, loggedUser.role)
+    const cook = res.cookie(`User:${String(loggedUser._id)}`, token, {
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60),
       httpOnly: true,//if this option isn't here cookie will be visible to the frontend
@@ -116,9 +114,8 @@ const login = async (req, res) => {
     return res.status(200).json({ message: "Successfully logged in", User: loggedUser, token })
   } catch (err) {
     console.log(err)
+    return res.status(500).json({message: "Error occured during Login! Please contact server administrator", error: err});
   }
-
-
 }
 
 

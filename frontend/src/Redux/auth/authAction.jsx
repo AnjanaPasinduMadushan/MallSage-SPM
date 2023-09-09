@@ -11,7 +11,7 @@ export const loginAction = (email, password) => {
   return async (dispatch) => {
     try {
       const response = await login(email, password);
-      console.log("response", response);
+      
       dispatch(setLoginResponse(response));
     } catch (error) {
       dispatch(setMessage(error.response.data.message));

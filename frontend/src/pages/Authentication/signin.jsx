@@ -29,7 +29,7 @@ export default function SignIn() {
   const dispatch = useDispatch();
 
   const isLoggedrole = useSelector((state) => state.auth.User.role);
-  console.log("isLoggedrole",isLoggedrole);
+  // console.log("isLoggedrole",isLoggedrole);
 
 
   const [inputs, setInputs] = useState({
@@ -101,9 +101,9 @@ export default function SignIn() {
 
   //Handle Submit
   const handleSubmit = async (e) => {
-    console.log("sdsdad");
-    console.log("isLoggedrole",isLoggedrole);
     e.preventDefault();
+    console.log("logging-In");
+
     try {
      dispatch(loginAction(inputs?.email, inputs?.password));
       // const data = await sendData();
