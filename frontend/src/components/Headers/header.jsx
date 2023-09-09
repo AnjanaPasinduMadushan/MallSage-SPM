@@ -45,7 +45,7 @@ function Header() {
     if (setting === settings[0]) {
       alert("go to profile")
     } else if (setting === settings[1]) {
-      await  dispatch(signOutAction())
+      await dispatch(signOutAction())
         .then(() => navigate("/signIn"));
     } else {
       alert("Pagr is not found")
@@ -100,7 +100,7 @@ function Header() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            MALL-SAGE
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>

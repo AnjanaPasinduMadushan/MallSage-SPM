@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Tooltip } from '@mui/material';
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
@@ -54,12 +55,14 @@ export default function FormDialogAdmin({ locationId, availability, currentNoRes
   }
 
   return (
-    <div>
-      <Button variant="outlined" onClick={handleClickOpen} disabled={!isChecking}>
-        Exit
-      </Button>
+    <>
+      <Tooltip title="To Check out a customer from here">
+        <Button variant="outlined" onClick={handleClickOpen} disabled={!isChecking} color="warning">
+          Leave
+        </Button>
+      </Tooltip>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Going Out???</DialogTitle>
+        <DialogTitle>Stepping out???</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -96,10 +99,10 @@ export default function FormDialogAdmin({ locationId, availability, currentNoRes
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Exit</Button>
+          <Button onClick={handleClose}>Leave</Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 
 }

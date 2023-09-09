@@ -2,8 +2,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Typography, Box, Grid } from "@mui/material";
+import { Typography, Box, Card, CardContent } from "@mui/material";
 import FormDialog from "../../components/style-Components/form-dialog";
+import Header from "../../components/Headers/header";
 
 const ViewRestLocation = () => {
 
@@ -33,34 +34,39 @@ const ViewRestLocation = () => {
   const availabilityMinusCurrentReserved = location?.availability - location?.currentNoReserved;
 
   return (
-    <><Box display="flex" justifyContent="center">
-      <Typography variant="h1" component="h2">
-        {location?.locationName}
-      </Typography>
-    </Box>
-      <Grid container spacing={2} columns={16} display="flex" justifyContent="center">
-        <Grid item xs={8}>
-          <Typography variant="h3">Current Seates Availble</Typography>
-          <Typography variant="h1" component="h2">{availabilityMinusCurrentReserved}</Typography>
-        </Grid>
-        {typeof qrCodeGenarated === 'number' && (
-          <Grid container spacing={2} columns={16} display="flex" justifyContent="center">
-            <Typography>{qrCodeGenarated}</Typography>
-          </Grid>
-        )}
-        <Grid item xs={4} mt={14}>
-          <FormDialog locationId={id} availability={location.availability} onReservationComplete={handleReservationData} currentNoReserved={location.currentNoReserved} />
-        </Grid>
-      </Grid>
-
-      <br />
-      <Grid container spacing={2} columns={16} display="flex" justifyContent="center">
-        <Typography>Features of this Resting Location</Typography>
-        {location.locationFeatures && location.locationFeatures.map((location, key) => (
-          <Typography key={key}>{location}</Typography>
+    <Box display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+      <Header />
+      <Box mt={8}>
+        <Typography variant="h2" gutterBottom display="flex" justifyContent="center">
+          {location?.locationName}
+        </Typography>
+        <Card>
+          <CardContent>
+            <Typography variant="h4" display="flex" justifyContent="center">Current Seats Available</Typography>
+            <Typography variant="h4" display="flex" justifyContent="center">{availabilityMinusCurrentReserved}</Typography>
+            {typeof qrCodeGenarated === 'number' && (
+              <Box>
+                <Typography variant="h4" display="flex" justifyContent="center">Your Reservation Number</Typography>
+                <Typography variant="h3" display="flex" justifyContent="center">{qrCodeGenarated}</Typography>
+              </Box>
+            )}
+            <Box display="flex" justifyContent="center">
+              <FormDialog
+                locationId={id}
+                availability={location.availability}
+                onReservationComplete={handleReservationData}
+                currentNoReserved={location.currentNoReserved}
+              />
+            </Box>
+          </CardContent>
+        </Card>
+        <br />
+        <Typography variant="h5">Features of this Resting Location</Typography>
+        {location.locationFeatures && location.locationFeatures.map((feature, key) => (
+          <Typography key={key}><ul>{feature}</ul></Typography>
         ))}
-      </Grid>
-    </>
+      </Box>
+    </Box>
   )
 }
 
