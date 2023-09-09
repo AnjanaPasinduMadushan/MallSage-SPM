@@ -49,14 +49,16 @@ export default function FormDialog({ locationId, availability, onReservationComp
   }
 
   const isChecking = () => {
-    const checkingResult = availability === currentNoReserved;
-    return checkingResult;
+    if (availability === currentNoReserved) {
+      return false;
+    }
+    return true;
   }
 
   return (
     <>
       <Tooltip title="To add a shopper to the Location">
-        <Button variant="outlined" onClick={handleClickOpen} disabled={!isChecking} >
+        <Button variant="outlined" onClick={handleClickOpen} disabled={isChecking && isChecking === false} >
           Hold
         </Button>
       </Tooltip>
@@ -79,7 +81,7 @@ export default function FormDialog({ locationId, availability, onReservationComp
               shrink: true,
             }}
             inputProps={{
-              min: 1
+              min: 2
             }}
           />
         </DialogContent>

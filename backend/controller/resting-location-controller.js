@@ -157,14 +157,13 @@ const updateGetsIn = async (req, res) => {
       reservation.qrCode === code
     )
     console.log(indexToChange);
-    console.log(location.Reserved[indexToChange].isGetsIn)
     if (indexToChange === -1) {
       return res.status(404).json({ message: "Invalid Status code!!!" });
     } else if (!(location.Reserved[indexToChange].isGetsIn)) {
       console.log(location.Reserved[indexToChange].isGetsIn)
       location.Reserved[indexToChange].isGetsIn = true;
     } else {
-      return res.status(400).json({ message: "Already Inside the Location." });
+      return res.status(400).json({ message: "Customer is already in the Location." });
     }
 
     await location.save();

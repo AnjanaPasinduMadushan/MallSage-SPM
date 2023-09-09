@@ -35,14 +35,13 @@ const ViewRestLocation = () => {
 
   return (
     <Box display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-      <Header />
       <Box mt={8}>
         <Typography variant="h2" gutterBottom display="flex" justifyContent="center">
           {location?.locationName}
         </Typography>
         <Card>
           <CardContent>
-            <Typography variant="h4" display="flex" justifyContent="center">Current Seats Available</Typography>
+            <Typography variant="h4" display="flex" justifyContent="center">No of Seats Available</Typography>
             <Typography variant="h4" display="flex" justifyContent="center">{availabilityMinusCurrentReserved}</Typography>
             {typeof qrCodeGenarated === 'number' && (
               <Box>

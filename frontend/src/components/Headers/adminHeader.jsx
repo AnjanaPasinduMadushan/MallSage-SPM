@@ -83,7 +83,7 @@ function AdminHeader() {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            href='/adminhome'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
