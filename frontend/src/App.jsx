@@ -9,6 +9,9 @@ import ShowRestLocations from "./pages/Administration/showRestLocations";
 import ViewLocation from "./pages/Administration/viewLocation";
 import ViewRestLocation from "./pages/Rest-Customers/ViewRestLocation";
 import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
+import AddParkingSlot from "./pages/Administration/addParkingSlots";
+import ViewParkingSlots from "./pages/Administration/viewParkingSlots";
+import AvailableParkingSlots from "./pages/Administration/bookParking"
 
 function App() {
   //Use Selector to getv logged role
@@ -25,8 +28,12 @@ function App() {
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
         <Route path="/shopper/showAllLocations" element={<ViewRestLocations />} />
         <Route path="/admin/addRestLocation" element={<AddRestLocations />} />
+        <Route path="/admin/addParkingSlot" element={<AddParkingSlot />} />
+        <Route path="/admin/viewParkingSlots" element={<ViewParkingSlots />} />
+        <Route path="/admin/availableParkingSlots" element={<AvailableParkingSlots />} />
         <Route path="/RestLocation/:id" element={<ViewLocation />} />
         <Route path="/Shopper/RestLocation/:id" element={<ViewRestLocation />} />
+        
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
