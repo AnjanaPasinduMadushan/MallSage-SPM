@@ -8,13 +8,15 @@ const checkToken = async (req, res, next) => {
 
   try {
     const cookies = req.headers.cookie;
-
+    
     if (!cookies) {
+      console.error("cookie not found")
       return res.status(403).json({ message: "Login first" })
     }
     const token = cookies.split("=")[1];
 
     if (!token) {
+      console.error("token not found")
       return res.status(403).json({ message: "A token is required" })
     }
     else {
