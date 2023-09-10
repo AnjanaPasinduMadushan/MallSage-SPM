@@ -92,17 +92,25 @@ const AvailableParkingSlots = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData.map((row) => (
-              <TableRow key={row._id}>
-                <TableCell>{row.slotNumber}</TableCell>
-                <TableCell>{row.floor}</TableCell>
-                <TableCell>{row.vehicleType}</TableCell>
-                <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
-                
-                <TableCell><PopUp Id={row._id} available ={row.isAvailable}/></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+  {filteredData.length === 0 ? (
+    <TableRow>
+      <TableCell colSpan={5}>No records found</TableCell>
+    </TableRow>
+  ) : (
+    filteredData.map((row) => (
+      <TableRow key={row._id}>
+        <TableCell>{row.slotNumber}</TableCell>
+        <TableCell>{row.floor}</TableCell>
+        <TableCell>{row.vehicleType}</TableCell>
+        <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
+        <TableCell>
+          <PopUp Id={row._id} available={row.isAvailable} />
+        </TableCell>
+      </TableRow>
+    ))
+  )}
+</TableBody>
+
         </Table>
       </TableContainer>
       </Container>
