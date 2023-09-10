@@ -22,7 +22,7 @@ const pages = ['Admin', 'Add Resting Locations', 'Add_Shops'];
 const settings = ['Profile', 'Logout'];
 const auth = ['Login', 'Sign Up'];
 
-function shopHeader() {
+function ShopHeader() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -94,7 +94,7 @@ function shopHeader() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            Mall-Sage | Shop
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -150,7 +150,7 @@ function shopHeader() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            Mall-Sage | Shop
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
@@ -211,5 +211,5 @@ function shopHeader() {
     </AppBar >
   );
 }
-export default shopHeader;
+export default ShopHeader;
 
