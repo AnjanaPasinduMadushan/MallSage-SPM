@@ -48,6 +48,12 @@ const luggagetrackingSchema = new Schema({
     required: false,
   },
 
+  Exit: {
+    type: String,
+    required: false,
+  },
+
+
   isComplete: {
     type: Boolean,
     default: false,

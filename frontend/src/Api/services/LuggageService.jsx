@@ -25,3 +25,20 @@ export const getLuggageIdByUserId = async (userId) => {
   console.log("response",response)
   return response.data;
 }
+
+// Update a Luggage
+export const updateLuggageCustomer = async (
+  lugageid,
+  Exit,
+
+) => {
+  console.log("Exit",Exit);
+  console.log("lugageid",lugageid);
+  const response = await apiClient.patch(`luggage/updateLuggage/${lugageid}`, {
+    Exit: Exit,
+    isCustomerConfirmed: "true",
+    },
+  );
+
+  return response.data;
+};

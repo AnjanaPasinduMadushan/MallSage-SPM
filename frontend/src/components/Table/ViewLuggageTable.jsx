@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import React from "react";
 import { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,21 +10,47 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import TablePagination from "@mui/material/TablePagination";
-import { getLuggageIdByUserId } from "../../Api/services/LuggageService";
+import { getLuggageIdByUserId, updateLuggageCustomer } from "../../Api/services/LuggageService";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { Button, Modal } from "react-bootstrap";
+import { InputLabel, MenuItem,Select } from "@mui/material";
+
 
 function ViewLuggageTable() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [luggages, setLuggages] = useState([]);
+  const [luggageid, setLuggageID] = useState("");
   const [DeliveryDisplay, setDeliveryDisplay] = useState(false);
   const handleClose = () => setDeliveryDisplay(false);
   const customeremail = useSelector((state) => state.auth.User.email);
+
+  const [location, setLocation] = React.useState('');
+
+  const handleChange = (event) => {
+    const newLocation = event.target.value
+    setLocation(newLocation);
+  };
   console.log("customeremail", customeremail);
   console.log("luggages", luggages);
+  console.log("location",location)
+  console.log("luggageid",luggageid)
+
+ async function handleUpdate() {
+  try {
+    const updatedLocation = await updateLuggageCustomer(luggageid, location);
+    console.log("updatedLocation", updatedLocation);
+    handleClose();
+    toast.success("Updated Successfully Will Deliver Soon to Check Point");
+  } catch (error) {
+    // Handle errors if the retrieval fails
+    console.error("Error fetching luggage data:", error);
+    throw error; // Re-throw the error to handle it elsewhere if needed
+  }
+}
+
 
   useEffect(() => {
     async function fetchLuggages() {
@@ -64,8 +91,13 @@ function ViewLuggageTable() {
         )
       : [];
 
+      const handleDelivery = (luggageid) => {
+        setDeliveryDisplay(true);
+        setLuggageID(luggageid);
+      }
   return (
     <div style={{ marginTop: "5%", marginLeft: "5%" }}>
+      <ToastContainer/>
       <TextField
         label="Search"
         value={search}
@@ -99,7 +131,7 @@ function ViewLuggageTable() {
                       <TableCell>
                         <Button
                           variant="contained"
-                          onClick={() => setDeliveryDisplay(true)}
+                          onClick={() => handleDelivery(row._id)}
                         >
                           Deliver Now
                         </Button>
@@ -127,9 +159,27 @@ function ViewLuggageTable() {
       >
         <Modal.Header   closeButton> Baggage Delivery🛍️ </Modal.Header>
         <Modal.Body>
-          
-
-
+        <InputLabel htmlFor="outlined-adornment-old-password">
+           Select Exiting Point
+          </InputLabel>
+          <Select
+          fullWidth
+    labelId="demo-simple-select-label"
+    id="demo-simple-select"
+    value={location}
+    label="Delivery Location"
+    onChange={handleChange}
+  >
+    <MenuItem value={1}>Exit 1</MenuItem>
+    <MenuItem value={2}>Exit 2</MenuItem>
+    <MenuItem value={3}>Exit 3</MenuItem>
+  </Select>
+ <Button 
+ sx={{marginTop:"6%",marginLeft:"8%"}}
+ onClick={() => handleUpdate()}
+ >
+  Deliver Now
+ </Button>
 
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
