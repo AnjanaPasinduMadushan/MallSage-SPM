@@ -12,13 +12,14 @@ import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
 import 'react-toastify/dist/ReactToastify.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import AdminHeader from "./components/Headers/adminHeader";
-import CreateBlogPost from "./pages/Blog-Vendors/createBlog";
+import CreateBlogPost from "./pages/Blog/createBlog";
 import Header from "./components/Headers/header";
 import AddEmployee from "./pages/Employees/AddEmployee";
 import AddShop from "./pages/Employees/AddShop";
 import { ShopHome } from "./pages/Shop/ShopHome";
 import AddLuggage from "./pages/Luggage/AddLuggage";
 import ViewLuggage from "./pages/Luggage/ViewLuggage";
+import ViewAllShopBlogs from "./pages/Blog/viewBlogs";
 
 
 function App() {
@@ -64,6 +65,8 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
         <Route path="/createPost" element={<CreateBlogPost />} />
+        <Route path="/allShopBlogs" element={<ViewAllShopBlogs />} />
+
         {/* <Route path="*" element={<h1><center>Page Not Found</center></h1>} /> */}
       </Routes>
     </BrowserRouter>

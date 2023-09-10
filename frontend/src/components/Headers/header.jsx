@@ -83,7 +83,7 @@ function Header() {
   const navigateToPage = (page)=>{
     switch(page){
       case pages[2]:
-        navigate('./createPost');
+        navigate('./allShopBlogs');
         break;
     }
   }

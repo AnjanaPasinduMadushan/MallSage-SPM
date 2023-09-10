@@ -12,6 +12,7 @@ import 'react-quill/dist/quill.snow.css';
 import styles from '../../styles/blog-styles.module.css';
 
 const CreateBlogPost = () => {
+
     // State variables
     const [editing, setEditing] = useState(false);
     const [title, setTitle] = useState('');
