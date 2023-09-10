@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Table, TableBody,Container, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, FormControl, InputLabel, Typography, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
+import PopUp from '../../components/Security/popUpBox';
 
 const AvailableParkingSlots = () => {
     const [data, setData] = useState([]);
@@ -97,7 +98,7 @@ const AvailableParkingSlots = () => {
                 <TableCell>{row.floor}</TableCell>
                 <TableCell>{row.vehicleType}</TableCell>
                 <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
-                <TableCell><Button>Book</Button></TableCell>
+                <TableCell><PopUp Id={row._id}/></TableCell>
               </TableRow>
             ))}
           </TableBody>

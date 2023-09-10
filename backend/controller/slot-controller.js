@@ -101,6 +101,7 @@ const createParkingSlot = async (req, res) => {
   const slotOccupide = async (req, res) => {
     try {
       const {vnumber} =req.body;
+      console.log(vnumber);
       const {id} =req.params;
       const parkingSlots = await Slot.findByIdAndUpdate(id,
         {
