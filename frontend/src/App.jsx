@@ -17,6 +17,7 @@ import AddEmployee from "./pages/Employees/AddEmployee";
 import AddShop from "./pages/Employees/AddShop";
 import { ShopHome } from "./pages/Shop/ShopHome";
 import AddLuggage from "./pages/Luggage/AddLuggage";
+import ViewLuggage from "./pages/Luggage/ViewLuggage";
 
 
 function App() {
@@ -33,9 +34,12 @@ function App() {
         {isLoggedrole === "admin" && (
           <>
             <Route path="/adminhome" element={<AdminHome />} />
+      
             <Route path="/addEmployee" element={<AddEmployee />} />
           </>
         )}
+
+
         <Route path="/adminhome" element={<AdminHome />} />
         <Route path="/addEmployee" element={<AddEmployee />} />
         <Route path="/addShop" element={<AddShop />} />
@@ -43,6 +47,7 @@ function App() {
         {isLoggedrole === "shop" && <Route path="/shopHome" element={<ShopHome />} />}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
         <Route path="/addluggage" element={<AddLuggage />} />
+        <Route path="/viewLuggage" element={<ViewLuggage />} />
         <Route path="/shopHome" element={<ShopHome />} />
         <Route
           path="/shopper/showAllLocations"

@@ -18,4 +18,10 @@ export const addLuggage = async (
   
     return response.data;
   };
-  
+
+  // get Luggage by userId
+export const getLuggageIdByUserId = async (userId) => {
+  const response = await apiClient.get(`luggage/getLuggagebyUseremail/${userId}`);
+  console.log("response",response)
+  return response.data;
+}

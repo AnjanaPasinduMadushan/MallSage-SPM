@@ -38,7 +38,7 @@ function LuggageCard() {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" href="/dest">
+          <Button size="small" href="/viewLuggage">
             Check Luggage and Bagages
           </Button>
         </CardActions>
