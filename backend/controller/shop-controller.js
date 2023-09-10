@@ -117,4 +117,25 @@ const updateShop = async (req, res, next) => {
   return res.status(200).json({ message: "Shop Updated successfully" });
 };
 
-export { addShop, getOneShop, getShops, deleteShop, updateShop };
+const getShopByUserId = async (req, res, next) => {
+  try {
+    const user_id = req.params.id;
+
+    // Use Mongoose to find the shop associated with the user's ID
+    const shop = await Shop.findOne({ userId: user_id });
+
+    if (!shop) {
+      // If no shop is found, return an error response
+      return res.status(404).json({ message: 'Shop not found for this user.' });
+    }
+
+    // If a shop is found, return it in the response
+    return res.status(200).json({ shop });
+  } catch (error) {
+    // Handle any errors that may occur during the process
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+export { addShop, getOneShop, getShops, deleteShop, updateShop,getShopByUserId };

@@ -19,7 +19,7 @@ const signUp = async (req, res) => {
 
   const { name, mobile, email, password, role } = req.body;
   //validation for all the input fields
-  if (!name || !mobile || !email || !password || !role) {
+  if (!name || !mobile || !email || !password) {
     return res.status(422).json({ message: "All feilds should be filled" })
   }
 
@@ -79,7 +79,7 @@ const signUp = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-  console.log({email: email, password: password})
+  console.log({ email: email, password: password })
 
   //checking whether pasword and login fields are filled or not 
   if (!email || !password) {
@@ -114,7 +114,7 @@ const login = async (req, res) => {
     return res.status(200).json({ message: "Successfully logged in", User: loggedUser, token })
   } catch (err) {
     console.log(err)
-    return res.status(500).json({message: "Error occured during Login! Please contact server administrator", error: err});
+    return res.status(500).json({ message: "Error occured during Login! Please contact server administrator", error: err });
   }
 }
 

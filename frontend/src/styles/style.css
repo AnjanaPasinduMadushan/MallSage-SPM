@@ -1,0 +1,16 @@
+@media print {
+
+  /* Set custom page size */
+  @page {
+    size: 200px 100px;
+    /* Width x Height in millimeters (mm) */
+    margin: 0;
+    /* Remove margins */
+  }
+
+  /* Style for the printed content */
+  body {
+    font-size: 12pt;
+    /* Add any other custom styles for the printed content here */
+  }
+}

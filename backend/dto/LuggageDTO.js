@@ -6,6 +6,9 @@ class LuggageDTO {
       SecurityCheckPoint,
       SecurityID,
       SecurityAdminID,
+      isSecurityConfirmed,
+      isCustomerConfirmed,
+
     }) {
       this.CustomerID = CustomerID;
       this.CustomerEmail = CustomerEmail;
@@ -16,6 +19,8 @@ class LuggageDTO {
       this.SecurityID = SecurityID;
       this.SecurityAdminID = SecurityAdminID;
       this.isComplete = isComplete;
+      this.isSecurityConfirmed = isSecurityConfirmed;
+      this.isCustomerConfirmed = isCustomerConfirmed;
     }
   }
   

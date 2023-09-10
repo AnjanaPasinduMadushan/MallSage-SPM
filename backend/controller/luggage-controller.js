@@ -2,6 +2,7 @@ import RestingLocations from "../model/resting-location-model.js";
 import _ from "lodash";
 import LuggageDTO from "../dto/LuggageDTO.js";
 import Luggage from "../model/luggage-model.js";
+import User from "../model/user-model.js";
 
 const addLuggage = async (req, res) => {
   const { LuggageDTO } = req.body;
@@ -28,6 +29,15 @@ const addLuggage = async (req, res) => {
 
     console.log("luggageDTO", LuggageDTO);
 
+     // Check if the CustomerEmail exists in the User collection
+     const userWithEmail = await User.findOne({
+      email: LuggageDTO.CustomerEmail,
+    });
+
+    if (!userWithEmail) {
+      return res.status(400).json({ message: "CustomerEmail does not exist" });
+    }
+
     const luggage = new Luggage({
       luggageID: randomLuggageID,
       CustomerID: LuggageDTO.CustomerID,
@@ -38,6 +48,9 @@ const addLuggage = async (req, res) => {
       SecurityCheckPoint: LuggageDTO.SecurityCheckPoint,
       SecurityID: LuggageDTO.SecurityID,
       SecurityAdminID: LuggageDTO.SecurityAdminID,
+      isComplete: LuggageDTO.isComplete,
+      isSecurityConfirmed: LuggageDTO.isSecurityConfirmed,
+      isCustomerConfirmed: LuggageDTO.isCustomerConfirmed,
     });
 
     await luggage.save();
@@ -124,4 +137,20 @@ const updateLuggage = async (req, res, next) => {
   return res.status(200).json({ message: "Luggage Updated successfully" });
 };
 
-export { addLuggage, getOneLuggage, getLuggages, deleteLuggage, updateLuggage };
+async function getLuggageByCustomerEmail(req, res) {
+  try {
+    const customerEmail = req.params.email;
+    console.log("customerEmail",customerEmail)
+    const luggageList = await Luggage.find({ CustomerEmail: customerEmail }).exec();
+    res.status(200).json({ luggageList });
+  } catch (error) {
+    // Handle any potential errors here
+    console.error('Error retrieving luggage by customer email:', error);
+    console.error(error.stack); // Log the error stack trace
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
+
+export { addLuggage, getOneLuggage, getLuggages, deleteLuggage, updateLuggage, getLuggageByCustomerEmail };

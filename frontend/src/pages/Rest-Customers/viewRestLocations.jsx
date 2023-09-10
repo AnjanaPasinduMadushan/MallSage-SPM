@@ -1,4 +1,3 @@
-import Header from "../../components/Headers/header";
 import ShowAllLocations from "../../components/RestLocation/showAllLocations"
 import { useNavigate } from "react-router-dom"
 
@@ -12,7 +11,6 @@ const ViewRestLocations = () => {
 
   return (
     <>
-      <Header />
       <ShowAllLocations handleOnClick={navigatePage} />
     </>
   )
