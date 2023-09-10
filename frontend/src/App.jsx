@@ -21,6 +21,9 @@ import AddLuggage from "./pages/Luggage/AddLuggage";
 import ViewLuggage from "./pages/Luggage/ViewLuggage";
 import ViewAllShopBlogs from "./pages/Blog/viewBlogs";
 
+import AddParkingSlot from "./pages/Administration/addParkingSlots";
+import ViewParkingSlots from "./pages/Administration/viewParkingSlots";
+import AvailableParkingSlots from "./pages/Administration/bookParking"
 
 function App() {
   //Use Selector to getv logged role
@@ -56,11 +59,16 @@ function App() {
           element={<ViewRestLocations />}
         />
         <Route path="/admin/addRestLocation" element={<AddRestLocations />} />
+        <Route path="/admin/addParkingSlot" element={<AddParkingSlot />} />
+        <Route path="/admin/viewParkingSlots" element={<ViewParkingSlots />} />
+        <Route path="/admin/availableParkingSlots" element={<AvailableParkingSlots />} />
         <Route path="/RestLocation/:id" element={<ViewLocation />} />
         <Route
           path="/Shopper/RestLocation/:id"
           element={<ViewRestLocation />}
         />
+        <Route path="/Shopper/RestLocation/:id" element={<ViewRestLocation />} />
+        
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
