@@ -103,7 +103,7 @@ const addNoReserved = async (req, res) => {
 
   const id = req.params.id;
   const noReservedObject = req.body.Reserved;
-
+  console.log(req.body);
   let location;
 
   try {
@@ -127,17 +127,18 @@ const addNoReserved = async (req, res) => {
     const uniqueNo = Math.floor((1000 + Math.random() * 9000));
 
     const newReservation = location.Reserved.create({
-      isGetIn: false,
       no: firstIndex.no,
       qrCode: uniqueNo,
     });
 
-    location.Reserved.push(newReservation);
-
     location.currentNoReserved += firstIndex.no;
+    if (location.currentNoReserved > location.availability) {
+      return res.status(403).json({ message: "Currently, isnt have enough spaces for all of you!!!" })
+    }
+    location.Reserved.push(newReservation);
     await location.save();
 
-    return res.status(200).json({ message: "Location Updated successfully" });
+    return res.status(200).json({ message: "Location Updated successfully", uniqueNo });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
@@ -148,17 +149,21 @@ const addNoReserved = async (req, res) => {
 const updateGetsIn = async (req, res) => {
 
   const id = req.params.id;
-  const code = req.body.code;
+  const code = req.body.qrCode;
   try {
     const location = await RestingLocations.findById(id);
+    console.log(location);
     const indexToChange = location.Reserved.findIndex((reservation) =>
       reservation.qrCode === code
     )
-
-    if (!(location.Reserved[indexToChange].isGetsIn)) {
+    console.log(indexToChange);
+    if (indexToChange === -1) {
+      return res.status(404).json({ message: "Invalid Status code!!!" });
+    } else if (!(location.Reserved[indexToChange].isGetsIn)) {
+      console.log(location.Reserved[indexToChange].isGetsIn)
       location.Reserved[indexToChange].isGetsIn = true;
     } else {
-      return res.status(400).json({ message: "Already Inside the Location." });
+      return res.status(400).json({ message: "Customer is already in the Location." });
     }
 
     await location.save();
@@ -192,13 +197,17 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
       return res.status(404).json({ message: "QR code not found in reservations" });
     }
 
-    if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no)) {
+    if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no) && body.no != 0) {
       location.Reserved[indexToRemove].no -= body.no;
       location.currentNoReserved -= body.no;
+      console.log('not splice')
     } else {
+      location.currentNoReserved -= location.Reserved[indexToRemove].no;
       location.Reserved.splice(indexToRemove, 1);
+      console.log('splice')
     }
 
+    console.log(location.currentNoReserved);
     await location.save();
 
     return res.status(200).json({ message: "Location Updated successfully" })

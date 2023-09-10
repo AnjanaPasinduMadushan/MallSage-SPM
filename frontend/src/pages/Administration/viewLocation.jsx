@@ -12,7 +12,11 @@ import InterestsIcon from '@mui/icons-material/Interests';
 import axios from "axios"
 import { useEffect, useState, useMemo } from "react"
 import { useParams } from "react-router-dom";
-
+import FormDialogAdmin from '../../components/style-Components/form-dialog-admin';
+import FormDialog from '../../components/style-Components/form-dialog';
+import '../../styles/style.css'
+import Divider from '@mui/material/Divider';
+import CheckBtn from '../../components/RestLocation/checkBtn';
 
 const defaultTheme = createTheme();
 
@@ -40,6 +44,12 @@ const ViewLocation = () => {
     getLocation();
   }, [id])
 
+  // eslint-disable-next-line no-unused-vars
+  const [qrCodeGenarated, setQrCodeGenarated] = useState(null);
+  const handleReservationData = (reservationData) => {
+    setQrCodeGenarated(reservationData.uniqueNo);
+    console.log("Reservation data:", reservationData.uniqueNo);
+  };
 
   const handleChange = async (e) => {
     const { name, value, checked } = e.target;
@@ -83,24 +93,68 @@ const ViewLocation = () => {
     return isChanged;
   }, [isChanged])
 
+  const handlePrint = () => {
+    if (typeof qrCodeGenarated === "number") {
+      const printWindow = window.open("", "");
+      if (printWindow) {
+        printWindow.document.write(`<html><head><title>QR Code</title></head><body>`);
+        printWindow.document.write(`<h2><center>Gate Code</center></h2><h1><center>${qrCodeGenarated}</center></h1>`);
+        printWindow.document.write(`</body></html>`);
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+      } else {
+        alert("Please allow pop-ups for this website to print the QR code.");
+      }
+    }
+  };
+
+
   return (
     <>
       <ThemeProvider theme={defaultTheme}>
+        <Typography mt={3} fontSize={35} display="flex" justifyContent="center">LOCATION CONTROLLING PANEL</Typography>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 8,
+              marginTop: 2,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
             }}
           >
+            <Grid>
+
+              {typeof qrCodeGenarated === 'number' && (
+                <Grid>
+                  <Grid item xs={6} mb={1}>
+                    <Typography >Gate Code: {qrCodeGenarated}</Typography>
+                  </Grid>
+                  <Grid item xs={6} ml={3.14}>
+                    <Button variant="outlined" onClick={handlePrint} mb={1} color='secondary'>Print</Button>
+                  </Grid>
+                </Grid>
+
+              )}
+            </Grid>
+            <br />
+            <Grid container columns={16} display="flex" justifyContent="center" spacing={10}>
+              <Grid item>
+                <FormDialogAdmin locationId={location._id} availability={location.availability} currentNoReserved={location.currentNoReserved} /></Grid>
+              <Grid item ml={20} mb={2}>
+                <FormDialog locationId={location._id} availability={location.availability} onReservationComplete={handleReservationData} currentNoReserved={location.currentNoReserved} />
+              </Grid>
+
+            </Grid>
+            <Divider style={{ width: '100%' }} sx={{ my: 2 }} />
+            <CheckBtn locationId={location._id} />
+            <Divider style={{ width: '100%' }} sx={{ my: 2 }} />
             <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
               <InterestsIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              ADD LOCATIONs
+              MODIFY LOCATION DETAILS
             </Typography>
             {location &&
               <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
@@ -179,7 +233,7 @@ const ViewLocation = () => {
             }
           </Box>
         </Container>
-      </ThemeProvider>
+      </ThemeProvider >
     </>
   )
 }

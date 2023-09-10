@@ -10,7 +10,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { FormControl, MenuItem, InputLabel, Select } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { signUpAction } from '../../Redux/auth/authAction';
 import { useNavigate } from 'react-router-dom';
@@ -175,22 +174,6 @@ export default function SignUp() {
                   name="email"
                   autoComplete="email"
                 />
-              </Grid>
-              <Grid item xs={15}>
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Role</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    label="role"
-                    value={inputs.role}
-                    onChange={handleChange}
-                    name="role"
-                  >
-                    <MenuItem value="admin">Admin</MenuItem>
-                    <MenuItem value="customer">Customer</MenuItem>
-                  </Select>
-                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <TextField

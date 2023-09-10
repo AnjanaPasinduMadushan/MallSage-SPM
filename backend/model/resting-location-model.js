@@ -25,7 +25,10 @@ const locationSchema = new Schema({
   },
 
   Reserved: [{
-    isGetsIn: Boolean,
+    isGetsIn: {
+      type: Boolean,
+      default: false
+    },
     no: Number,
     qrCode: Number
   }],

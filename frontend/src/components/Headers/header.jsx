@@ -16,7 +16,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 // import { autheticationActions } from '../store';
 import { useNavigate } from 'react-router-dom';
-import authSlice from '../../Redux/auth/authSlice';
+// import authSlice from '../../Redux/auth/authSlice';
 import { signOutAction } from '../../Redux/auth/authAction';
 axios.defaults.withCredentials = true;
 
@@ -45,7 +45,7 @@ function Header() {
     if (setting === settings[0]) {
       alert("go to profile")
     } else if (setting === settings[1]) {
-      await  dispatch(signOutAction())
+      await dispatch(signOutAction())
         .then(() => navigate("/signIn"));
     } else {
       alert("Pagr is not found")
@@ -80,10 +80,18 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  const navigateToPage = (page)=>{
+    switch(page){
+      case pages[2]:
+        navigate('./allShopBlogs');
+        break;
+    }
+  }
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters >
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -100,7 +108,7 @@ function Header() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            MALL-SAGE
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -134,7 +142,7 @@ function Header() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center" ><div onClick={()=>navigateToPage(page)}>{page}</div></Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -165,7 +173,7 @@ function Header() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                <div onClick={()=>navigateToPage(page)}>{page}</div>
               </Button>
             ))}
           </Box>
