@@ -98,7 +98,8 @@ const AvailableParkingSlots = () => {
                 <TableCell>{row.floor}</TableCell>
                 <TableCell>{row.vehicleType}</TableCell>
                 <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
-                <TableCell><PopUp Id={row._id}/></TableCell>
+                
+                <TableCell><PopUp Id={row._id} available ={row.isAvailable}/></TableCell>
               </TableRow>
             ))}
           </TableBody>

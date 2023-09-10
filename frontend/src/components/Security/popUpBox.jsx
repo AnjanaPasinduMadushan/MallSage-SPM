@@ -9,7 +9,7 @@ import { Tooltip } from '@mui/material';
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
-export default function PopUp({Id}) {
+export default function PopUp({Id , available}) {
 
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState({
@@ -45,12 +45,17 @@ export default function PopUp({Id}) {
     }
   }
 
-
+ const isAvailable = ()=>{
+  if(available === "true"){
+    return false;
+ }
+ return true
+}
 
   return (
     <>
-      <Tooltip title="To add a shopper to the Location">
-        <Button variant="outlined" onClick={handleClickOpen} >
+      <Tooltip title="To book a paking slot">
+        <Button variant="outlined" onClick={handleClickOpen} disabled={isAvailable && isAvailable === true} >
           Book
         </Button>
       </Tooltip>
@@ -63,7 +68,7 @@ export default function PopUp({Id}) {
             margin="dense"
             id="vNo"
             name="vNo"
-            label="No of Shoppers"
+            label="Vehical Number"
             type="String"
             fullWidth
             value={input.vNo}
