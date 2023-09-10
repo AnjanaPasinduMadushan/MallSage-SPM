@@ -7,28 +7,52 @@ import Box from '@mui/material/Box';
 const AvailableParkingSlots = () => {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
-    const [filters, setFilters] = useState({ vehicleType: '' });
+    const [filters, setFilters] = useState({vehicleType:'any'});
+
 
   useEffect(() => {
-    axios.get('http://localhost:5000/slot/getSlot', { Type: filters.vehicleType })
+    // Apply filters to the data.
+    let filtered = [...data];
+    if(filters.vehicleType=='any'){
+        axios.get(`http://localhost:5000/slot/getAll`)
+        .then((response) => {
+          setData(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+        });
+    }else{
+    axios.get(`http://localhost:5000/slot/getSlot/${filters.vehicleType}`)
       .then((response) => {
         setData(response.data);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
-  },  [filters.vehicleType]);
-
-  useEffect(() => {
-    // Apply filters to the data.
-    let filtered = [...data];
-
+    }
     setFilteredData(filtered);
   }, [data]);
 
-  const handleFilterChange = (event) => {
+  const handleFilterChange = async (event) => {
     const { name, value } = event.target;
     setFilters({ ...filters, [name]: value });
+    if(filters.vehicleType=='any'){
+        await axios.get(`http://localhost:5000/slot/getAll`)
+        .then((response) => {
+          setData(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+        });
+    }else{
+    await axios.get(`http://localhost:5000/slot/getSlot/${filters.vehicleType}`)
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+    }
   };
 
   return (
@@ -49,9 +73,9 @@ const AvailableParkingSlots = () => {
             <FormControl>
         <InputLabel>Vehicle Type</InputLabel>
         <Select name="vehicleType" value={filters.vehicleType} onChange={handleFilterChange}>
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="Car">Car</MenuItem>
-            <MenuItem value="Motor Bike">Motor Bike</MenuItem>
+            <MenuItem value="any">All</MenuItem>
+            <MenuItem value="car">Car</MenuItem>
+            <MenuItem value="bike">Motor Bike</MenuItem>
         </Select>
       </FormControl>
       
@@ -72,7 +96,7 @@ const AvailableParkingSlots = () => {
                 <TableCell>{row.slotNumber}</TableCell>
                 <TableCell>{row.floor}</TableCell>
                 <TableCell>{row.vehicleType}</TableCell>
-                <TableCell>{row.isAvailable}</TableCell>
+                <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
                 <TableCell><Button>Book</Button></TableCell>
               </TableRow>
             ))}

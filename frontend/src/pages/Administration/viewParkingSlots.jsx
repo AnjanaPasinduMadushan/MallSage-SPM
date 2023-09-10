@@ -36,7 +36,7 @@ const ViewParkingSlots = () => {
     <>
     <ThemeProvider theme={defaultTheme}>
      
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="md">
           <CssBaseline />
           <Box
             sx={{
@@ -67,7 +67,7 @@ const ViewParkingSlots = () => {
               </TableCell>
               <TableCell>{row.floor}</TableCell>
               <TableCell>{row.vehicleType}</TableCell>
-              <TableCell>{row.isAvailable}</TableCell>
+              <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
             </TableRow>
           ))}
         </TableBody>

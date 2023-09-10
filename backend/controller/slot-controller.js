@@ -80,13 +80,12 @@ const createParkingSlot = async (req, res) => {
   };
 
   const getAvailableSlots = async (req, res) => {
-    const {Type} = req.body;
+    const { type } = req.params;
   
-
     try {
       const parkingSlots = await Slot.find({
         isAvailable:true,
-        vehicleType:{$eq:Type}
+        vehicleType:type
       });
         
       if (parkingSlots.length==0) {
