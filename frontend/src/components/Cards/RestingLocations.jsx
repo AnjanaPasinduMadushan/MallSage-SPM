@@ -1,5 +1,5 @@
 //IT21013300
-import  { useState } from 'react';
+import { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -37,8 +37,8 @@ function RestingCard() {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" href="/hotel">
-           Have A Look
+          <Button size="small" href="/shopper/showAllLocations">
+            Have A Look
           </Button>
         </CardActions>
         <br />
