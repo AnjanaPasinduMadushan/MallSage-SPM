@@ -55,7 +55,11 @@ function AddLuggageForm() {
     BagNo: yup.string().required("Number of Bags is required"),
     pdfFile: yup
     .mixed()
-    .required('PDF file is required'),
+    .required('PDF file is required')
+    .test('file-extension', 'File must be a PDF', (value) => {
+      if (!value) return true; // No file provided, let required validation handle it
+      return value.name.endsWith('.pdf');
+    }),
   });
 
 
@@ -247,7 +251,7 @@ function AddLuggageForm() {
           value={pdfFile}
           onChange={handlePdfSubmit}
         />
-        {errors.pdfFile && <p>{errors.pdfFile}</p>}
+        {errors.pdfFile && <p style={{ color: 'red'}}>{errors.pdfFile}</p>}
         {loading ? (
           <CircularProgress />
         ) : (

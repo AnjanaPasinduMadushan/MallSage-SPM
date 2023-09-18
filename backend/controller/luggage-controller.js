@@ -3,7 +3,9 @@ import _ from "lodash";
 import LuggageDTO from "../dto/LuggageDTO.js";
 import Luggage from "../model/luggage-model.js";
 import User from "../model/user-model.js";
-
+ // Send email using Nodemailer
+ import nodemailer from 'nodemailer';
+import Shop from "../model/Shop-model.js";
 
 //Auto generating token 
 const generateToken = () => {
@@ -18,10 +20,10 @@ const generateToken = () => {
 const generateUniqueCustomerToken = async () => {
   let isUnique = false;
   let token;
-  
+
   while (!isUnique) {
     token = generateToken();
-    
+
     // Check if the generated token already exists in the database
     const existingLuggage = await Luggage.findOne({
       CustomerToken: token,
@@ -31,17 +33,17 @@ const generateUniqueCustomerToken = async () => {
       isUnique = true;
     }
   }
-  
+
   return token;
 };
 
 const generateUniqueShopToken = async () => {
   let isUnique = false;
   let token;
-  
+
   while (!isUnique) {
     token = generateToken();
-    
+
     // Check if the generated token already exists in the database
     const existingLuggage = await Luggage.findOne({
       ShopToken: token,
@@ -51,7 +53,7 @@ const generateUniqueShopToken = async () => {
       isUnique = true;
     }
   }
-  
+
   return token;
 };
 
@@ -75,7 +77,7 @@ const addLuggage = async (req, res) => {
     if (!existingUser) {
       return res.status(400).json({ message: "Customer not found" });
     }
-   
+
     const existingLuggage = await Luggage.findOne({
       CustomerEmail: LuggageDTO.CustomerEmail,
       Date: {
@@ -84,6 +86,12 @@ const addLuggage = async (req, res) => {
       },
     });
 
+
+    const existingShop = await Shop.findOne({
+      ShopID: LuggageDTO.ShopID,
+    });
+
+// console.log("existingShop",existingShop)
 
     let luggage;
     if (existingLuggage) {
@@ -132,6 +140,32 @@ const addLuggage = async (req, res) => {
     }
 
     await luggage.save();
+
+   
+
+    const mailTransporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "mallsage34@gmail.com",
+        pass: "jwzaldpwytqqghlj"
+      }
+    });
+
+    const emailDetails = {
+      from: "mallsage34@gmail.com",
+      to: LuggageDTO.CustomerEmail, // Use the customer's email
+      subject: "Your items were added by the shop",
+      text: `Your luggage with Bag Number ${LuggageDTO.BagNo} was successfully added by the shop ${existingShop.Name}.`
+    };
+
+    mailTransporter.sendMail(emailDetails, (err) => {
+      if (err) {
+        console.error("Error sending email:", err);
+      } else {
+        console.log("Email sent successfully!");
+      }
+    });
+
     return res
       .status(201)
       .json({ message: "Luggage is Added", Luggage: luggage });
@@ -139,7 +173,7 @@ const addLuggage = async (req, res) => {
     console.error(err);
     return res
       .status(400)
-      .json({ message: "Error occurred in adding Luggage" });
+      .json({ message: "Error occurred in adding Luggage", err});
   }
 };
 
@@ -218,7 +252,7 @@ const updateLuggage = async (req, res, next) => {
 async function getLuggageByCustomerEmail(req, res) {
   try {
     const customerEmail = req.params.email;
-    console.log("customerEmail",customerEmail)
+    console.log("customerEmail", customerEmail)
     const luggageList = await Luggage.find({ CustomerEmail: customerEmail }).exec();
     res.status(200).json({ luggageList });
   } catch (error) {
