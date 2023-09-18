@@ -14,6 +14,7 @@ class LuggageDTO {
       this.CustomerEmail = CustomerEmail;
       this.ShopID = ShopID;
       this.BagNo = BagNo;
+      this.Bill = Bill;
       this.TimeDuration = TimeDuration;
       this.SecurityCheckPoint = SecurityCheckPoint;
       this.SecurityID = SecurityID;

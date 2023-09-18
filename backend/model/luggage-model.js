@@ -28,9 +28,29 @@ const luggagetrackingSchema = new Schema({
     required: true,
   },
 
+  ShopToken: {
+    type: String,
+    required: true,
+  },
+
+  CustomerToken: {
+    type: String,
+    required: true,
+  },
+
+  Bill: {
+    type: String,
+    required: true,
+  },
+
   TimeDuration: {
     type: String,
     required: false,
+  },
+
+  Date: {
+    type: Date,
+    required: true,
   },
 
   SecurityCheckPoint: {

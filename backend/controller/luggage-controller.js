@@ -4,54 +4,132 @@ import LuggageDTO from "../dto/LuggageDTO.js";
 import Luggage from "../model/luggage-model.js";
 import User from "../model/user-model.js";
 
+
+//Auto generating token 
+const generateToken = () => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let token = '';
+  for (let i = 0; i < 4; i++) {
+    token += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return token;
+};
+
+const generateUniqueCustomerToken = async () => {
+  let isUnique = false;
+  let token;
+  
+  while (!isUnique) {
+    token = generateToken();
+    
+    // Check if the generated token already exists in the database
+    const existingLuggage = await Luggage.findOne({
+      CustomerToken: token,
+    });
+
+    if (!existingLuggage) {
+      isUnique = true;
+    }
+  }
+  
+  return token;
+};
+
+const generateUniqueShopToken = async () => {
+  let isUnique = false;
+  let token;
+  
+  while (!isUnique) {
+    token = generateToken();
+    
+    // Check if the generated token already exists in the database
+    const existingLuggage = await Luggage.findOne({
+      ShopToken: token,
+    });
+
+    if (!existingLuggage) {
+      isUnique = true;
+    }
+  }
+  
+  return token;
+};
+
 const addLuggage = async (req, res) => {
   const { LuggageDTO } = req.body;
 
   console.log(req.body);
 
   try {
-    let randomLuggageID;
-    let isUnique = false;
+    const currentDate = new Date();
+    const currentYear = currentDate.getUTCFullYear();
+    const currentMonth = currentDate.getUTCMonth();
+    const currentDateComponent = currentDate.getUTCDate();
 
-    // Keep generating random IDs until a unique one is found
-    while (!isUnique) {
-      randomLuggageID = Math.floor(1000 + Math.random() * 9000); // Generate a random 4-digit number
-
-      // Check if the generated ID already exists in the database
-      const existingLuggage = await Luggage.findOne({
-        luggageID: randomLuggageID,
-      });
-
-      if (!existingLuggage) {
-        isUnique = true;
-      }
-    }
-
-    console.log("luggageDTO", LuggageDTO);
-
-     // Check if the CustomerEmail exists in the User collection
-     const userWithEmail = await User.findOne({
+    //Check if the customer is an exsisting one
+    const existingUser = await User.findOne({
       email: LuggageDTO.CustomerEmail,
+      role: "customer",
     });
 
-    if (!userWithEmail) {
-      return res.status(400).json({ message: "CustomerEmail does not exist" });
+    if (!existingUser) {
+      return res.status(400).json({ message: "Customer not found" });
     }
-
-    const luggage = new Luggage({
-      luggageID: randomLuggageID,
-      CustomerID: LuggageDTO.CustomerID,
+   
+    const existingLuggage = await Luggage.findOne({
       CustomerEmail: LuggageDTO.CustomerEmail,
-      ShopID: LuggageDTO.ShopID,
-      BagNo: LuggageDTO.BagNo,
-      TimeDuration: LuggageDTO.TimeDuration,
-      SecurityCheckPoint: LuggageDTO.SecurityCheckPoint,
-      SecurityID: LuggageDTO.SecurityID,
-      SecurityAdminID: LuggageDTO.SecurityAdminID,
-      isComplete: LuggageDTO.isComplete,
-      isSecurityConfirmed: LuggageDTO.isSecurityConfirmed,
-      isCustomerConfirmed: LuggageDTO.isCustomerConfirmed,
+      Date: {
+        $gte: new Date(Date.UTC(currentYear, currentMonth, currentDateComponent)),
+        $lt: new Date(Date.UTC(currentYear, currentMonth, currentDateComponent + 1)),
+      },
     });
+
+
+    let luggage;
+    if (existingLuggage) {
+      // If an existing luggage is found, reuse its ShopToken and CustomerToken
+      luggage = new Luggage({
+        luggageID: existingLuggage.luggageID,
+        CustomerID: LuggageDTO.CustomerID,
+        CustomerEmail: LuggageDTO.CustomerEmail,
+        ShopID: LuggageDTO.ShopID,
+        BagNo: LuggageDTO.BagNo,
+        Bill: LuggageDTO.Bill,
+        Date: new Date(),
+        TimeDuration: LuggageDTO.TimeDuration,
+        SecurityCheckPoint: LuggageDTO.SecurityCheckPoint,
+        SecurityID: LuggageDTO.SecurityID,
+        SecurityAdminID: LuggageDTO.SecurityAdminID,
+        isComplete: LuggageDTO.isComplete,
+        isSecurityConfirmed: LuggageDTO.isSecurityConfirmed,
+        isCustomerConfirmed: LuggageDTO.isCustomerConfirmed,
+        ShopToken: existingLuggage.ShopToken,
+        CustomerToken: existingLuggage.CustomerToken,
+      });
+    } else {
+      // Generate unique CustomerToken and ShopToken
+      const customerToken = await generateUniqueCustomerToken();
+      const shopToken = await generateUniqueShopToken();
+
+      luggage = new Luggage({
+        luggageID: Math.floor(1000 + Math.random() * 9000),
+        CustomerID: LuggageDTO.CustomerID,
+        CustomerEmail: LuggageDTO.CustomerEmail,
+        ShopID: LuggageDTO.ShopID,
+        BagNo: LuggageDTO.BagNo,
+        Bill: LuggageDTO.Bill,
+        Date: new Date(),
+        TimeDuration: LuggageDTO.TimeDuration,
+        SecurityCheckPoint: LuggageDTO.SecurityCheckPoint,
+        SecurityID: LuggageDTO.SecurityID,
+        SecurityAdminID: LuggageDTO.SecurityAdminID,
+        isComplete: LuggageDTO.isComplete,
+        isSecurityConfirmed: LuggageDTO.isSecurityConfirmed,
+        isCustomerConfirmed: LuggageDTO.isCustomerConfirmed,
+        ShopToken: shopToken,
+        CustomerToken: customerToken,
+      });
+    }
 
     await luggage.save();
     return res
