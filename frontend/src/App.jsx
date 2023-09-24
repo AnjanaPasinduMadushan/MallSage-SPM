@@ -18,6 +18,8 @@ import AddShop from "./pages/Employees/AddShop";
 import { ShopHome } from "./pages/Shop/ShopHome";
 import AddLuggage from "./pages/Luggage/AddLuggage";
 import ViewLuggage from "./pages/Luggage/ViewLuggage";
+import AddBaggageEmployee from "./pages/Employees/AddBaggageEmployee";
+import BaggageEmployeeHome from "./pages/home/baggage-employee-home";
 
 
 function App() {
@@ -43,8 +45,10 @@ function App() {
         <Route path="/adminhome" element={<AdminHome />} />
         <Route path="/addEmployee" element={<AddEmployee />} />
         <Route path="/addShop" element={<AddShop />} />
+        <Route path="/addBaggageemployee" element={<AddBaggageEmployee />} />
         {isLoggedrole === "customer" && <Route path="/" element={<Home />} />}
         {isLoggedrole === "shop" && <Route path="/shopHome" element={<ShopHome />} />}
+        {isLoggedrole === "baggageemployee" && <Route path="/baggageHome" element={<BaggageEmployeeHome />} />}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
         <Route path="/addluggage" element={<AddLuggage />} />
         <Route path="/viewLuggage" element={<ViewLuggage />} />

@@ -6,15 +6,20 @@ export const addLuggage = async (
   CustomerEmail,
   BagNo,
   Bill,
-  ShopID
+  ShopID,
+  ShopName 
 ) => {
+  const shop = {
+    ShopID: ShopID,
+    ShopName: ShopName,
+  };
   const response = await apiClient.post(`luggage/addLuggage`, {
     LuggageDTO: {
       CustomerID: CustomerID,
       CustomerEmail: CustomerEmail,
       BagNo: BagNo,
       Bill: Bill,
-      ShopID: ShopID,
+      Shop: shop,
     },
   });
 
@@ -42,5 +47,11 @@ export const updateLuggageCustomer = async (
   },
   );
 
+  return response.data;
+};
+
+//Get All Luggages all customer view 
+export const getAllLuggages = async (email) => {
+  const response = await apiClient.get(`luggage/getallLuggagescustomer/${email}`);
   return response.data;
 };

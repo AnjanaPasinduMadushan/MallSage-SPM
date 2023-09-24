@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,33 +10,33 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import TablePagination from "@mui/material/TablePagination";
-import { getLuggageIdByUserId, updateLuggageCustomer } from "../../Api/services/LuggageService";
+import {  updateLuggageCustomer } from "../../Api/services/LuggageService";
 import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import { Button, Modal } from "react-bootstrap";
 import { InputLabel, MenuItem,Select } from "@mui/material";
+import { useQuery } from 'react-query';
+import { getAllLuggages } from "../../Api/services/LuggageService";
 
 
 function ViewLuggageTable() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [luggages, setLuggages] = useState([]);
   const [luggageid, setLuggageID] = useState("");
   const [DeliveryDisplay, setDeliveryDisplay] = useState(false);
   const handleClose = () => setDeliveryDisplay(false);
   const customeremail = useSelector((state) => state.auth.User.email);
-
   const [location, setLocation] = React.useState('');
-
+  const { data, isLoading, error, isError } = useQuery({
+    queryFn: () => getAllLuggages(customeremail),
+  });
+console.log("data",data)
   const handleChange = (event) => {
     const newLocation = event.target.value
     setLocation(newLocation);
   };
-  console.log("customeremail", customeremail);
-  console.log("luggages", luggages);
-  console.log("location",location)
-  console.log("luggageid",luggageid)
+
 
  async function handleUpdate() {
   try {
@@ -52,26 +52,6 @@ function ViewLuggageTable() {
 }
 
 
-  useEffect(() => {
-    async function fetchLuggages() {
-      try {
-        const response = await getLuggageIdByUserId(customeremail);
-        setLuggages(response);
-        console.log(response);
-        console.log(luggages);
-        // console.log("luggages", luggages);
-        toast.success("Retrieved Successfully");
-      } catch (error) {
-        // Handle errors if the retrieval fails
-        console.error("Error fetching luggage data:", error);
-        throw error; // Re-throw the error to handle it elsewhere if needed
-      }
-    }
-
-    // Call the async function to fetch data
-    fetchLuggages();
-  }, [customeremail]);
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -82,12 +62,10 @@ function ViewLuggageTable() {
   };
 
   const filteredRows =
-    luggages?.luggageList?.length > 0
-      ? luggages?.luggageList.filter(
+    data?.length > 0
+      ? data.filter(
           (row) =>
-            row?.luggageID?.toLowerCase().includes(search.toLowerCase()) ||
-            row?.ShopID?.toLowerCase().includes(search.toLowerCase()) ||
-            row?.BagNo?.toLowerCase().includes(search.toLowerCase())
+            row?.customerToken?.toLowerCase().includes(search.toLowerCase()) 
         )
       : [];
 
@@ -111,23 +89,23 @@ function ViewLuggageTable() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>BaggageID</TableCell>
-                  <TableCell>ShopID</TableCell>
+                  <TableCell>Total Bags</TableCell>
+                  <TableCell>Shops</TableCell>
                   <TableCell>BagNo</TableCell>
-                  <TableCell>isComplete</TableCell>
+                  <TableCell>Your Token</TableCell>
                   <TableCell>Delivery</TableCell>
                 </TableRow>
               </TableHead>
               {console.log("filteredRows", filteredRows)}
               <TableBody>
-                {filteredRows
+                {data
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow key={row.luggageID}>
-                      <TableCell>{row.luggageID}</TableCell>
-                      <TableCell>{row.ShopID}</TableCell>
-                      <TableCell>{row.BagNo}</TableCell>
-                      <TableCell>{row.isComplete ? "Yes" : "No"}</TableCell>
+                    <TableRow key={row.totalBags}>
+                      <TableCell>{row.uniqueShops.ShopID}</TableCell>
+                      <TableCell>{row.uniqueShops.ShopName}</TableCell>
+                      <TableCell>{row.customerToken}</TableCell>
+                      {/* <TableCell>{row.isComplete ? "Yes" : "No"}</TableCell> */}
                       <TableCell>
                         <Button
                           variant="contained"
