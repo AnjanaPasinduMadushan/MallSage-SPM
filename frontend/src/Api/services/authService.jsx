@@ -6,12 +6,20 @@ export const login = async (email, password) => {
   const response = await apiClient.post(`user/login`, {
     email: email,
     password: password,
-  });
+  }, {withCredentials: true});
+
   return response.data;
 };
 
 //Authentication SignUp
 export const signup = async (name, mobile, email, password, role) => {
+  console.log(
+    "name: " + name,
+    "mobile: " + mobile,
+    "email: " + email,
+    "password: " + password,
+    "role: " + role
+  )
   const response = await apiClient.post(`user/signup`, {
     name: name,
     mobile: mobile,

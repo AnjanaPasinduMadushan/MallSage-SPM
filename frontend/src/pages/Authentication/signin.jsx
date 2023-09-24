@@ -29,7 +29,7 @@ export default function SignIn() {
   const dispatch = useDispatch();
 
   const isLoggedrole = useSelector((state) => state.auth.User.role);
-  console.log("isLoggedrole",isLoggedrole);
+  // console.log("isLoggedrole",isLoggedrole);
 
 
   const [inputs, setInputs] = useState({
@@ -92,6 +92,9 @@ export default function SignIn() {
         } else if( isLoggedrole === "customer") {
           navigate("/", { replace: true });
           //          window.location.reload();
+        } else if( isLoggedrole === "shop") {
+          navigate("/shopHome", { replace: true });
+          //          window.location.reload();
         }else{
           navigate("/", { replace: true });
         }
@@ -101,16 +104,19 @@ export default function SignIn() {
 
   //Handle Submit
   const handleSubmit = async (e) => {
-    console.log("sdsdad");
-    console.log("isLoggedrole",isLoggedrole);
     e.preventDefault();
+    console.log("logging-In");
+
     try {
      dispatch(loginAction(inputs?.email, inputs?.password));
       // const data = await sendData();
       if (isLoggedrole?.role=== "admin") {
         console.log("isLoggedrole",isLoggedrole);
         navigate('/adminhome')
-      } else if (isLoggedrole?.role === "customer") {
+      } else if( isLoggedrole === "shop") {
+        navigate("/shopHome", { replace: true });
+        //          window.location.reload();
+      }else if (isLoggedrole?.role === "customer") {
         console.log("isLoggedrole",isLoggedrole);
         navigate('/')
       }

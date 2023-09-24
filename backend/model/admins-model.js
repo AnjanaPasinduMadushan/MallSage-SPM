@@ -3,27 +3,38 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const adminSchema = new Schema({
-
   name: {
     type: String,
-    required: true
+    required: true,
   },
 
   email: {
     type: String,
-    required: true
+    required: true,
   },
 
   isFacilityAdmin: {
     type: Boolean,
   },
 
+  isShop: {
+    type: Boolean,
+  },
+
+  isSecurityAdmin: {
+    type: Boolean,
+  },
+
+  isSecurity: {
+    type: Boolean,
+  },
+
   password: {
     type: String,
     required: true,
-    minlength: 6
-  }
-})
+    minlength: 6,
+  },
+});
 
 const Admins = mongoose.model("Administration", adminSchema);
 
