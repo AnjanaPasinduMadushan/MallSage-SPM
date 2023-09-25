@@ -13,7 +13,7 @@ import location_router from './router/resting-location-router.js';
 import blog_router from './router/blog-router.js';
 import luggage_router from './router/luggage-router.js';
 import shop_router from './router/shop-router.js';
-
+import baggageEmployee_router from './router/BaggageEmployee-router.js'
 const app = express();
 
 const PORT = 5000;
@@ -29,6 +29,7 @@ app.use('/restingLocation', location_router);
 app.use('/blog', blog_router);
 app.use('/luggage', luggage_router);
 app.use('/shop', shop_router);
+app.use('/baggage',baggageEmployee_router);
 
 //db connection
 db();
