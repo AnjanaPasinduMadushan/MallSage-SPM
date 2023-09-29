@@ -1,13 +1,12 @@
 import { Typography } from "@mui/material";
-import ViewLuggageTable from "../../components/Table/ViewLuggageTable";
+import LuggageBox from "../../components/Box/LuggageBox";
+
 
 function ViewLuggage() {
+
   return (
     <div>
-      <Typography variant="h1" gutterBottom style={{ fontSize: "24px", marginTop:"2%" }}>
-        Your Available Baggage
-      </Typography>
-      <ViewLuggageTable />
+      <LuggageBox />
     </div>
   );
 }

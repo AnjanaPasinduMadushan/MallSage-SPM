@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+
 const luggagetrackingSchema = new Schema({
   luggageID: {
     type: String,
@@ -20,7 +21,12 @@ const luggagetrackingSchema = new Schema({
 
   ShopID: {
     type: String,
-    required: true,
+    required: false,
+  },
+
+  ShopName: {
+    type: String,
+    required: false,
   },
 
   BagNo: {
@@ -28,9 +34,29 @@ const luggagetrackingSchema = new Schema({
     required: true,
   },
 
+  ShopToken: {
+    type: String,
+    required: true,
+  },
+
+  CustomerToken: {
+    type: String,
+    required: true,
+  },
+
+  Bill: {
+    type: String,
+    required: true,
+  },
+
   TimeDuration: {
     type: String,
     required: false,
+  },
+
+  Date: {
+    type: Date,
+    required: true,
   },
 
   SecurityCheckPoint: {
@@ -57,6 +83,16 @@ const luggagetrackingSchema = new Schema({
   isComplete: {
     type: Boolean,
     default: false,
+    required: false,
+  },
+
+  CollectedDate: {
+    type: Date,
+    required: false,
+  },
+
+  CompletedDate: {
+    type: Date,
     required: false,
   },
 

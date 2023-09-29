@@ -103,6 +103,8 @@ function AddEmployeeForm() {
         toast.success('Employee Added Successfully');
         if (inputs.role === "shop") {
           navigate("/addShop", { state: { userId: res.User._id } });
+        }else if(inputs.role === "baggageemployee") {
+          navigate("/addBaggageemployee", { state: { userId: res.User._id } });
         }
         console.log("Form data is valid:", { ...inputs, phone });
         }catch(error){
@@ -195,6 +197,7 @@ function AddEmployeeForm() {
         <MenuItem value={""}>None</MenuItem>
         <MenuItem value={"shop"}>Shop</MenuItem>
         <MenuItem value={"Security"}>Security Officer</MenuItem>
+        <MenuItem value={"baggageemployee"}>Baggage Employee</MenuItem>
       </Select>
       <InputLabel sx={labelStyles}>Password</InputLabel>
       <TextField
