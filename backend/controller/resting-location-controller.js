@@ -98,12 +98,10 @@ const updateLocation = async (req, res, next) => {
 
 }
 
-
 const addNoReserved = async (req, res) => {
 
   const id = req.params.id;
   const noReservedObject = req.body.Reserved;
-  console.log(req.body);
   let location;
 
   try {
@@ -119,14 +117,18 @@ const addNoReserved = async (req, res) => {
     }
 
     const firstIndex = noReservedObject[0];
+    const userId = firstIndex.userId;
 
-    if (!_.isNumber(firstIndex.no) && !_.isNaN(firstIndex.no)) {
+    console.log(firstIndex.no);
+
+    if (!_.isNumber(firstIndex.no)) {
       return res.status(400).json({ message: "Invalid 'no' value" });
     }
 
     const uniqueNo = Math.floor((1000 + Math.random() * 9000));
 
     const newReservation = location.Reserved.create({
+      userId: userId,
       no: firstIndex.no,
       qrCode: uniqueNo,
     });
@@ -136,8 +138,12 @@ const addNoReserved = async (req, res) => {
       return res.status(403).json({ message: "Currently, isnt have enough spaces for all of you!!!" })
     }
     location.Reserved.push(newReservation);
-    await location.save();
-
+    try {
+      await location.save();
+    } catch (saveError) {
+      console.error("Error saving location:", saveError);
+      return res.status(500).json({ message: "Error saving location" });
+    }
     return res.status(200).json({ message: "Location Updated successfully", uniqueNo });
   } catch (err) {
     console.log(err);
