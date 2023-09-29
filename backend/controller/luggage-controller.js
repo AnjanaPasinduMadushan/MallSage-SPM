@@ -6,6 +6,7 @@ import User from "../model/user-model.js";
 // Send email using Nodemailer
 import nodemailer from "nodemailer";
 import Shop from "../model/Shop-model.js";
+import axios from "axios";
 
 //Auto generating token
 const generateToken = () => {
@@ -63,13 +64,17 @@ const addLuggage = async (req, res) => {
   console.log(req.body);
   console.log(LuggageDTO);
   console.log("LuggageDTO.shop.ShopID", LuggageDTO?.Shop?.ShopID);
+
+  // Declare customerToken here
+  let customerToken;
+
   try {
     const currentDate = new Date();
     const currentYear = currentDate.getUTCFullYear();
     const currentMonth = currentDate.getUTCMonth();
     const currentDateComponent = currentDate.getUTCDate();
 
-    //Check if the customer is an exsisting one
+    // Check if the customer is an existing one
     const existingUser = await User.findOne({
       email: LuggageDTO.CustomerEmail,
       role: "customer",
@@ -99,10 +104,9 @@ const addLuggage = async (req, res) => {
       return res.status(400).json({ message: "Shop not found" });
     }
 
-    // console.log("existingShop",existingShop)
-
     let luggage;
     if (existingLuggage) {
+      customerToken = existingLuggage.CustomerToken;
       // If an existing luggage is found, reuse its ShopToken and CustomerToken
       luggage = new Luggage({
         luggageID: existingLuggage.luggageID,
@@ -125,7 +129,7 @@ const addLuggage = async (req, res) => {
       });
     } else {
       // Generate unique CustomerToken and ShopToken
-      const customerToken = await generateUniqueCustomerToken();
+      customerToken = await generateUniqueCustomerToken();
       const shopToken = await generateUniqueShopToken();
 
       luggage = new Luggage({
@@ -151,19 +155,44 @@ const addLuggage = async (req, res) => {
 
     await luggage.save();
 
+    async function downloadPdfFromLink(pdfUrl) {
+      try {
+        const response = await axios.get(pdfUrl, {
+          responseType: 'arraybuffer', // This ensures the response is treated as binary data
+        });
+        
+        return Buffer.from(response.data, 'binary');
+      } catch (error) {
+        console.error('Error downloading PDF:', error);
+        throw error;
+      }
+    }
+    const pdfUrl = LuggageDTO.Bill;
+    const pdfBuffer = await downloadPdfFromLink(pdfUrl);
+
     const mailTransporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: "mallsage34@gmail.com",
         pass: "jwzaldpwytqqghlj",
       },
+      timeout: 30000,
     });
+
+    // console.log("customerToken", customerToken);
 
     const emailDetails = {
       from: "mallsage34@gmail.com",
-      to: LuggageDTO.CustomerEmail, // Use the customer's email
-      subject: "Your items were added by the shop",
-      text: `Your luggage with Bag Number ${LuggageDTO.BagNo} was successfully added by the shop ${existingShop.Name}.`,
+      to: LuggageDTO.CustomerEmail,
+      subject: `Your items were added by the shop ${existingShop.Name}`,
+      text: `Your Customer Token is ${customerToken}. Pls find the billing attached below as well. 
+              Pls notice this delivery would only be available for the day.`,
+      attachments: [
+        {
+          filename: "bill.pdf",
+          content: pdfBuffer, 
+        },
+      ],
     };
 
     mailTransporter.sendMail(emailDetails, (err) => {
@@ -262,7 +291,9 @@ const getallLuggages = async (req, res) => {
 
       // Iterate through the luggages to collect unique ShopID and ShopName
       luggages.forEach((luggage) => {
-        uniqueShops.add(JSON.stringify({ ShopID: luggage.ShopID, ShopName: luggage.ShopName }));
+        uniqueShops.add(
+          JSON.stringify({ ShopID: luggage.ShopID, ShopName: luggage.ShopName })
+        );
       });
 
       // Convert the unique ShopID and ShopName pair back to an object
@@ -287,28 +318,39 @@ const getallLuggages = async (req, res) => {
   }
 };
 
-
-
 //Get total lugagages for all view
 const gettotalLuggages = async (req, res) => {
   try {
-    const  email = req.params.email;
+    const email = req.params.email;
     const currentDate = new Date();
 
     const luggages = await Luggage.find({
       CustomerEmail: email,
       Date: {
-        $gte: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()),
-        $lt: new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1)
-      }
+        $gte: new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate()
+        ),
+        $lt: new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() + 1
+        ),
+      },
     });
 
     if (!luggages || luggages.length === 0) {
-      return res.status(404).json({ message: "No Luggages found for the specified email and date" });
+      return res.status(404).json({
+        message: "No Luggages found for the specified email and date",
+      });
     }
 
     // Calculate the total number of bags
-    const totalBags = luggages.reduce((acc, luggage) => acc + parseInt(luggage.BagNo), 0);
+    const totalBags = luggages.reduce(
+      (acc, luggage) => acc + parseInt(luggage.BagNo),
+      0
+    );
 
     // Create a Set to store unique ShopID and ShopName pairs
     const uniqueShops = new Set();
@@ -328,7 +370,9 @@ const gettotalLuggages = async (req, res) => {
     });
 
     // Convert the unique ShopID and ShopName pairs back to an array
-    const uniqueShopList = Array.from(uniqueShops).map((pair) => JSON.parse(pair));
+    const uniqueShopList = Array.from(uniqueShops).map((pair) =>
+      JSON.parse(pair)
+    );
 
     res.status(200).json({
       totalBags,
