@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { getAllLuggages } from '../../Api/services/LuggageService';
-import Calendar from 'react-calendar';
-import { useQuery } from 'react-query';
-import { Box, Typography, CircularProgress } from '@mui/material';
-import LiveClockUpdate from '../LiveClock/LiveClock';
-import 'react-calendar/dist/Calendar.css';
-import { MaterialReactTable } from 'material-react-table';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { getAllLuggages } from "../../Api/services/LuggageService";
+import Calendar from "react-calendar";
+import { useQuery } from "react-query";
+import { Box, Typography, CircularProgress } from "@mui/material";
+import LiveClockUpdate from "../LiveClock/LiveClock";
+import "react-calendar/dist/Calendar.css";
+import { MaterialReactTable } from "material-react-table";
 
 function LuggageBox() {
   const customeremail = useSelector((state) => state.auth.User.email);
@@ -36,39 +36,46 @@ function LuggageBox() {
   // Custom CSS class names for different date types
   const tileClassName = ({ date }) => {
     if (isWeekend(date)) {
-      return 'weekend';
+      return "weekend";
     } else if (isCurrentDate(date)) {
-      return 'current-date';
+      return "current-date";
     }
-    return '';
+    return "";
   };
 
   const uniqueShops = data?.uniqueShops || [];
 
-// Extract all unique keys from the objects in uniqueShops
-const allKeys = uniqueShops.reduce((keys, obj) => {
-    Object.keys(obj).forEach(key => {
+  // Extract all unique keys from the objects in uniqueShops
+  const allKeys = uniqueShops.reduce((keys, obj) => {
+    Object.keys(obj).forEach((key) => {
       if (!keys.includes(key)) {
         keys.push(key);
       }
     });
     return keys;
   }, []);
-  
+  // console.log("allkeys", allKeys);
   // Generate columns dynamically based on the unique keys
-  const columns = allKeys.map((key, index) => ({
-    id: `column_${index + 1}`,
-    Header: key,
-    accessor: key,
-  }));
-  
-  console.log(columns);
+  const columns = [
+    {
+      header: "ShopID",
+      accessorKey: "ShopID",
+    },
+    {
+      header: "ShopName",
+      accessorKey: "ShopName",
+    },
+  ];
+
+  // console.log("data", data);
   function CircularWithValueLabel() {
     const [progress, setProgress] = React.useState(10);
 
     React.useEffect(() => {
       const timer = setInterval(() => {
-        setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+        setProgress((prevProgress) =>
+          prevProgress >= 100 ? 0 : prevProgress + 10
+        );
       }, 800);
       return () => {
         clearInterval(timer);
@@ -77,28 +84,41 @@ const allKeys = uniqueShops.reduce((keys, obj) => {
 
     return <CircularProgress value={progress} />;
   }
+  
+
+  let mappedData;
+
+if (data !== undefined) {
+  mappedData = data?.uniqueShops?.map((shop) => ({
+    ShopID: shop.ShopID,
+    ShopName: shop.ShopName,
+  })) || [];
+} else {
+  mappedData = [];
+}
 
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'row',
+        display: "flex",
+        flexDirection: "row",
       }}
     >
       <Box
         sx={{
-          borderRadius: '40px',
-          boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-          width: '40vw',
-          padding: '10px',
-          marginLeft: '3vw',
-          marginTop: '5vh',
+          borderRadius: "40px",
+          boxShadow:
+            "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+          width: "40vw",
+          padding: "10px",
+          marginLeft: "3vw",
+          marginTop: "5vh",
         }}
       >
         <Typography
           sx={{
-            fontWeight: 'bold',
-            fontSize: '30px',
+            fontWeight: "bold",
+            fontSize: "30px",
           }}
         >
           Hello there {name}!
@@ -106,8 +126,8 @@ const allKeys = uniqueShops.reduce((keys, obj) => {
         <LiveClockUpdate />
         <div
           style={{
-            marginTop: '8%',
-            marginLeft: '5%',
+            marginTop: "8%",
+            marginLeft: "5%",
           }}
         >
           <style>
@@ -139,78 +159,82 @@ const allKeys = uniqueShops.reduce((keys, obj) => {
       ) : (
         <Box
           sx={{
-            borderRadius: '40px',
-            boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-            width: '50vw',
-            padding: '10px',
-            marginLeft: '3vw',
-            marginTop: '5vh',
+            borderRadius: "40px",
+            boxShadow:
+              "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+            width: "50vw",
+            padding: "10px",
+            marginLeft: "3vw",
+            marginTop: "5vh",
           }}
         >
           <Typography
             sx={{
-              fontWeight: 'bold',
-              fontSize: '30px',
+              fontWeight: "bold",
+              fontSize: "30px",
             }}
           >
             Your Baggages💼
           </Typography>
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'row',
+              display: "flex",
+              flexDirection: "row",
             }}
           >
             {/* Display the total bags and customer token */}
             <Box
               sx={{
-                borderRadius: '40px',
-                boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-                width: '14vw',
-                padding: '10px',
-                marginLeft: '3vw',
-                marginTop: '5vh',
+                borderRadius: "40px",
+                boxShadow:
+                  "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                width: "17vw",
+                padding: "10px",
+                marginLeft: "3vw",
+                marginTop: "5vh",
               }}
             >
               <Typography
                 sx={{
-                  fontWeight: 'bold',
-                  fontSize: '20px',
+                  fontWeight: "bold",
+                  fontSize: "20px",
                 }}
               >
-                {data.totalBags !== undefined && data.totalBags !== null ? (
-                  `Total Baggages: ${data.totalBags}`
-                ) : (
-                  'No baggage to be delivered'
-                )}
+                {data !== undefined && data !== null || data?.totalBags !== undefined && data?.totalBags !== null
+                  ? `Total Baggages: ${data?.totalBags}`
+                  : "No baggage to be delivered"}
               </Typography>
             </Box>
             <Box
               sx={{
-                borderRadius: '40px',
-                boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-                width: '14vw',
-                padding: '10px',
-                marginLeft: '3vw',
-                marginTop: '5vh',
+                borderRadius: "40px",
+                boxShadow:
+                  "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                width: "14vw",
+                padding: "10px",
+                marginLeft: "3vw",
+                marginTop: "5vh",
               }}
             >
               <Typography
                 sx={{
-                  fontWeight: 'bold',
-                  fontSize: '20px',
+                  fontWeight: "bold",
+                  fontSize: "20px",
                 }}
               >
-                {data.customerToken !== undefined && data.customerToken !== null ? (
-                  `Your Token: ${data.customerToken}`
-                ) : (
-                  'No Token to be displayed'
-                )}
+                {data !== undefined && data !== null || data?.customerToken !== undefined && data?.customerToken !== null 
+                  ? `Your Token: ${data?.customerToken}`
+                  : "No Token to be displayed"}
               </Typography>
             </Box>
           </div>
-          {/* Add MaterialReactTable component */}
-          <MaterialReactTable columns={columns} data={data?.uniqueShops || []} />
+          <div
+            style={{
+              marginTop: "8%",
+            }}
+          >
+            <MaterialReactTable columns={columns} data={mappedData} />
+          </div>
         </Box>
       )}
     </div>
