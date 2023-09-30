@@ -42,32 +42,39 @@ const CreateBlogPost = () => {
     };
 
     const handleTitleKeyPress = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            e.preventDefault();
             setTitle(title.trim());
             authorNameInputRef.current.focus();
         }
     };
 
     const handleAuthorKeyPress = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' || e.key === 'Tab') {
+            e.preventDefault();
             contentInputRef.current.focus();
         }
     };
 
     const handleImageUpload = (e) => {
+        const allowedExtensions = ["jpg", "jpeg", "png", "gif", "bmp"];
         const selectedFiles = e.target.files;
         const newImages = [];
 
         for (let i = 0; i < selectedFiles.length; i++) {
             const file = selectedFiles[i];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
 
-            const imageUrl = URL.createObjectURL(file);
-            newImages.push({
-                id: Date.now() + i,
-                url: imageUrl,
-                name: file.name,
-                file: file
-            });
+            //Check and add only image files
+            if (allowedExtensions.includes(fileExtension)) {
+                const imageUrl = URL.createObjectURL(file);
+                newImages.push({
+                    id: Date.now() + i,
+                    url: imageUrl,
+                    name: file.name,
+                    file: file
+                });
+            }
         }
 
         setImages([...images, ...newImages]);
