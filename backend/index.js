@@ -16,6 +16,7 @@ import shop_router from './router/shop-router.js';
 import slot_router from './router/slot-routers.js';
 //import reservation_router from './router/reservation-routers.js';
 
+import baggageEmployee_router from './router/BaggageEmployee-router.js'
 const app = express();
 
 const PORT = 5000;
@@ -34,6 +35,7 @@ app.use('/shop', shop_router);
 app.use('/slot', slot_router);
 //app.use('/reservation', reservation_router);
 
+app.use('/baggage',baggageEmployee_router);
 
 //db connection
 db();
