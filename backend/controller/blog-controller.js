@@ -1,7 +1,11 @@
 import Blog from "../model/blog-model.js";
+import FirebaseStorage from "../configs/firebaseConfig.js";
 
 const createBlog = async (req, res) => {
-  console.log("blog data received")
+  
+ const val = await FirebaseStorage.upload('./uploads/Picture1.png');
+ console.log({"firebase response": val});
+
   const shop = req.userId;
   const {
     title,
