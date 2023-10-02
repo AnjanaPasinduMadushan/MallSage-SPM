@@ -3,10 +3,22 @@ import { useSelector } from "react-redux";
 import { getAllLuggages } from "../../Api/services/LuggageService";
 import Calendar from "react-calendar";
 import { useQuery } from "react-query";
-import { Box, Typography, CircularProgress } from "@mui/material";
-import LiveClockUpdate from "../LiveClock/LiveClock";
-import "react-calendar/dist/Calendar.css";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Button,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
+import { Modal } from "react-bootstrap";
+import "react-calendar/dist/Calendar.css";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import { MobileTimePicker } from "@mui/x-date-pickers";
 
 function LuggageBox() {
   const customeremail = useSelector((state) => state.auth.User.email);
@@ -16,6 +28,10 @@ function LuggageBox() {
   });
 
   const [date, setDate] = useState(new Date());
+  const [deliverymodal, setShowDeliveryModal] = useState(false);
+  const handleDeliveryModalOpen = () => setShowDeliveryModal(true);
+  const handleDeliveryModalClose = () => setShowDeliveryModal(false);
+  const [location, setLocation] = useState(""); // Define and initialize location
 
   // Custom function to determine if a date is a weekend (Saturday or Sunday)
   const isWeekend = (date) => {
@@ -43,19 +59,6 @@ function LuggageBox() {
     return "";
   };
 
-  const uniqueShops = data?.uniqueShops || [];
-
-  // Extract all unique keys from the objects in uniqueShops
-  const allKeys = uniqueShops.reduce((keys, obj) => {
-    Object.keys(obj).forEach((key) => {
-      if (!keys.includes(key)) {
-        keys.push(key);
-      }
-    });
-    return keys;
-  }, []);
-  // console.log("allkeys", allKeys);
-  // Generate columns dynamically based on the unique keys
   const columns = [
     {
       header: "ShopID",
@@ -67,7 +70,6 @@ function LuggageBox() {
     },
   ];
 
-  // console.log("data", data);
   function CircularWithValueLabel() {
     const [progress, setProgress] = React.useState(10);
 
@@ -84,18 +86,18 @@ function LuggageBox() {
 
     return <CircularProgress value={progress} />;
   }
-  
 
   let mappedData;
 
-if (data !== undefined) {
-  mappedData = data?.uniqueShops?.map((shop) => ({
-    ShopID: shop.ShopID,
-    ShopName: shop.ShopName,
-  })) || [];
-} else {
-  mappedData = [];
-}
+  if (data !== undefined) {
+    mappedData =
+      data?.uniqueShops?.map((shop) => ({
+        ShopID: shop.ShopID,
+        ShopName: shop.ShopName,
+      })) || [];
+  } else {
+    mappedData = [];
+  }
 
   return (
     <div
@@ -123,7 +125,26 @@ if (data !== undefined) {
         >
           Hello there {name}!
         </Typography>
-        <LiveClockUpdate />
+        <div
+          style={{
+            display: "flex",
+          }}
+        >
+          {/* LiveClockUpdate component here */}
+          <Button
+            sx={{
+              borderRadius: "40px",
+              backgroundColor: "#0276aa",
+              color: "white",
+              marginLeft: "5%",
+              width: "15vw",
+              height: "8vh",
+              marginTop: "10%",
+            }}
+          >
+            Left Baggages?
+          </Button>
+        </div>
         <div
           style={{
             marginTop: "8%",
@@ -182,7 +203,6 @@ if (data !== undefined) {
               flexDirection: "row",
             }}
           >
-            {/* Display the total bags and customer token */}
             <Box
               sx={{
                 borderRadius: "40px",
@@ -190,7 +210,8 @@ if (data !== undefined) {
                   "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
                 width: "17vw",
                 padding: "10px",
-                marginLeft: "3vw",
+                marginLeft: "2vw",
+                height: "8vh",
                 marginTop: "5vh",
               }}
             >
@@ -200,8 +221,8 @@ if (data !== undefined) {
                   fontSize: "20px",
                 }}
               >
-                {data !== undefined && data !== null || data?.totalBags !== undefined && data?.totalBags !== null
-                  ? `Total Baggages: ${data?.totalBags}`
+                {data
+                  ? `Total Baggages: ${data.totalBags || 0}`
                   : "No baggage to be delivered"}
               </Typography>
             </Box>
@@ -211,8 +232,9 @@ if (data !== undefined) {
                 boxShadow:
                   "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
                 width: "14vw",
+                height: "8vh",
                 padding: "10px",
-                marginLeft: "3vw",
+                marginLeft: "2vw",
                 marginTop: "5vh",
               }}
             >
@@ -222,11 +244,25 @@ if (data !== undefined) {
                   fontSize: "20px",
                 }}
               >
-                {data !== undefined && data !== null || data?.customerToken !== undefined && data?.customerToken !== null 
-                  ? `Your Token: ${data?.customerToken}`
+                {data
+                  ? `Your Token: ${data.customerToken || "N/A"}`
                   : "No Token to be displayed"}
               </Typography>
             </Box>
+            <Button
+              sx={{
+                borderRadius: "40px",
+                backgroundColor: "#0276aa",
+                color: "white",
+                marginLeft: "2%",
+                width: "13vw",
+                height: "8vh",
+                marginTop: "5vh",
+              }}
+              onClick={handleDeliveryModalOpen}
+            >
+              Deliver Baggages
+            </Button>
           </div>
           <div
             style={{
@@ -237,6 +273,60 @@ if (data !== undefined) {
           </div>
         </Box>
       )}
+      <Modal
+        show={deliverymodal}
+        onHide={handleDeliveryModalClose}
+        style={{ marginTop: "8%" }}
+      >
+        <Modal.Header closeButton>Baggage Delivery🛍️</Modal.Header>
+        <Modal.Body>
+          <InputLabel htmlFor="outlined-adornment-old-password">
+            Select Exiting Point
+          </InputLabel>
+          <Select
+            fullWidth
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            label="Delivery Location"
+          >
+            <MenuItem value={1}>Exit 1</MenuItem>
+            <MenuItem value={2}>Exit 2</MenuItem>
+            <MenuItem value={3}>Exit 3</MenuItem>
+          </Select>
+          <InputLabel htmlFor="outlined-adornment-old-password"
+          style={{
+            marginTop:"5%",
+            marginLeft:"5%"
+          }}
+          >
+            Select Delivery Time
+          </InputLabel>
+          <div
+            style={{
+              display: "flex",
+              marginLeft:"5%"
+            }}
+          >
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <MobileTimePicker defaultValue={dayjs()} />
+            </LocalizationProvider>
+            <Button
+              sx={{
+                marginLeft: "15%",
+                borderRadius: "40px",
+                backgroundColor: "#0276aa",
+                color: "white",
+                height:"6vh"
+              }}
+            >
+              Deliver Now
+            </Button>
+          </div>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
     </div>
   );
 }
