@@ -198,7 +198,8 @@ console.log("data",data)
         boxShadow="10px 10px 20px #ccc"
         padding={3}
         margin={"auto"}
-        marginTop={3}
+        marginTop={"6%"}
+        marginBottom={"3%"}
         display="flex"
         flexDirection={"column"}
         width={"80%"}
