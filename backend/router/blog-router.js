@@ -1,4 +1,4 @@
-import {createBlog, deleteBlog, getBlog, getBlogs, updateBlog} from "../controller/blog-controller.js";
+import { createBlog, deleteBlog, getBlog, getBlogs, updateBlog } from "../controller/blog-controller.js";
 import express from "express";
 import { checkToken } from "../middlewares/user.js";
 import { upload } from "../configs/multerConfig.js";

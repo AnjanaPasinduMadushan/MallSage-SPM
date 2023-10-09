@@ -8,7 +8,7 @@ const checkToken = async (req, res, next) => {
 
   try {
     const cookies = req.headers.cookie;
-    
+
     if (!cookies) {
       console.error("cookie not found")
       return res.status(403).json({ message: "Login first" })
@@ -18,8 +18,7 @@ const checkToken = async (req, res, next) => {
     if (!token) {
       console.error("token not found")
       return res.status(403).json({ message: "A token is required" })
-    }
-    else {
+    } else {
       const decode = jwt.verify(token, process.env.secret);
 
       req.userId = decode._id;
