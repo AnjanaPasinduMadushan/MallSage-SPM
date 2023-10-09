@@ -7,13 +7,21 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 // eslint-disable-next-line react/prop-types
-export default function FormDialog({ locationId, availability, onReservationComplete, currentNoReserved }) {
+export default function FormDialog({ locationName, locationId, availability, onReservationComplete, currentNoReserved }) {
+
+  const loggeduserId = useSelector((state) => state.auth.User._id);
+  const loggeduserRole = useSelector((state) => state.auth.User.role);
+  const loggedUserMail = useSelector((state) => state.auth.User.email);
+
+  console.log(loggeduserRole)
 
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState({
-    no: 0
+    no: 0,
+    userId: loggeduserId
   });
   let intoNumber;
   const handleClickOpen = () => {
@@ -36,7 +44,10 @@ export default function FormDialog({ locationId, availability, onReservationComp
     console.log(intoNumber);
     try {
       const res = await axios.patch(`http://localhost:5000/restingLocation/addReserved/${locationId}`, {
-        Reserved: [{ no: intoNumber }]
+        Reserved: [{ no: intoNumber, userId: input.userId }],
+        userRole: loggeduserRole,
+        email: loggedUserMail,
+        locationName: locationName
       });
       const data = await res.data;
       console.log(data);
