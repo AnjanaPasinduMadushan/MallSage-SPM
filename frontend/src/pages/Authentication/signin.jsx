@@ -95,6 +95,9 @@ export default function SignIn() {
         } else if( isLoggedrole === "shop") {
           navigate("/shopHome", { replace: true });
           //          window.location.reload();
+        }else if( isLoggedrole === "baggageemployee") {
+          navigate("/baggageHome", { replace: true });
+          //          window.location.reload();
         }else{
           navigate("/", { replace: true });
         }
