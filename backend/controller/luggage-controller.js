@@ -243,11 +243,11 @@ const validateShopToken = async (req, res) => {
     if (luggageList.length === 0) {
       return res.status(404).json({ message: "No luggage found with the provided ShopToken" });
     }
-
+console.log("luggageList", luggageList)
     for (const luggage of luggageList) {
-      if (luggage.isComplete) {
-        return res.status(400).json({ message: "Some luggage entries are already marked as complete" });
-      }
+      // if (luggage.isComplete) {
+      //   return res.status(400).json({ message: "Some luggage entries are already marked as complete" });
+      // }
 
       luggage.isComplete = true;
       luggage.CompletedDate = new Date();
@@ -261,6 +261,7 @@ const validateShopToken = async (req, res) => {
     return res.status(500).json({ message: "Error in validating the ShopToken" });
   }
 };
+
 
 const getLuggages = async (req, res) => {
   try {
