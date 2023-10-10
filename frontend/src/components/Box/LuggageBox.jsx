@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { getAllLuggages } from "../../Api/services/LuggageService";
 import Calendar from "react-calendar";
 import { useQuery } from "react-query";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Box,
   Typography,
@@ -101,80 +102,7 @@ function LuggageBox() {
 
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-      }}
     >
-      <Box
-        sx={{
-          borderRadius: "40px",
-          boxShadow:
-            "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-          width: "40vw",
-          padding: "10px",
-          marginLeft: "3vw",
-          marginTop: "5vh",
-        }}
-      >
-        <Typography
-          sx={{
-            fontWeight: "bold",
-            fontSize: "30px",
-          }}
-        >
-          Hello there {name}!
-        </Typography>
-        <div
-          style={{
-            display: "flex",
-          }}
-        >
-          {/* LiveClockUpdate component here */}
-          <Button
-            sx={{
-              borderRadius: "40px",
-              backgroundColor: "#0276aa",
-              color: "white",
-              marginLeft: "5%",
-              width: "15vw",
-              height: "8vh",
-              marginTop: "10%",
-            }}
-          >
-            Left Baggages?
-          </Button>
-        </div>
-        <div
-          style={{
-            marginTop: "8%",
-            marginLeft: "5%",
-          }}
-        >
-          <style>
-            {`
-              .react-calendar {
-                border: none; /* Remove all borders */
-                font-family: Arial, sans-serif;
-                width: 30vw; /* Adjust the width as needed */
-                height: 40vh; /* Adjust the height as needed */
-                border-radius: 20px;
-              }
-
-              .weekend {
-                color: red; /* Saturday and Sunday text color */
-              }
-
-              .current-date {
-                background-color: blue; /* Blue circle for the current date */
-                color: white; /* White text color for the current date */
-                border-radius: 50%; /* Make it a circle */
-              }
-            `}
-          </style>
-          <Calendar value={date} tileClassName={tileClassName} />
-        </div>
-      </Box>
       {isLoading ? (
         <CircularWithValueLabel />
       ) : (
@@ -183,7 +111,8 @@ function LuggageBox() {
             borderRadius: "40px",
             boxShadow:
               "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-            width: "50vw",
+            width: "94%",
+            height: "80vh",
             padding: "10px",
             marginLeft: "3vw",
             marginTop: "5vh",
@@ -197,71 +126,103 @@ function LuggageBox() {
           >
             Your Baggages💼
           </Typography>
+          <Button
+            sx={{ marginRight: "15%", border: "1px solid black", borderRadius: "8px",marginTop: "2%", marginLeft: "2%" }}
+            // onClick={handleButtonClick}
+          >
+            <ArrowBackIcon style={{ marginLeft: "5px" }} />
+            Back to Home
+          </Button>
           <div
             style={{
               display: "flex",
               flexDirection: "row",
+              width: "100%",
             }}
           >
-            <Box
+
+            <Typography
               sx={{
-                borderRadius: "40px",
-                boxShadow:
-                  "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                width: "17vw",
-                padding: "10px",
-                marginLeft: "2vw",
-                height: "8vh",
-                marginTop: "5vh",
+                fontWeight: "bold",
+                fontSize: "20px",
+                marginTop: "3%",
+                marginLeft: "2%",
               }}
             >
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "20px",
-                }}
-              >
-                {data
-                  ? `Total Baggages: ${data.totalBags || 0}`
-                  : "No baggage to be delivered"}
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                borderRadius: "40px",
-                boxShadow:
-                  "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                width: "14vw",
-                height: "8vh",
-                padding: "10px",
-                marginLeft: "2vw",
-                marginTop: "5vh",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontWeight: "bold",
-                  fontSize: "20px",
-                }}
-              >
-                {data
-                  ? `Your Token: ${data.customerToken || "N/A"}`
-                  : "No Token to be displayed"}
-              </Typography>
-            </Box>
+              {data ? (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    width: "20vw",
+                  }}
+                >
+                  Total Baggages:{" "}
+                  <Box
+                    sx={{
+                      borderRadius: "40px",
+                      boxShadow:
+                        "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                      width: "2vw",
+                      justifyContent: "center",
+                      justifyItems: "center",
+                      textAlign: "center",
+                      marginLeft: "6%",
+                    }}
+                  >
+                    {data.totalBags}
+                  </Box>
+                </div>
+              ) : (
+                "No baggage to be delivered"
+              )}
+            </Typography>
             <Button
               sx={{
-                borderRadius: "40px",
-                backgroundColor: "#0276aa",
-                color: "white",
-                marginLeft: "2%",
-                width: "13vw",
-                height: "8vh",
-                marginTop: "5vh",
+                mt: 2,
+                borderRadius: '18px', // Make this consistent with other borderRadius values
+                width: '20vw',
+                marginLeft: '1%',
+                color: 'white',
+                marginTop: '2.7%',
+                height: '4vh',
+                fontSize: '1.0rem',
+                backgroundColor: '#1769aa', // Move backgroundColor here
+              }}
+            >
+              View Your Token
+            </Button>
+            <Button
+              sx={{
+                mt: 2,
+                borderRadius: '18px', // Make this consistent with other borderRadius values
+                width: '20vw',
+                marginLeft: '3%',
+                color: 'white',
+                marginTop: '2.7%',
+                height: '4vh',
+                fontSize: '1.0rem',
+                backgroundColor: '#1769aa', // Move backgroundColor here
               }}
               onClick={handleDeliveryModalOpen}
             >
               Deliver Baggages
+            </Button>
+            <Button
+              sx={{
+                mt: 2,
+                borderRadius: '18px', // Make this consistent with other borderRadius values
+                width: '20vw',
+                marginLeft: '3%',
+                color: 'white',
+                marginTop: '2.7%',
+                height: '4vh',
+                fontSize: '1.0rem',
+                backgroundColor: '#1769aa', // Move backgroundColor here
+              }}
+              onClick={handleDeliveryModalOpen}
+            >
+              Forgot Your Baggage?
             </Button>
           </div>
           <div
@@ -269,6 +230,7 @@ function LuggageBox() {
               marginTop: "8%",
             }}
           >
+
             <MaterialReactTable columns={columns} data={mappedData} />
           </div>
         </Box>
@@ -296,17 +258,17 @@ function LuggageBox() {
             <MenuItem value={3}>Exit 3</MenuItem>
           </Select>
           <InputLabel htmlFor="outlined-adornment-old-password"
-          style={{
-            marginTop:"5%",
-            marginLeft:"5%"
-          }}
+            style={{
+              marginTop: "5%",
+              marginLeft: "5%"
+            }}
           >
             Select Delivery Time
           </InputLabel>
           <div
             style={{
               display: "flex",
-              marginLeft:"5%"
+              marginLeft: "5%"
             }}
           >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -318,7 +280,7 @@ function LuggageBox() {
                 borderRadius: "40px",
                 backgroundColor: "#0276aa",
                 color: "white",
-                height:"6vh"
+                height: "6vh"
               }}
             >
               Deliver Now
