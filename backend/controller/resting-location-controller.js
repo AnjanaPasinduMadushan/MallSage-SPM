@@ -114,6 +114,7 @@ const addNoReserved = async (req, res) => {
   const userRole = req.body.userRole;
   const userEmail = req.body.email;
   const restingLocationName = req.body.locationName;
+  const isGetsIn = req.body.isGetsIn;
   let location;
 
   try {
@@ -138,7 +139,6 @@ const addNoReserved = async (req, res) => {
     if (userRole === "customer") {
       try {
         const isIdAlreadyThere = location.Reserved.find(reservations => reservations.userId.toString() === userId);
-        console.log("is this", isIdAlreadyThere)
         if (isIdAlreadyThere) {
           return res.status(400).json({ message: "You have already reserved a seat in this location" })
         }
@@ -248,11 +248,9 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
     if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no) && body.no != 0) {
       location.Reserved[indexToRemove].no -= body.no;
       location.currentNoReserved -= body.no;
-      console.log('not splice')
     } else {
       location.currentNoReserved -= location.Reserved[indexToRemove].no;
       location.Reserved.splice(indexToRemove, 1);
-      console.log('splice')
     }
 
     console.log(location.currentNoReserved);
@@ -265,6 +263,34 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
   }
 
 }
+
+const DeleteTimeExceededReservations = async (req, res) => {
+
+  try {
+    const currentTime = new Date();
+    const timeThreshold = new Date(currentTime - 20 * 60 * 1000);
+
+    const exceededReservations = await RestingLocations.find({
+      'Reserved.getsInTime': { $lt: timeThreshold },
+      'Reserved.isGetsIn': false
+    });
+    console.log('exceededReservations', exceededReservations)
+    for (const doc of exceededReservations) {
+      const sumOfRemoved = doc.Reserved.filter((reservation) => reservation.getsInTime <= timeThreshold && !reservation.isGetsIn)
+        .reduce((sum, obj) => sum + obj.no, 0);
+      doc.currentNoReserved += sumOfRemoved;
+      doc.Reserved = doc.Reserved.filter((reservation) => reservation.getsInTime > timeThreshold || reservation.isGetsIn)
+      await doc.save();
+    }
+
+  } catch (error) {
+    console.log('something is wrong when deleting Reservations', error)
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+setInterval(DeleteTimeExceededReservations, 20 * 60 * 1000);
 
 export {
   addLocation,
