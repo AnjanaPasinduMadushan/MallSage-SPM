@@ -62,6 +62,8 @@ const getOneShop = async (req, res) => {
   }
 };
 
+
+
 const getShops = async (req, res) => {
   try {
     const shops = await Shop.find();

@@ -7,6 +7,8 @@ import User from "../model/user-model.js";
 import nodemailer from "nodemailer";
 import Shop from "../model/Shop-model.js";
 import axios from "axios";
+import cron from 'node-cron';
+
 
 //Auto generating token
 const generateToken = () => {
@@ -160,7 +162,7 @@ const addLuggage = async (req, res) => {
         const response = await axios.get(pdfUrl, {
           responseType: 'arraybuffer', // This ensures the response is treated as binary data
         });
-        
+
         return Buffer.from(response.data, 'binary');
       } catch (error) {
         console.error('Error downloading PDF:', error);
@@ -190,7 +192,7 @@ const addLuggage = async (req, res) => {
       attachments: [
         {
           filename: "bill.pdf",
-          content: pdfBuffer, 
+          content: pdfBuffer,
         },
       ],
     };
@@ -231,6 +233,35 @@ const getOneLuggage = async (req, res) => {
   }
 };
 
+//Verify luggage collected by shop by shop Token 
+const validateShopToken = async (req, res) => {
+  const shopToken = req.params.shopToken;
+
+  try {
+    const luggageList = await Luggage.find({ ShopToken: shopToken });
+
+    if (luggageList.length === 0) {
+      return res.status(404).json({ message: "No luggage found with the provided ShopToken" });
+    }
+
+    for (const luggage of luggageList) {
+      if (luggage.isComplete) {
+        return res.status(400).json({ message: "Some luggage entries are already marked as complete" });
+      }
+
+      luggage.isComplete = true;
+      luggage.CompletedDate = new Date();
+
+      await luggage.save();
+    }
+
+    return res.status(200).json({ message: "All luggage entries marked as complete", luggageList });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error in validating the ShopToken" });
+  }
+};
+
 const getLuggages = async (req, res) => {
   try {
     const luggages = await Luggage.find();
@@ -245,6 +276,53 @@ const getLuggages = async (req, res) => {
     return res.status(500).json({ message: "Error in getting the Luggages" });
   }
 };
+
+// Get luggages for the passed date and shopId
+async function getLuggagesByShopAndDate(userid, date) {
+  try {
+    // Use await to get the shop information
+    const shop = await Shop.findOne({ userId: userid });
+    // Convert the passed date to a Date object
+    const searchDate = new Date(date);
+console.log("shop", shop.ShopID)
+    // Extract the year, month, and day from the searchDate
+    const searchYear = searchDate.getFullYear();
+    const searchMonth = searchDate.getMonth();
+    const searchDay = searchDate.getDate();
+let shopIdentity = shop.ShopID
+    // Calculate the start and end date for the search
+    const startDate = new Date(searchYear, searchMonth, searchDay);
+    const endDate = new Date(searchYear, searchMonth, searchDay + 1);
+
+    // Find luggages matching the date range
+    const luggages = await Luggage.find({
+      ShopID: shopIdentity,
+      Date: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+    });
+
+    return luggages;
+  } catch (error) {
+    console.error('Error fetching luggages:', error);
+    throw error;
+  }
+}
+
+
+//Get Luggages By Shop Id
+async function getLuggagesByShopId(shopId) {
+  try {
+    // Find all luggages with the specified ShopID
+    const luggages = await Luggage.find({ ShopID: shopId });
+    return luggages;
+  } catch (error) {
+    console.error('Error fetching luggages:', error);
+    throw error;
+  }
+}
+
 
 //Get all customer luggages for day
 const getallLuggages = async (req, res) => {
@@ -442,13 +520,41 @@ async function getLuggageByCustomerEmail(req, res) {
   }
 }
 
+// Define the task to run at 11:50 PM every day
+cron.schedule('50 23 * * *', async () => {
+  try {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Find all luggages with a Date on or before the current date
+    const luggages = await Luggage.find({
+      Date: { $lte: currentDate },
+      isComplete: false, // Only consider luggages that are not already complete
+    });
+
+    // Update isComplete to true for each luggage
+    for (const luggage of luggages) {
+      luggage.isComplete = true;
+      luggage.CompletedDate = new Date();
+      await luggage.save();
+    }
+
+    console.log('Luggages marked as complete:', luggages.length);
+  } catch (error) {
+    console.error('Error updating luggages:', error);
+  }
+});
+
 export {
   addLuggage,
   getOneLuggage,
+  getLuggagesByShopAndDate,
   getLuggages,
   gettotalLuggages,
   deleteLuggage,
   getallLuggages,
+  validateShopToken,
+  getLuggagesByShopId,
   updateLuggage,
   getLuggageByCustomerEmail,
 };

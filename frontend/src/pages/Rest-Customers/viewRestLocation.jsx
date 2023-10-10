@@ -51,10 +51,11 @@ const ViewRestLocation = () => {
             )}
             <Box display="flex" justifyContent="center">
               <FormDialog
+                locationName={location?.locationName}
                 locationId={id}
-                availability={location.availability}
+                availability={location?.availability}
                 onReservationComplete={handleReservationData}
-                currentNoReserved={location.currentNoReserved}
+                currentNoReserved={location?.currentNoReserved}
               />
             </Box>
           </CardContent>

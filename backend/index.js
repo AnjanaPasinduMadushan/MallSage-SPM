@@ -16,7 +16,7 @@ import shop_router from './router/shop-router.js';
 import baggageEmployee_router from './router/BaggageEmployee-router.js'
 const app = express();
 
-const PORT = 5000;
+const PORT = 5050;
 
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(bodyParser.json());

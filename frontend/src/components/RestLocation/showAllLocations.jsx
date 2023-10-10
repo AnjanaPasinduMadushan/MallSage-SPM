@@ -23,7 +23,7 @@ const ShowAllLocations = ({ handleOnClick }) => {
   return (
     <Box mt={3}>
       < Typography variant='h3' align='center' gutterBottom >
-        Customer Rest Zones
+        Resting Zones
       </Typography >
       <Grid container spacing={3}>
         {locations.map((location, key) => (
