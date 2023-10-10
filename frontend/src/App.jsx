@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignUp from "./pages/Authentication/signup";
 import SignIn from "./pages/Authentication/signin";
 import Home from "./pages/home/home";
+import "../src/CSS/App.css";
 import { AdminHome } from "./pages/home/admin-home";
 import AddRestLocations from "./pages/Administration/addRestLocations";
 import { useSelector } from "react-redux";
@@ -21,11 +22,13 @@ import ViewLuggage from "./pages/Luggage/ViewLuggage";
 import AddBaggageEmployee from "./pages/Employees/AddBaggageEmployee";
 import BaggageEmployeeHome from "./pages/home/baggage-employee-home";
 import MiniDrawer from "./components/ShopDrawer/shopDrawer";
+import VerifyToken from "./pages/Shop/VerifyToken";
+import ShopLuggageHistory from "./pages/Shop/ShopLuggageHistory";
 
 function App() {
   //Use Selector to getv logged role
   const isLoggedrole = useSelector((state) => state.auth.User.role);
-
+  const backgroundColor = "#80c3ff";
   return (
     <BrowserRouter>
       {isLoggedrole === "admin" && <AdminHeader />}
@@ -44,6 +47,7 @@ function App() {
         )}
 
         <Route path="/adminhome" element={<AdminHome />} />
+        <Route path="/viewshopluggagehistory" element={<ShopLuggageHistory />} />
         <Route path="/addEmployee" element={<AddEmployee />} />
         <Route path="/addShop" element={<AddShop />} />
         <Route path="/addBaggageemployee" element={<AddBaggageEmployee />} />
@@ -59,6 +63,7 @@ function App() {
           <Route path="/baggageHome" element={<BaggageEmployeeHome />} />
         )}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
+        <Route path="/verifyshopToken" element={<VerifyToken />} />
         <Route path="/addluggage" element={<AddLuggage />} />
         <Route path="/viewLuggage" element={<ViewLuggage />} />
         <Route path="/shopHome" element={<ShopHome />} />

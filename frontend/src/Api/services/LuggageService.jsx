@@ -55,3 +55,30 @@ export const getAllLuggages = async (email) => {
   const response = await apiClient.get(`luggage/getallLuggagescustomer/${email}`);
   return response.data;
 };
+
+//Get All Luggages by ShopID and Date
+export const getLuggagesByShopIDandDate = async (shopID,date) => {
+  console.log("shopID", shopID);
+  const response = await apiClient.get(`luggage/getluggagesbyshop/${shopID}/${date}`);
+  return response.data;
+};
+
+
+//Get All Luggages by shop ID
+export const getLuggagesByShopID = async (shopID) => {
+  const response = await apiClient.get(`luggage/getluggagesbyshopID/${shopID}`);
+  return response.data;
+};
+
+//Validate Token
+export const validateToken = async (token) => {
+  console.log("token", token)
+  const response = await apiClient.patch(`luggage/validateShopToken/${token}`);
+  return response.data;
+};
+
+//Get Luggages by userId and Date
+export const getLuggagesByuserIdandDate = async (userId, date) => {
+  const response = await apiClient.get(`luggage/getluggagesbyshop/${userId}/${date}`);
+  return response.data;
+};

@@ -26,6 +26,7 @@ export const addShop = async (
   
 //Get Shop Id by user Id
 export const getShopIdByUserId = async (userId) => {
+  console.log("userId", userId);
     const response = await apiClient.get(`shop/shopbyuser/${userId}`);
     console.log("response",response)
     return response.data;

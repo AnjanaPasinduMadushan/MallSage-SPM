@@ -1,4 +1,4 @@
-import { Button, InputLabel, TextField, Typography } from "@mui/material";
+import { Button, Grid, InputLabel, TextField, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Box } from "@mui/system";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,10 +12,11 @@ import { useSelector } from "react-redux";
 import { addLuggage } from "../../Api/services/LuggageService";
 import { storage } from "../../Api/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import AddIcon from '@mui/icons-material/Add';
 import { MuiFileInput } from "mui-file-input";
 
 function AddLuggageForm() {
- 
+
   const labelStyles = { mb: 1, mt: 2, fontSize: "24px", fontWeight: "bold" };
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfUrl, setPdfUrl] = useState("");
@@ -34,7 +35,7 @@ function AddLuggageForm() {
   const { data, isLoading, error, isError } = useQuery({
     queryFn: () => getShopIdByUserId(userId),
   });
-console.log("data",data)
+  console.log("data", data)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInputs({
@@ -192,83 +193,103 @@ console.log("data",data)
     <>
       <ToastContainer />
       <Box
-        border={3}
-        borderColor="linear-gradient(90deg, rgba(255,252,13,1) 60%, rgba(110,224,200,1) 100%, rgba(169,175,14,1) 100%)"
+        // border={3}
+        // borderColor="linear-gradient(90deg, rgba(255,252,13,1) 60%, rgba(110,224,200,1) 100%, rgba(169,175,14,1) 100%)"
         borderRadius={10}
         boxShadow="10px 10px 20px #ccc"
         padding={3}
         margin={"auto"}
         marginTop={"6%"}
+        marginLeft={"18%"}
         marginBottom={"3%"}
         display="flex"
+        backgroundColor="#f2f2f2"
         flexDirection={"column"}
-        width={"80%"}
+        width={"70%"}
+        height={"80vh"}
       >
         <Typography
           fontWeight={"bold"}
           padding={3}
           color="black"
           variant="h2"
-          // textAlign={"center"}
+        // textAlign={"center"}
         >
           <Button
-            sx={{ marginRight: "15%", border: "1px solid black" }}
+            sx={{ marginRight: "15%", border: "1px solid black", borderRadius: "8px" }}
             onClick={handleButtonClick}
           >
             <ArrowBackIcon style={{ marginLeft: "5px" }} />
-            Back
+            Back to Home
           </Button>
           🛒Add Purchases🛍️
         </Typography>
-        <InputLabel sx={labelStyles}>CustomerID</InputLabel>
-        <TextField
-          id="outlined-basic"
-          label="CustomerID"
-          variant="outlined"
-          name="CustomerID"
-          value={inputs.CustomerID}
-          onChange={handleChange}
-          error={!!errors.CustomerID}
-          helperText={errors.CustomerID}
-        />
-        <InputLabel sx={labelStyles}>CustomerEmail </InputLabel>
-        <TextField
-          id="outlined-basic"
-          label="CustomerEmail"
-          variant="outlined"
-          name="CustomerEmail"
-          value={inputs.CustomerEmail}
-          onChange={handleChange}
-          error={!!errors.CustomerEmail}
-          helperText={errors.CustomerEmail}
-        />
-        <InputLabel sx={labelStyles}>BagNo</InputLabel>
-        <TextField
-          id="outlined-basic"
-          type="number"
-          label="BagNo"
-          variant="outlined"
-          name="BagNo"
-          value={inputs.BagNo}
-          onChange={handleChange}
-          error={!!errors.BagNo}
-          helperText={errors.BagNo}
-        />
-        <InputLabel sx={labelStyles}>Bill Pdf</InputLabel>
-        <MuiFileInput value={pdfFile} onChange={handlePdfSubmit} />
-        {errors.pdfFile && <p style={{ color: "red" }}>{errors.pdfFile}</p>}
+        <Grid container spacing={1} columns={12}sx={{ height: "400px",marginTop:"2%", marginLeft:"2%" }}>
+          <Grid item xs={4}>
+            <InputLabel sx={labelStyles}>CustomerID</InputLabel>
+            <TextField
+              id="outlined-basic"
+              label="CustomerID"
+              variant="outlined"
+              name="CustomerID"
+              sx={{ width: "100%", borderRadius: "8px" }}
+              InputProps={{ style: { height: "8vh" } }}
+              value={inputs.CustomerID}
+              onChange={handleChange}
+              error={!!errors.CustomerID}
+              helperText={errors.CustomerID}
+            />
+          </Grid>
+          <Grid item xs={8}>
+            <InputLabel sx={labelStyles} style={{ marginLeft: "12%" }}>CustomerEmail </InputLabel>
+            <TextField
+              id="outlined-basic"
+              label="CustomerEmail"
+              variant="outlined"
+              sx={{ width: "80%", marginLeft: "12%" }}
+              InputProps={{ style: { height: "8vh" } }}
+              name="CustomerEmail"
+              value={inputs.CustomerEmail}
+              onChange={handleChange}
+              error={!!errors.CustomerEmail}
+              helperText={errors.CustomerEmail}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <InputLabel sx={labelStyles}>BagNo</InputLabel>
+            <TextField
+              id="outlined-basic"
+              type="number"
+              label="BagNo"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              InputProps={{ style: { height: "8vh" } }}
+              name="BagNo"
+              value={inputs.BagNo}
+              onChange={handleChange}
+              error={!!errors.BagNo}
+              helperText={errors.BagNo}
+            />
+          </Grid>
+          <Grid item xs={10}>
+            <InputLabel sx={labelStyles} style={{ marginLeft: "12%" }} >Bill Pdf</InputLabel>
+            <MuiFileInput sx={{ width: "80%", marginLeft: "12%", height:"8vh" }} value={pdfFile} onChange={handlePdfSubmit} />
+            {errors.pdfFile && <p style={{ color: "red" }}>{errors.pdfFile}</p>}
+          </Grid>
+        </Grid>
         {loading ? (
           <CircularProgress />
         ) : (
           <Button
-            sx={{ mt: 2, borderRadius: 4 }}
+            sx={{ mt: 2, borderRadius: 6, width: "20vw", marginLeft: "34%",marginTop:"2%", height: "8vh", fontSize: "1.4rem" }}
             onClick={handleSubmit}
             variant="contained"
-            color="warning"
+            backgroundColor='#1769aa'
             type="submit"
+            startIcon={<AddIcon />}
           >
             {" "}
-            ➕ Add Purchases ➕
+            Add Purchases
           </Button>
         )}
       </Box>
