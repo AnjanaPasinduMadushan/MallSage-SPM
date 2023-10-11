@@ -243,7 +243,7 @@ const validateShopToken = async (req, res) => {
     if (luggageList.length === 0) {
       return res.status(404).json({ message: "No luggage found with the provided ShopToken" });
     }
-console.log("luggageList", luggageList)
+    console.log("luggageList", luggageList)
     for (const luggage of luggageList) {
       // if (luggage.isComplete) {
       //   return res.status(400).json({ message: "Some luggage entries are already marked as complete" });
@@ -285,12 +285,12 @@ async function getLuggagesByShopAndDate(userid, date) {
     const shop = await Shop.findOne({ userId: userid });
     // Convert the passed date to a Date object
     const searchDate = new Date(date);
-console.log("shop", shop.ShopID)
+    console.log("shop", shop.ShopID)
     // Extract the year, month, and day from the searchDate
     const searchYear = searchDate.getFullYear();
     const searchMonth = searchDate.getMonth();
     const searchDay = searchDate.getDate();
-let shopIdentity = shop.ShopID
+    let shopIdentity = shop.ShopID
     // Calculate the start and end date for the search
     const startDate = new Date(searchYear, searchMonth, searchDay);
     const endDate = new Date(searchYear, searchMonth, searchDay + 1);
@@ -324,6 +324,30 @@ async function getLuggagesByShopId(shopId) {
   }
 }
 
+//Get Luggages By Shop Id
+async function getLuggagesByShopIdandUserID(shopId, userId) {
+  try {
+
+    const Customer = await User.findById(userId);
+    console.log("Customer", Customer.email)
+
+    // Get the current date and format it as YYYY-MM-DD
+    const currentDate = new Date();
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+
+
+    // Find all luggages with the specified ShopID
+    const luggages = await Luggage.find({
+      ShopID: shopId,
+      CustomerEmail: Customer.email,
+      Date: { $gte: formattedCurrentDate, $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] },
+    });
+    return luggages;
+  } catch (error) {
+    console.error('Error fetching luggages:', error);
+    throw error;
+  }
+}
 
 //Get all customer luggages for day
 const getallLuggages = async (req, res) => {
@@ -437,11 +461,17 @@ const gettotalLuggages = async (req, res) => {
     // Initialize variables to store total bill and one customer token
     let totalBill = 0;
     let customerToken = null;
+    let shopcollected = false;
+    let securitycollected = false;
+    let customercollected = false;
 
     // Iterate through the luggages to collect unique ShopID and ShopName, calculate total bill, and get one customer token
     luggages.forEach((luggage) => {
-      const { ShopID, ShopName, Bill, CustomerToken } = luggage;
+      const { ShopID, ShopName, Bill, CustomerToken, isComplete, isSecurityConfirmed, isCustomerConfirmed } = luggage;
       uniqueShops.add(JSON.stringify({ ShopID, ShopName }));
+      shopcollected = isComplete;
+      securitycollected = isSecurityConfirmed;
+      customercollected = isCustomerConfirmed;
       totalBill += parseFloat(Bill);
       if (!customerToken) {
         customerToken = CustomerToken;
@@ -456,6 +486,9 @@ const gettotalLuggages = async (req, res) => {
     res.status(200).json({
       totalBags,
       uniqueShops: uniqueShopList,
+      shopcollected,
+      securitycollected,
+      customercollected,
       totalBill,
       customerToken,
     });
@@ -550,6 +583,7 @@ export {
   addLuggage,
   getOneLuggage,
   getLuggagesByShopAndDate,
+  getLuggagesByShopIdandUserID,
   getLuggages,
   gettotalLuggages,
   deleteLuggage,

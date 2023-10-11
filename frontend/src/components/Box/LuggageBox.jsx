@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { getAllLuggages } from "../../Api/services/LuggageService";
+import { getAllLuggages, getAllLuggagesbyUserIDandShopID } from "../../Api/services/LuggageService";
 import Calendar from "react-calendar";
 import { useQuery } from "react-query";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -12,14 +12,22 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  TableContainer,
+  Paper,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TablePagination,
 } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
-import { Modal } from "react-bootstrap";
+import { Modal, Table } from "react-bootstrap";
 import "react-calendar/dist/Calendar.css";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import { MobileTimePicker } from "@mui/x-date-pickers";
+import { toast } from "react-toastify";
 
 function LuggageBox() {
   const customeremail = useSelector((state) => state.auth.User.email);
@@ -27,13 +35,34 @@ function LuggageBox() {
   const { data, isLoading, error, isError } = useQuery({
     queryFn: () => getAllLuggages(customeremail),
   });
-
+  const [page, setPage] = useState(0);
   const [date, setDate] = useState(new Date());
   const [deliverymodal, setShowDeliveryModal] = useState(false);
   const handleDeliveryModalOpen = () => setShowDeliveryModal(true);
   const handleDeliveryModalClose = () => setShowDeliveryModal(false);
+  const [customerTokenModal, setShowCustomerTokenModal] = useState(false);
+  const handleCustomerTokenModalOpen = () => setShowCustomerTokenModal(true);
+  const handleCustomerTokenModalClose = () => setShowCustomerTokenModal(false);
+  const [shopLuggageModal, setShopLuggageModal] = useState(false);
+  const [shopId, setShopId] = useState("");
+  const [shopLuggageData, setShopLuggageData] = useState([]);
+  const handleShopLuggageModalOpen = () => setShopLuggageModal(true);
+  const handleShopLuggageModalClose = () => setShopLuggageModal(false);
   const [location, setLocation] = useState(""); // Define and initialize location
+  const { User } = useSelector((state) => state.auth);
 
+  const rowsPerPage = 3;
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // // Slice the data based on the current page and rows per page
+  // const slicedData = shopLuggageData?.luggages?.slice(
+  //   page * rowsPerPage,
+  //   page * rowsPerPage + rowsPerPage
+  // );
   // Custom function to determine if a date is a weekend (Saturday or Sunday)
   const isWeekend = (date) => {
     const day = date.getDay();
@@ -60,15 +89,45 @@ function LuggageBox() {
     return "";
   };
 
+  //Create a function to call the modal to show each goods and details individually
+  const handleButtonClick = async (shopId) => {
+    setShopId(shopId);
+    try {
+      console.log("shopId", shopId)
+      console.log("userId", User._id)
+      await getAllLuggagesbyUserIDandShopID(shopId, User._id)
+        .then((res) => {
+          console.log("res", res);
+          setShopLuggageData(res);
+          handleShopLuggageModalOpen();
+          toast.success("Luggage Data Fetched Successfully");
+        }
+        );
+
+
+    } catch (err) {
+      console.log("err", err);
+      toast.error("Error Fetching Luggage Data");
+    }
+
+  };
+
+  let shopIdToPass = null;
+
   const columns = [
-    {
-      header: "ShopID",
-      accessorKey: "ShopID",
-    },
     {
       header: "ShopName",
       accessorKey: "ShopName",
     },
+    {
+      header: "Status",
+      accessorKey: "Status",
+    },
+    {
+      header: "View",
+      accessorKey: "ViewButton",
+      cellRenderer: (rowData) => rowData.ViewButton,
+    }
   ];
 
   function CircularWithValueLabel() {
@@ -88,18 +147,54 @@ function LuggageBox() {
     return <CircularProgress value={progress} />;
   }
 
-  let mappedData;
+  let mappedData = [];
 
   if (data !== undefined) {
-    mappedData =
-      data?.uniqueShops?.map((shop) => ({
-        ShopID: shop.ShopID,
+    mappedData = data?.uniqueShops?.map((shop) => {
+      const row = {
         ShopName: shop.ShopName,
-      })) || [];
-  } else {
-    mappedData = [];
+        Status: "",
+      };
+
+      // Add a button to the row data
+      row.ViewButton = (
+        <Button
+        sx={{
+          mt: 2,
+          borderRadius: '18px', // Make this consistent with other borderRadius values
+          // width: '20vw',
+          // marginLeft: '3%',
+          color: 'white',
+          // marginTop: '2.7%',
+          // height: '4vh',
+          fontSize: '1.0rem',
+          backgroundColor: '#1769aa', // Move backgroundColor here
+        }}
+        onClick={() => handleButtonClick(shop.ShopID)}
+        >
+          View 
+        </Button>
+        // <button onClick={() => handleButtonClick(shop.ShopID)}>View</button>
+      );
+
+      if (data.shopcollected) {
+        console.log("isComplete", data.shopcollected);
+        row.Status = "Collected From ShopShop 🛍️";
+      } else if (data.securitycollected) {
+        row.Status = "Handed Over To Security 🛡️";
+      } else if (data.customercollected) {
+        row.Status = "Delivery Confirmed 🚚";
+      } else {
+        row.Status = "Pending";
+      }
+
+      return row;
+    }) || [];
   }
 
+  function handleDownload(downloadLink) {
+    window.location.href = downloadLink;
+  }
   return (
     <div
     >
@@ -127,8 +222,8 @@ function LuggageBox() {
             Your Baggages💼
           </Typography>
           <Button
-            sx={{ marginRight: "15%", border: "1px solid black", borderRadius: "8px",marginTop: "2%", marginLeft: "2%" }}
-            // onClick={handleButtonClick}
+            sx={{ marginRight: "15%", border: "1px solid black", borderRadius: "8px", marginTop: "2%", marginLeft: "2%" }}
+          // onClick={handleButtonClick}
           >
             <ArrowBackIcon style={{ marginLeft: "5px" }} />
             Back to Home
@@ -189,6 +284,7 @@ function LuggageBox() {
                 fontSize: '1.0rem',
                 backgroundColor: '#1769aa', // Move backgroundColor here
               }}
+              onClick={handleCustomerTokenModalOpen}
             >
               View Your Token
             </Button>
@@ -235,6 +331,8 @@ function LuggageBox() {
           </div>
         </Box>
       )}
+
+      {/*Start Of The Modal*/}
       <Modal
         show={deliverymodal}
         onHide={handleDeliveryModalClose}
@@ -286,6 +384,69 @@ function LuggageBox() {
               Deliver Now
             </Button>
           </div>
+        </Modal.Body>
+        <Modal.Footer></Modal.Footer>
+      </Modal>
+      {/*Modal For Customer Token */}
+      <Modal
+        show={customerTokenModal}
+        onHide={handleCustomerTokenModalClose}
+        style={{ marginTop: "8%" }}
+      >
+        <Modal.Header closeButton>Your Token </Modal.Header>
+
+        <Modal.Body style={{ textAlign: 'center' }}>
+          {data
+            ? `Your Token: ${data.customerToken || "N/A"}`
+            : "No Token to be displayed"}
+
+        </Modal.Body>
+      </Modal>
+      {/*Modal To View Luggages in List View  */}
+      <Modal
+        show={shopLuggageModal}
+        onHide={handleShopLuggageModalClose}
+        style={{ marginTop: "8%" }}
+      >
+        <Modal.Header closeButton>View Your Luggages🛍️</Modal.Header>
+        <Modal.Body>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">Shop</TableCell>
+                  <TableCell align="left">Bage No.</TableCell>
+                  <TableCell align="left">Bill</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {shopLuggageData.luggages && shopLuggageData.luggages.length > 0 ? (
+                  shopLuggageData.luggages.map((row) => (
+                    <TableRow
+                      key={row.name}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.ShopName}
+                      </TableCell>
+                      <TableCell align="left">{row.BagNo}</TableCell>
+                      <TableCell align="left"><Button onClick={() => handleDownload(row.Bill)}>Download</Button></TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <p>No luggages to display</p>
+                )}
+              </TableBody>
+            </Table>
+            <TablePagination
+              component="div"
+              count={shopLuggageData?.luggages?.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              rowsPerPageOptions={[]}
+            />
+          </TableContainer>
         </Modal.Body>
         <Modal.Footer></Modal.Footer>
       </Modal>

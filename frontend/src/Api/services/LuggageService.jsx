@@ -7,7 +7,7 @@ export const addLuggage = async (
   BagNo,
   Bill,
   ShopID,
-  ShopName 
+  ShopName
 ) => {
   const shop = {
     ShopID: ShopID,
@@ -56,8 +56,14 @@ export const getAllLuggages = async (email) => {
   return response.data;
 };
 
+//Get All Luggages by Shop ID and user ID 
+export const getAllLuggagesbyUserIDandShopID = async (shopID, userId) => {
+  const response = await apiClient.get(`luggage/getluggagesbyshopIDandUserID/${shopID}/${userId}`);
+  return response.data;
+};
+
 //Get All Luggages by ShopID and Date
-export const getLuggagesByShopIDandDate = async (shopID,date) => {
+export const getLuggagesByShopIDandDate = async (shopID, date) => {
   console.log("shopID", shopID);
   const response = await apiClient.get(`luggage/getluggagesbyshop/${shopID}/${date}`);
   return response.data;
