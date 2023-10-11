@@ -31,7 +31,7 @@ function ViewLuggageTable() {
   const { data, isLoading, error, isError } = useQuery({
     queryFn: () => getAllLuggages(customeremail),
   });
-console.log("data",data)
+// console.log("data",data)
   const handleChange = (event) => {
     const newLocation = event.target.value
     setLocation(newLocation);

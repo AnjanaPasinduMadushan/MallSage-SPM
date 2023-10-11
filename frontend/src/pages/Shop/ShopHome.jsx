@@ -12,6 +12,9 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 // import LocalParkingIcon from '@mui/icons-material/LocalParking';
 // import InterestsIcon from '@mui/icons-material/Interests';
 import { useNavigate } from "react-router-dom";
+import ViewTodayLuggages from "../../components/Table/ViewTodayLuggages";
+import PieChart from "../../components/Charts/PieChart";
+import { Typography } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -31,45 +34,25 @@ export const ShopHome = () => {
 
   const navigate = useNavigate();
 
-  //Testing api call(line no 8 - 25)
-  const userProfile = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/user/profile", {
-        withCredentials: true,
-      })
-
-      const data = res.data;
-      console.log(data);
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  useEffect(() => {
-    userProfile();
-  }, [])
 
   return (
     <>
-      {/* <AdminHeader /> */}
-      <Box m={15} sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Item  onClick={() => navigate('/addluggage')}>Purchases Delivery<ShoppingBagIcon /></Item>
-          </Grid>
-          {/* <Grid item xs={6}>
-            <Item onClick={() => navigate('/showAllLocations')}>Resting Location Tracking System<InterestsIcon /></Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>Car Parking Reservation System<LocalParkingIcon /></Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>Promotional Bloging System<BookIcon /></Item>
-          </Grid> */}
-        </Grid>
-      </Box>
-
+    <Typography sx={{color:"black", marginTop:"6%", marginLeft:"6%", fontSize:"30px"}}>
+      Ongoing Luggages
+    </Typography>
+    <div
+    style ={{
+      marginTop: '3%',
+      marginLeft: '13%',
+      display: 'flex',
+    }}
+    >
+       <ViewTodayLuggages/>
+       <>  <PieChart/></>
+       
+    </div>
     </>
+    
+
   )
 }
