@@ -91,8 +91,44 @@ const luggagetrackingSchema = new Schema({
     required: false,
   },
 
+  ExitPoint: {
+    type: String,
+    required: false,
+  },
+
+  RequestedDeliveryTime: {
+    type: String,
+    required: false,
+  },
+
+  RequestedDeliveryDate: {
+    type: Date,
+    required: false,
+  },
+
+  AssignedBaggageEmployeeID: {
+    type: String,
+    required: false,
+  },
+
+  AssignedBaggageEmployeeName: {
+    type: String,
+    required: false,
+  },
+
+  AssignedBaggageEmployeeEmail: {
+    type: String,
+    required: false,
+  },
+
   CompletedDate: {
     type: Date,
+    required: false,
+  },
+
+  isDeliveryRequested: {
+    type: Boolean,
+    default: false,
     required: false,
   },
 

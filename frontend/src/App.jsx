@@ -24,6 +24,7 @@ import BaggageEmployeeHome from "./pages/home/baggage-employee-home";
 import MiniDrawer from "./components/ShopDrawer/shopDrawer";
 import VerifyToken from "./pages/Shop/VerifyToken";
 import ShopLuggageHistory from "./pages/Shop/ShopLuggageHistory";
+import ForgotLuggages from "./pages/Luggage/ForgotLuggages";
 
 function App() {
   //Use Selector to getv logged role
@@ -51,6 +52,7 @@ function App() {
         <Route path="/addEmployee" element={<AddEmployee />} />
         <Route path="/addShop" element={<AddShop />} />
         <Route path="/addBaggageemployee" element={<AddBaggageEmployee />} />
+        <Route path="/forgotluggages" element={<ForgotLuggages />} />
         <Route path="/shopHome" element={<ShopHome />} />
         {isLoggedrole === "customer" && <Route path="/" element={<Home />} />}
         {isLoggedrole === "shop" && (

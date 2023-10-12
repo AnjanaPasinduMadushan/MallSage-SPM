@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { RequestTodayGoodsDelivery, getAllLuggages, getAllLuggagesbyUserIDandShopID } from "../../Api/services/LuggageService";
+import { RequestTodayGoodsDelivery, getAllForgottenLuggages, getAllForgottenLuggagesbyUserIDandShopID, getAllLuggages, getAllLuggagesbyUserIDandShopID } from "../../Api/services/LuggageService";
 import Calendar from "react-calendar";
 import { useQuery } from "react-query";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -21,7 +21,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
-import { Modal, Table, ToastContainer } from "react-bootstrap";
+import { Modal, Table } from "react-bootstrap";
 import "react-calendar/dist/Calendar.css";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -30,11 +30,11 @@ import { MobileTimePicker } from "@mui/x-date-pickers";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function LuggageBox() {
+function ForgotLuggages() {
   const customeremail = useSelector((state) => state.auth.User.email);
   const name = useSelector((state) => state.auth.User.name);
   const { data, isLoading, error, isError } = useQuery({
-    queryFn: () => getAllLuggages(customeremail),
+    queryFn: () => getAllForgottenLuggages(customeremail),
   });
   const [page, setPage] = useState(0);
   const [date, setDate] = useState(new Date());
@@ -49,9 +49,9 @@ function LuggageBox() {
   const [shopLuggageData, setShopLuggageData] = useState([]);
   const handleShopLuggageModalOpen = () => setShopLuggageModal(true);
   const handleShopLuggageModalClose = () => setShopLuggageModal(false);
-  const [location, setLocation] = useState(""); // Define and initialize location
-  const { User } = useSelector((state) => state.auth);
+  const [location, setLocation] = useState("");
   const [time, setTime] = useState(dayjs());
+  const { User } = useSelector((state) => state.auth);
 
   const rowsPerPage = 3;
 
@@ -59,36 +59,6 @@ function LuggageBox() {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
-  const handleTimeChange = (newTime) => {
-    if (isTimeValid(newTime)) {
-      setTime(newTime);
-    }
-  };
-
-  const isTimeValid = (selectedTime) => {
-    const minTime = dayjs('8:00 AM', 'h:mm A');
-    const maxTime = dayjs('10:00 PM', 'h:mm A');
-    return (
-      selectedTime.isAfter(minTime) && selectedTime.isBefore(maxTime)
-    );
-  };
-console.log("User", User._id)
-  console.log("location", location)
-  console.log("time", time)
-  const handleDeliverySubmit = async () => {
-    try {
-      const result = await RequestTodayGoodsDelivery(User._id, location, time);
-      console.log("result", result);
-      toast.success("Your Request Is Being Processed");
-      handleDeliveryModalClose();
-    } catch (err) {
-      console.error("Error Sending Request", err);
-      toast.error("Error Sending Request");
-    }
-  }
-  
-  
 
   // // Slice the data based on the current page and rows per page
   // const slicedData = shopLuggageData?.luggages?.slice(
@@ -111,6 +81,20 @@ console.log("User", User._id)
     );
   };
 
+  const handleTimeChange = (newTime) => {
+    if (isTimeValid(newTime)) {
+      setTime(newTime);
+    }
+  };
+
+  const isTimeValid = (selectedTime) => {
+    const minTime = dayjs('8:00 AM', 'h:mm A');
+    const maxTime = dayjs('10:00 PM', 'h:mm A');
+    return (
+      selectedTime.isAfter(minTime) && selectedTime.isBefore(maxTime)
+    );
+  };
+
   // Custom CSS class names for different date types
   const tileClassName = ({ date }) => {
     if (isWeekend(date)) {
@@ -127,7 +111,7 @@ console.log("User", User._id)
     try {
       console.log("shopId", shopId)
       console.log("userId", User._id)
-      await getAllLuggagesbyUserIDandShopID(shopId, User._id)
+      await getAllForgottenLuggagesbyUserIDandShopID(shopId, User._id)
         .then((res) => {
           console.log("res", res);
           setShopLuggageData(res);
@@ -227,10 +211,26 @@ console.log("User", User._id)
   function handleDownload(downloadLink) {
     window.location.href = downloadLink;
   }
+console.log("location", location)
+console.log("time", time)
+  const handleDeliverySubmit = async () => {
+    try {
+      console.log("handleDeliverySubmit called");
+    const res =   await RequestTodayGoodsDelivery(
+        User.id,
+        location,
+        time,
+      ).then((res) => {
+      toast.success("Your Request Has Is Being Processed");
+      handleDeliveryModalClose();
+      });
+    } catch (err) {
+      toast.error("Error Sending Request");
+    }
+  }
   return (
     <div
     >
-      <ToastContainer/>
       {isLoading ? (
         <CircularWithValueLabel />
       ) : (
@@ -252,11 +252,11 @@ console.log("User", User._id)
               fontSize: "30px",
             }}
           >
-            Your Baggages💼
+            Forgot Your Baggages💼?
           </Typography>
           <Button
             sx={{ marginRight: "15%", border: "1px solid black", borderRadius: "8px", marginTop: "2%", marginLeft: "2%" }}
-            onClick={() => { navigate("/") }}
+            onClick={() => navigate("/viewLuggage")}
           >
             <ArrowBackIcon style={{ marginLeft: "5px" }} />
             Back to Home
@@ -302,7 +302,7 @@ console.log("User", User._id)
                   </Box>
                 </div>
               ) : (
-                "No baggage to be delivered"
+                "No baggage available"
               )}
             </Typography>
             <Button
@@ -319,7 +319,7 @@ console.log("User", User._id)
               }}
               onClick={handleCustomerTokenModalOpen}
             >
-              View Your Token
+              View Your Customer ID
             </Button>
             <Button
               sx={{
@@ -336,24 +336,6 @@ console.log("User", User._id)
               onClick={handleDeliveryModalOpen}
             >
               Deliver Baggages
-            </Button>
-            <Button
-              sx={{
-                mt: 2,
-                borderRadius: '18px', // Make this consistent with other borderRadius values
-                width: '20vw',
-                marginLeft: '3%',
-                color: 'white',
-                marginTop: '2.7%',
-                height: '4vh',
-                fontSize: '1.0rem',
-                backgroundColor: '#1769aa', // Move backgroundColor here
-              }}
-              onClick={() => {
-                navigate("/forgotluggages");
-              }}
-            >
-              Forgot Your Baggage?
             </Button>
           </div>
           <div
@@ -398,35 +380,35 @@ console.log("User", User._id)
           >
             Select Delivery Time
           </InputLabel>
-
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <MobileTimePicker
-              value={time}
-              onChange={handleTimeChange}
-              renderInput={(params) => <TextField {...params} />}
-              ampm={true}
-              openTo="hours"
-              views={['hours', 'minutes', 'ampm']}
-              mask="__:__ _M"
-              inputFormat="hh:mm A"
-            />
-          </LocalizationProvider>
-
-
+      
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <MobileTimePicker
+                value={time}
+                onChange={handleTimeChange}
+                renderInput={(params) => <TextField {...params} />}
+                ampm={true}
+                openTo="hours"
+                views={['hours', 'minutes', 'ampm']}
+                mask="__:__ _M"
+                inputFormat="hh:mm A"
+              />
+            </LocalizationProvider>
+            
+   
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            sx={{
-              marginLeft: "15%",
-              borderRadius: "40px",
-              backgroundColor: "#0276aa",
-              color: "black",
-              height: "6vh"
-            }}
-            onClick={handleDeliverySubmit}
-          >
-            Deliver Now
-          </Button>
+        <Button
+              sx={{
+                marginLeft: "15%",
+                borderRadius: "40px",
+                backgroundColor: "#0276aa",
+                color: "white",
+                height: "6vh"
+              }}
+              onClick={handleDeliverySubmit}
+            >
+              Deliver Now
+            </Button>
         </Modal.Footer>
       </Modal>
       {/*Modal For Customer Token */}
@@ -435,12 +417,12 @@ console.log("User", User._id)
         onHide={handleCustomerTokenModalClose}
         style={{ marginTop: "8%" }}
       >
-        <Modal.Header closeButton>Your Token </Modal.Header>
+        <Modal.Header closeButton>Your Customer ID </Modal.Header>
 
         <Modal.Body style={{ textAlign: 'center' }}>
           {data
-            ? `Your Token: ${data.customerToken || "N/A"}`
-            : "No Token to be displayed"}
+            ? `Your ID: ${data.customerid || "N/A"}`
+            : "No ID to be displayed"}
 
         </Modal.Body>
       </Modal>
@@ -496,4 +478,5 @@ console.log("User", User._id)
   );
 }
 
-export default LuggageBox;
+
+export default ForgotLuggages
