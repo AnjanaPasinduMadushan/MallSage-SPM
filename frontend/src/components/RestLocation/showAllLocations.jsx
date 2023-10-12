@@ -9,7 +9,7 @@ const ShowAllLocations = ({ handleOnClick }) => {
 
   useEffect(() => {
     const getLocations = async () => {
-      const res = await axios.get('http://localhost:5000/restingLocation').catch((err) => {
+      const res = await axios.get('http://localhost:5050/restingLocation').catch((err) => {
         console.log(err)
       })
       setLocations(res.data.locations)
@@ -23,7 +23,7 @@ const ShowAllLocations = ({ handleOnClick }) => {
   return (
     <Box mt={3}>
       < Typography variant='h3' align='center' gutterBottom >
-        Customer Rest Zones
+        Resting Zones
       </Typography >
       <Grid container spacing={3}>
         {locations.map((location, key) => (

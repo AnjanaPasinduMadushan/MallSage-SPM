@@ -8,7 +8,7 @@ const checkToken = async (req, res, next) => {
 
   try {
     const cookies = req.headers.cookie;
-
+    
     if (!cookies) {
       console.error("cookie not found")
       return res.status(403).json({ message: "Login first" })

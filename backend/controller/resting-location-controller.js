@@ -1,5 +1,14 @@
 import RestingLocations from "../model/resting-location-model.js";
 import _ from 'lodash';
+import nodemailer from "nodemailer";
+
+const mailTransporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "mallsage34@gmail.com",
+    pass: "jwzaldpwytqqghlj",
+  },
+});
 
 const addLocation = async (req, res) => {
   const { locationName, locationPlaced, locationFeatures, availability } = req.body;
@@ -98,12 +107,14 @@ const updateLocation = async (req, res, next) => {
 
 }
 
-
 const addNoReserved = async (req, res) => {
 
   const id = req.params.id;
   const noReservedObject = req.body.Reserved;
-  console.log(req.body);
+  const userRole = req.body.userRole;
+  const userEmail = req.body.email;
+  const restingLocationName = req.body.locationName;
+  const isGetsIn = req.body.isGetsIn;
   let location;
 
   try {
@@ -119,14 +130,28 @@ const addNoReserved = async (req, res) => {
     }
 
     const firstIndex = noReservedObject[0];
+    const userId = firstIndex.userId;
 
-    if (!_.isNumber(firstIndex.no) && !_.isNaN(firstIndex.no)) {
+    if (!_.isNumber(firstIndex.no)) {
       return res.status(400).json({ message: "Invalid 'no' value" });
+    }
+
+    if (userRole === "customer") {
+      try {
+        const isIdAlreadyThere = location.Reserved.find(reservations => reservations.userId.toString() === userId);
+        if (isIdAlreadyThere) {
+          return res.status(400).json({ message: "You have already reserved a seat in this location" })
+        }
+      } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "Error in finding the userID" })
+      }
     }
 
     const uniqueNo = Math.floor((1000 + Math.random() * 9000));
 
     const newReservation = location.Reserved.create({
+      userId: userId,
       no: firstIndex.no,
       qrCode: uniqueNo,
     });
@@ -135,8 +160,31 @@ const addNoReserved = async (req, res) => {
     if (location.currentNoReserved > location.availability) {
       return res.status(403).json({ message: "Currently, isnt have enough spaces for all of you!!!" })
     }
+
+    if (userRole === "customer") {
+      const emailDetails = {
+        from: "mallsage34@gmail.com",
+        to: userEmail, // Use the customer's email
+        subject: "Holding Space in a Resting Locations",
+        text: `Your reserved No for the ${restingLocationName},  is ${uniqueNo}. Show this no when entering to the ${restingLocationName} `,
+      };
+
+      mailTransporter.sendMail(emailDetails, (err) => {
+        if (err) {
+          console.error("Error sending email:", err);
+        } else {
+          console.log("Email sent successfully!");
+        }
+      });
+    }
+
     location.Reserved.push(newReservation);
-    await location.save();
+    try {
+      await location.save();
+    } catch (saveError) {
+      console.error("Error saving location:", saveError);
+      return res.status(500).json({ message: "Error saving location" });
+    }
 
     return res.status(200).json({ message: "Location Updated successfully", uniqueNo });
   } catch (err) {
@@ -200,11 +248,9 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
     if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no) && body.no != 0) {
       location.Reserved[indexToRemove].no -= body.no;
       location.currentNoReserved -= body.no;
-      console.log('not splice')
     } else {
       location.currentNoReserved -= location.Reserved[indexToRemove].no;
       location.Reserved.splice(indexToRemove, 1);
-      console.log('splice')
     }
 
     console.log(location.currentNoReserved);
@@ -217,6 +263,34 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
   }
 
 }
+
+const DeleteTimeExceededReservations = async (req, res) => {
+
+  try {
+    const currentTime = new Date();
+    const timeThreshold = new Date(currentTime - 20 * 60 * 1000);
+
+    const exceededReservations = await RestingLocations.find({
+      'Reserved.getsInTime': { $lt: timeThreshold },
+      'Reserved.isGetsIn': false
+    });
+    console.log('exceededReservations', exceededReservations)
+    for (const doc of exceededReservations) {
+      const sumOfRemoved = doc.Reserved.filter((reservation) => reservation.getsInTime <= timeThreshold && !reservation.isGetsIn)
+        .reduce((sum, obj) => sum + obj.no, 0);
+      doc.currentNoReserved += sumOfRemoved;
+      doc.Reserved = doc.Reserved.filter((reservation) => reservation.getsInTime > timeThreshold || reservation.isGetsIn)
+      await doc.save();
+    }
+
+  } catch (error) {
+    console.log('something is wrong when deleting Reservations', error)
+    return res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+setInterval(DeleteTimeExceededReservations, 20 * 60 * 1000);
 
 export {
   addLocation,

@@ -25,9 +25,18 @@ const locationSchema = new Schema({
   },
 
   Reserved: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     isGetsIn: {
       type: Boolean,
       default: false
+    },
+    getsInTime: {
+      type: Date,
+      default: new Date()
     },
     no: Number,
     qrCode: Number
@@ -35,6 +44,7 @@ const locationSchema = new Schema({
 
   currentNoReserved: {
     type: Number,
+    default: 0
   }
 
 });
