@@ -15,7 +15,6 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { signOutAction } from '../../Redux/auth/authAction';
 axios.defaults.withCredentials = true;
 
 const pages = ['Admin', 'Add Resting Locations', 'Add_Shops'];

@@ -3,7 +3,7 @@
 import { apiClient } from "../axios/api";
 
 //Create new Blog
-export const  createBlog = async (title, author, content, images) => {
+export const createBlog = async (title, author, content, images) => {
   let formData = new FormData();
   formData.append('title', title);
   formData.append('author', author);
@@ -19,7 +19,7 @@ export const  createBlog = async (title, author, content, images) => {
     credentials: 'include',
   });
 
-  return response.json
+  return { status: response.status, msg: response.statusText }
 }
 
 export const getAllBlogs = async () => {

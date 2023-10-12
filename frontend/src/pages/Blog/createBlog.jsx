@@ -94,30 +94,55 @@ const CreateBlogPost = () => {
     const handleSubmit = async () => {
         console.log("submit pressed");
 
+        var error;
         if (title == '') {
-            toast.error('Title is Required', {
-                position: "top-right",
+            error = 'Title required';
+        } else if (authorName == '') {
+            error = 'Author Name required';
+        } else if (content == '' || content == '<p><br></p>') {
+            error = 'Content cannot be empty';
+        }
+
+        // Validation toast
+        if (error != null) {
+            toast.error(error, {
                 autoClose: 5000,
                 hideProgressBar: false,
-                closeOnClick: true,
+                closeOnClick: false,
                 pauseOnHover: true,
-                draggable: true,
-                theme: "colored",
             });
             return;
         }
 
-        try {
-            const res = await createBlog(title, authorName, content, images);
 
-            if (res) {
-                console.log({ msg: "success", data: res });
+        const toastId = toast.loading("Saving Blog...");
+        const res = await createBlog(title, authorName, content, images);
+
+        if (res.status == 201) {
+            console.log({ msg: "success", data: res });
+            toast.update(toastId, {
+                render: "Blog Created",
+                type: "success",
+                isLoading: false,
+                autoClose: 5000,
+            });
+        } else {
+            console.error({ msg: "error", data: res });
+            var msg;
+            if (res.status == 403) {
+                msg = "Unauthorised! Please Login!"
             } else {
-                console.error({ msg: "error", data: res });
+                msg = res.msg
             }
-        } catch (err) {
-            console.error(err);
+
+            toast.update(toastId, {
+                render: msg,
+                type: "error",
+                isLoading: false,
+                autoClose: 5000,
+            });
         }
+
     }
 
 

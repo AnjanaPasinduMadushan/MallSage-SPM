@@ -47,7 +47,6 @@ const createBlog = async (req, res) => {
 
     // Save the Blog document to the database
     await blog.save();
-
     // Respond with a success message
     return res.status(201).json({ message: "Blog successfully created!" });
   } catch (err) {

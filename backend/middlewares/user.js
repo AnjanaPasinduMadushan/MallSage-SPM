@@ -64,4 +64,20 @@ const checkCustomer = async (req, res, next) => {
 
 }
 
-export { checkToken, checkAdmin, checkCustomer }
+//TODO: Only created, not tested
+const checkShop = async (req, res, next) => {
+
+  try {
+    if (req.roleIs === "shop") {
+      next();
+    } else {
+      return res.status(403).json("unauthorized")
+    }
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json("Error in authorization")
+  }
+
+}
+
+export { checkToken, checkAdmin, checkCustomer, checkShop }

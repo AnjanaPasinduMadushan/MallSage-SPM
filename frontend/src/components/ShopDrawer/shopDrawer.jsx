@@ -25,6 +25,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, Button, Link, Menu, MenuItem, Tooltip } from "@mui/material";
+import { signOutAction } from '../../Redux/auth/authAction';
 
 const drawerWidth = 240;
 
@@ -137,7 +138,7 @@ export default function MiniDrawer() {
     } else if (setting === settings[1]) {
       await dispatch(signOutAction()).then(() => navigate("/signIn"));
     } else {
-      alert("Page is not found");
+      alert("Page is not found");//ttt
     }
   };
 
