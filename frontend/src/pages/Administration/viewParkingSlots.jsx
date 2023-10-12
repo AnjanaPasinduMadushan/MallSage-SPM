@@ -20,7 +20,7 @@ const ViewParkingSlots = () => {
 
   useEffect(() => {
 
-    axios.get('http://localhost:5000/slot/getAll')
+    axios.get('http://localhost:5050/slot/getAll')
       .then((response) => {
         setData(response.data); 
       })

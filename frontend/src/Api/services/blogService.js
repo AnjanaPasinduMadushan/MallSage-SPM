@@ -13,7 +13,7 @@ export const  createBlog = async (title, author, content, images) => {
     formData.append(`image`, image.file);
   });
 
-  const response = await fetch('http://localhost:5000/blog/create', {
+  const response = await fetch('http://localhost:5050/blog/create', {
     method: 'POST',
     body: formData,
     credentials: 'include',

@@ -15,7 +15,7 @@ const AvailableParkingSlots = () => {
     // Apply filters to the data.
     let filtered = [...data];
     if(filters.vehicleType=='any'){
-        axios.get(`http://localhost:5000/slot/getAll`)
+        axios.get(`http://localhost:5050/slot/getAll`)
         .then((response) => {
           setData(response.data);
         })
@@ -23,7 +23,7 @@ const AvailableParkingSlots = () => {
           console.error('Error fetching data:', error);
         });
     }else{
-    axios.get(`http://localhost:5000/slot/getSlot/${filters.vehicleType}`)
+    axios.get(`http://localhost:5050/slot/getSlot/${filters.vehicleType}`)
       .then((response) => {
         setData(response.data);
       })
@@ -38,7 +38,7 @@ const AvailableParkingSlots = () => {
     const { name, value } = event.target;
     setFilters({ ...filters, [name]: value });
     if(filters.vehicleType=='any'){
-        await axios.get(`http://localhost:5000/slot/getAll`)
+        await axios.get(`http://localhost:5050/slot/getAll`)
         .then((response) => {
           setData(response.data);
         })
@@ -46,7 +46,7 @@ const AvailableParkingSlots = () => {
           console.error('Error fetching data:', error);
         });
     }else{
-    await axios.get(`http://localhost:5000/slot/getSlot/${filters.vehicleType}`)
+    await axios.get(`http://localhost:5050/slot/getSlot/${filters.vehicleType}`)
       .then((response) => {
         setData(response.data);
       })

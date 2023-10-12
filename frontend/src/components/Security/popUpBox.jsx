@@ -33,7 +33,7 @@ export default function PopUp({Id , available}) {
     e.preventDefault();
     console.log(input);
     try {
-      const res = await axios.patch(`http://localhost:5000/slot/updateSlot/${Id}`, {
+      const res = await axios.patch(`http://localhost:5050/slot/updateSlot/${Id}`, {
         vehicleNumber: input.vNo
       });
       const data = await res.data;

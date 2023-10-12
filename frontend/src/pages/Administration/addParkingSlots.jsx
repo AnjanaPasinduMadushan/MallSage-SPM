@@ -42,7 +42,7 @@ const AddParkingSlot = () => {
     e.preventDefault();
     console.log(inputs)
     try {
-      const res = await axios.post('http://localhost:5000/slot/add', {
+      const res = await axios.post('http://localhost:5050/slot/add', {
         slotNumber: inputs.number,
         floor: inputs.floor,
         vehicleType: inputs.vehicleType,
