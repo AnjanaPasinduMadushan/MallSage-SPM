@@ -50,15 +50,43 @@ export const updateLuggageCustomer = async (
   return response.data;
 };
 
+// Request Delivery 
+export const RequestTodayGoodsDelivery = async (
+  userid,
+  exitpoint,
+  deliverytime,
+
+) => {
+  const response = await apiClient.patch(`luggage/requestluggagedelivery/${userid}`, {
+    exitpoint: exitpoint,
+    deliverytime: deliverytime,
+  },
+  );
+
+  return response.data;
+};
+
 //Get All Luggages all customer view 
 export const getAllLuggages = async (email) => {
   const response = await apiClient.get(`luggage/getallLuggagescustomer/${email}`);
   return response.data;
 };
 
+//Get All Forgotten Luggages
+export const getAllForgottenLuggages = async (email) => {
+  const response = await apiClient.get(`luggage/getallOlderLuggagescustomer/${email}`);
+  return response.data;
+};
+
 //Get All Luggages by Shop ID and user ID 
 export const getAllLuggagesbyUserIDandShopID = async (shopID, userId) => {
   const response = await apiClient.get(`luggage/getluggagesbyshopIDandUserID/${shopID}/${userId}`);
+  return response.data;
+};
+
+//Get All Forgotten Luggages by Shop ID and user ID 
+export const getAllForgottenLuggagesbyUserIDandShopID = async (shopID, userId) => {
+  const response = await apiClient.get(`luggage/getForgottenluggagesbyshopIDandUserID/${shopID}/${userId}`);
   return response.data;
 };
 

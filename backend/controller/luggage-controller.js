@@ -3,6 +3,7 @@ import _ from "lodash";
 import LuggageDTO from "../dto/LuggageDTO.js";
 import Luggage from "../model/luggage-model.js";
 import User from "../model/user-model.js";
+import BaggageEmployee from "../model/baggageemployee-model.js";
 // Send email using Nodemailer
 import nodemailer from "nodemailer";
 import Shop from "../model/Shop-model.js";
@@ -349,6 +350,38 @@ async function getLuggagesByShopIdandUserID(shopId, userId) {
   }
 }
 
+//Get Luggaged By Shop Id and User Id For Forgotten Password
+async function getForgottenLuggagesByShopIdandUserID(shopId, userId) {
+  try {
+
+    const Customer = await User.findById(userId);
+    console.log("Customer", Customer.email)
+
+    // Get the current date and format it as YYYY-MM-DD
+    const currentDate = new Date();
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7);
+    const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+
+
+    // Find all luggages with the specified ShopID
+    const luggages = await Luggage.find({
+      ShopID: shopId,
+      CustomerEmail: Customer.email,
+      Date: {
+        $gte: sevenDaysAgo.toISOString().split('T')[0],
+        $lt: currentDate.toISOString().split('T')[0],
+      },
+    
+    });
+    return luggages;
+  } catch (error) {
+    console.error('Error fetching luggages:', error);
+    throw error;
+  }
+}
+
+
 //Get all customer luggages for day
 const getallLuggages = async (req, res) => {
   try {
@@ -498,6 +531,75 @@ const gettotalLuggages = async (req, res) => {
   }
 };
 
+//Get total lugagages for all view previous dates
+const gettotalLuggagesForOlderDates = async (req, res) => {
+  try {
+    const email = req.params.email;
+    const currentDate = new Date();
+    const sevenDaysAgo = new Date(currentDate);
+    sevenDaysAgo.setDate(currentDate.getDate() - 7);
+
+    const luggages = await Luggage.find({
+      CustomerEmail: email,
+      Date: {
+        $gte: sevenDaysAgo,
+        $lt: currentDate,
+      },
+    });
+
+    if (!luggages || luggages.length === 0) {
+      return res.status(404).json({
+        message: "No Luggages found for the specified email and date",
+      });
+    }
+
+    // Calculate the total number of bags
+    const totalBags = luggages.reduce(
+      (acc, luggage) => acc + parseInt(luggage.BagNo),
+      0
+    );
+
+    // Create a Set to store unique ShopID and ShopName pairs
+    const uniqueShops = new Set();
+
+    // Initialize variables to store total bill and one customer token
+    let totalBill = 0;
+    let customerid = null;
+    let shopcollected = false;
+    let securitycollected = false;
+    let customercollected = false;
+
+    // Iterate through the luggages to collect unique ShopID and ShopName, calculate total bill, and get one customer token
+    luggages.forEach((luggage) => {
+      const { ShopID, ShopName, Bill, CustomerID, isComplete, isSecurityConfirmed, isCustomerConfirmed } = luggage;
+      uniqueShops.add(JSON.stringify({ ShopID, ShopName }));
+      shopcollected = isComplete;
+      customerid = CustomerID;
+      securitycollected = isSecurityConfirmed;
+      customercollected = isCustomerConfirmed;
+      totalBill += parseFloat(Bill);
+    });
+
+    // Convert the unique ShopID and ShopName pairs back to an array
+    const uniqueShopList = Array.from(uniqueShops).map((pair) =>
+      JSON.parse(pair)
+    );
+
+    res.status(200).json({
+      totalBags,
+      uniqueShops: uniqueShopList,
+      shopcollected,
+      securitycollected,
+      customercollected,
+      totalBill,
+      customerid,
+
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error in getting the Luggages" });
+  }
+};
 const deleteLuggage = async (req, res, next) => {
   const id = req.params.id;
   let luggage;
@@ -554,6 +656,88 @@ async function getLuggageByCustomerEmail(req, res) {
   }
 }
 
+//Update luggage upon customer delivery request
+const RequestLuggageDelivery = async (req, res, next) => {
+  const id = req.params.userid;
+  const exitpoint = req.body.exitpoint;
+  const deliveryTime = req.body.deliverytime;
+
+  let luggage;
+
+  try {
+    // Find the customer by ID
+    const Customer = await User.findById(id);
+
+    // Retrieve all luggages for the customer within the same date
+    const luggages = await Luggage.find({
+      CustomerEmail: Customer.email,
+      Date: {
+        $gte: new Date(new Date().setHours(0, 0, 0)),
+        $lt: new Date(new Date().setHours(23, 59, 59)),
+      },
+    });
+
+    // Fetch the list of available BaggageEmployees
+    const BaggageEmployees = await BaggageEmployee.find();
+
+    // Create an array to store assigned employees
+    const AssignedBaggageEmployees = [];
+
+    // Find the BaggageEmployee with the least assigned luggage
+    let minAssignedLuggageCount = Infinity;
+    let assignedBaggageEmployee;
+
+    for (const employee of BaggageEmployees) {
+      const employeeID = employee.BaggageEmployeeID;
+      const employees = luggages.filter(
+        (luggage) => luggage.AssignedBaggageEmployeeID === employeeID
+      );
+      if (employees.length < minAssignedLuggageCount) {
+        assignedBaggageEmployee = employee;
+        minAssignedLuggageCount = employees.length;
+      }
+    }
+
+    const result = await Luggage.updateMany(
+      {
+        CustomerEmail: Customer.email,
+        Date: {
+          $gte: new Date(new Date().setHours(0, 0, 0)),
+          $lt: new Date(new Date().setHours(23, 59, 59)),
+        },
+      },
+      {
+        $set: {
+          RequestedDeliveryTime: deliveryTime,
+          RequestedDeliveryDate: new Date(),
+          ExitPoint: exitpoint,
+          AssignedBaggageEmployeeID: assignedBaggageEmployee.BaggageEmployeeID,
+          AssignedBaggageEmployeeName: assignedBaggageEmployee.Name,
+          AssignedBaggageEmployeeEmail: assignedBaggageEmployee.Email,
+          isDeliveryRequested: true,
+          TimeDuration: "45", // You may want to validate and set the correct data type
+        },
+      },
+      { new: true }
+    );
+    console.log("result", result);
+
+    if (result.nModified === 0) {
+      return res.status(404).json({
+        message: "No luggage was updated",
+      });
+    }
+
+    return res.status(200).json({ message: "Luggage updated successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "An error occurred while updating luggage",
+    });
+  }
+};
+
+
 // Define the task to run at 11:50 PM every day
 cron.schedule('50 23 * * *', async () => {
   try {
@@ -587,8 +771,11 @@ export {
   getLuggages,
   gettotalLuggages,
   deleteLuggage,
+  getForgottenLuggagesByShopIdandUserID,
   getallLuggages,
   validateShopToken,
+  RequestLuggageDelivery,
+  gettotalLuggagesForOlderDates,
   getLuggagesByShopId,
   updateLuggage,
   getLuggageByCustomerEmail,
