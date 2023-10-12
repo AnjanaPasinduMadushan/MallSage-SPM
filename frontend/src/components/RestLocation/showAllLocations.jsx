@@ -9,7 +9,7 @@ const ShowAllLocations = ({ handleOnClick }) => {
 
   useEffect(() => {
     const getLocations = async () => {
-      const res = await axios.get('http://localhost:5000/restingLocation').catch((err) => {
+      const res = await axios.get('http://localhost:5050/restingLocation').catch((err) => {
         console.log(err)
       })
       setLocations(res.data.locations)
