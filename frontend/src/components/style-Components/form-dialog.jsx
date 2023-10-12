@@ -21,7 +21,7 @@ export default function FormDialog({ locationName, locationId, availability, onR
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState({
     no: 0,
-    userId: loggeduserId
+    userId: loggeduserId,
   });
   let intoNumber;
   const handleClickOpen = () => {
@@ -43,7 +43,7 @@ export default function FormDialog({ locationName, locationId, availability, onR
     intoNumber = parseInt(input.no)
     console.log(intoNumber);
     try {
-      const res = await axios.patch(`http://localhost:5000/restingLocation/addReserved/${locationId}`, {
+      const res = await axios.patch(`http://localhost:5050/restingLocation/addReserved/${locationId}`, {
         Reserved: [{ no: intoNumber, userId: input.userId }],
         userRole: loggeduserRole,
         email: loggedUserMail,

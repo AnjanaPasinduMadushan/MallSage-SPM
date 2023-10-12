@@ -45,6 +45,16 @@ const locationSchema = new Schema({
   currentNoReserved: {
     type: Number,
     default: 0
+  },
+
+  avgTime: {
+    type: Number,
+    default: 0
+  },
+
+  count: {
+    type: Number,
+    default: 0
   }
 
 });

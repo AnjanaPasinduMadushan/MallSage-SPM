@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { useState, useEffect } from 'react';
+import LocationFeatures from '../../../components/Table/RestingLocationFeatures';
 import axios from 'axios';
 
 const RestingLocationReport = () => {
@@ -32,22 +33,25 @@ const RestingLocationReport = () => {
   const centerY = chartHeight / 2;
 
   return (
-    <PieChart width={chartWidth} height={chartHeight}>
-      <Pie
-        dataKey="value"
-        isAnimationActive={false}
-        data={chartData}
-        cx={centerX}
-        cy={centerY}
-        outerRadius={80}
-        label={({ name, value }) => `${name}: ${value} %`}
-      >
-        {chartData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.color} />
-        ))}
-      </Pie>
-      <Tooltip />
-    </PieChart>
+    <>
+      <PieChart width={chartWidth} height={chartHeight}>
+        <Pie
+          dataKey="value"
+          isAnimationActive={false}
+          data={chartData}
+          cx={centerX}
+          cy={centerY}
+          outerRadius={80}
+          label={({ name, value }) => `${name}: ${value} %`}
+        >
+          {chartData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+      <LocationFeatures />
+    </>
   );
 }
 

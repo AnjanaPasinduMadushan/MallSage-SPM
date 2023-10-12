@@ -35,7 +35,7 @@ const ViewLocation = () => {
   useEffect(() => {
     const getLocation = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/restingLocation/${id}`)
+        const res = await axios.get(`http://localhost:5050/restingLocation/${id}`)
         setLocation(res.data.location);
       } catch (e) {
         console.log(e)
@@ -75,7 +75,7 @@ const ViewLocation = () => {
     e.preventDefault();
     setIsChanged(false);
     try {
-      const res = await axios.patch(`http://localhost:5000/restingLocation/${id}`, {
+      const res = await axios.patch(`http://localhost:5050/restingLocation/${id}`, {
         locationName: location?.locationName,
         locationPlaced: location?.locationPlaced,
         locationFeatures: location?.locationFeatures,

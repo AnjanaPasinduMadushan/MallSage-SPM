@@ -110,11 +110,9 @@ const updateLocation = async (req, res, next) => {
 const addNoReserved = async (req, res) => {
 
   const id = req.params.id;
-  const noReservedObject = req.body.Reserved;
-  const userRole = req.body.userRole;
-  const userEmail = req.body.email;
-  const restingLocationName = req.body.locationName;
-  const isGetsIn = req.body.isGetsIn;
+  const { Reserved, userRole, email, locationName } = req.body;
+  console.log(email)
+  let isGetsIn;
   let location;
 
   try {
@@ -124,12 +122,12 @@ const addNoReserved = async (req, res) => {
       return res.status(404).json({ message: "Unable to update Location details or location is not added" })
     }
 
-    // Validate 'noReservedObject' and 'no' property
-    if (!_.isArray(noReservedObject) && noReservedObject.length === 0) {
+    // Validate 'Reserved' and 'no' property
+    if (!_.isArray(Reserved) && Reserved.length === 0) {
       return res.status(400).json({ message: "Invalid 'Reserved' data" });
     }
 
-    const firstIndex = noReservedObject[0];
+    const firstIndex = Reserved[0];
     const userId = firstIndex.userId;
 
     if (!_.isNumber(firstIndex.no)) {
@@ -146,6 +144,8 @@ const addNoReserved = async (req, res) => {
         console.log(e)
         return res.status(500).json({ message: "Error in finding the userID" })
       }
+    } else {
+      isGetsIn = true;
     }
 
     const uniqueNo = Math.floor((1000 + Math.random() * 9000));
@@ -154,6 +154,7 @@ const addNoReserved = async (req, res) => {
       userId: userId,
       no: firstIndex.no,
       qrCode: uniqueNo,
+      isGetsIn: isGetsIn
     });
 
     location.currentNoReserved += firstIndex.no;
@@ -161,12 +162,14 @@ const addNoReserved = async (req, res) => {
       return res.status(403).json({ message: "Currently, isnt have enough spaces for all of you!!!" })
     }
 
+    location.count += 1;
+
     if (userRole === "customer") {
       const emailDetails = {
         from: "mallsage34@gmail.com",
-        to: userEmail, // Use the customer's email
+        to: email, // Use the customer's email
         subject: "Holding Space in a Resting Locations",
-        text: `Your reserved No for the ${restingLocationName},  is ${uniqueNo}. Show this no when entering to the ${restingLocationName} `,
+        text: `Your reserved No for the ${locationName},  is ${uniqueNo}. Show this no when entering to the ${locationName} `,
       };
 
       mailTransporter.sendMail(emailDetails, (err) => {
@@ -245,15 +248,29 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
       return res.status(404).json({ message: "QR code not found in reservations" });
     }
 
+    console.log('indexToRemove ', indexToRemove)
+
     if (body && body.no && _.isNumber(body.no) && !_.isNaN(body.no) && body.no != 0) {
       location.Reserved[indexToRemove].no -= body.no;
       location.currentNoReserved -= body.no;
     } else {
       location.currentNoReserved -= location.Reserved[indexToRemove].no;
+
+
+      const removedReservation = location.Reserved[indexToRemove];
+      console.log(removedReservation)
+
+      if (removedReservation) {
+        const entryTime = removedReservation.getsInTime;
+        const exitTime = new Date();
+        const stayingTimeMilliseconds = exitTime - entryTime;
+        const stayingTimeMinutes = stayingTimeMilliseconds / (1000 * 60);
+
+        location.avgTime = (location.avgTime * location.count + stayingTimeMinutes) / (location.count + 1);
+        location.count += 1;
+      }
       location.Reserved.splice(indexToRemove, 1);
     }
-
-    console.log(location.currentNoReserved);
     await location.save();
 
     return res.status(200).json({ message: "Location Updated successfully" })
@@ -274,6 +291,11 @@ const DeleteTimeExceededReservations = async (req, res) => {
       'Reserved.getsInTime': { $lt: timeThreshold },
       'Reserved.isGetsIn': false
     });
+
+    if (exceededReservations.length === 0) {
+      console.log('No exceeded reservations found');
+      return res.status(200).json({ message: "No exceeded reservations found" });
+    }
     console.log('exceededReservations', exceededReservations)
     for (const doc of exceededReservations) {
       const sumOfRemoved = doc.Reserved.filter((reservation) => reservation.getsInTime <= timeThreshold && !reservation.isGetsIn)
