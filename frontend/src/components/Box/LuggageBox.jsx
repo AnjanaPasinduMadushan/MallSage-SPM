@@ -40,7 +40,6 @@ function LuggageBox() {
   const [date, setDate] = useState(new Date());
   const [deliverymodal, setShowDeliveryModal] = useState(false);
   const handleDeliveryModalOpen = () => setShowDeliveryModal(true);
-  const handleDeliveryModalClose = () => setShowDeliveryModal(false);
   const [customerTokenModal, setShowCustomerTokenModal] = useState(false);
   const handleCustomerTokenModalOpen = () => setShowCustomerTokenModal(true);
   const handleCustomerTokenModalClose = () => setShowCustomerTokenModal(false);
@@ -55,16 +54,16 @@ function LuggageBox() {
 
   const rowsPerPage = 3;
 
+  const handleDeliveryModalClose = () => {
+    setTime(null);
+    setLocation(null);
+    setShowDeliveryModal(false);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleTimeChange = (newTime) => {
-    if (isTimeValid(newTime)) {
-      setTime(newTime);
-    }
-  };
 
   const isTimeValid = (selectedTime) => {
     const minTime = dayjs('8:00 AM', 'h:mm A');
@@ -73,22 +72,68 @@ function LuggageBox() {
       selectedTime.isAfter(minTime) && selectedTime.isBefore(maxTime)
     );
   };
-console.log("User", User._id)
-  console.log("location", location)
+
+  const isTotalBagsValid = (totalBags, selectedTime) => {
+    if (totalBags > 20) {
+      const oneHourFromNow = dayjs().add(1, 'hour');
+      return selectedTime.isSame(oneHourFromNow, 'minute');
+    } else {
+      const fortyFiveMinutesPrior = dayjs().subtract(45, 'minutes');
+      return selectedTime.isSame(fortyFiveMinutesPrior, 'minute');
+    }
+  };
   console.log("time", time)
+  const handleTimeChange = (newTime) => {
+    setTime(newTime);
+    if (data && data.totalBags !== undefined) {
+      if (isTimeValid(newTime) && isTotalBagsValid(data.totalBags, newTime)) {
+        // console.log("newTime2", newTime);
+        setTime(newTime);
+      } else {
+        if (!isTimeValid(newTime)) {
+          // console.log("newTime3", newTime);
+          toast.error('Invalid time. Time should be between 8:00 AM and 10:00 PM.');
+        } else {
+          // console.log("newTime4", newTime);
+          toast.error('Your Time should be betweeen 45 - 60 minutes prior.');
+        }
+      }
+    } else {
+      // Handle the case where data or data.totalBags is undefined
+      console.log("Data or data.totalBags is undefined.");
+    }
+
+  }
+  // console.log("User", User._id)
+  //   console.log("location", location)
+  //   console.log("time", time)
   const handleDeliverySubmit = async () => {
+
+    // Perform the validation checks here
+    if (!location) {
+      toast.error('Invalid location. Please select a valid location.');
+      return; // Stop the function execution if location is invalid
+    }
+
+    if (!isTimeValid(time)) {
+      toast.error('Invalid time. Time should be between 8:00 AM and 10:00 PM.');
+      return; // Stop the function execution if time is invalid
+    }
+
     try {
       const result = await RequestTodayGoodsDelivery(User._id, location, time);
       console.log("result", result);
       toast.success("Your Request Is Being Processed");
+      setTime("");
+      setLocation("");
       handleDeliveryModalClose();
     } catch (err) {
       console.error("Error Sending Request", err);
       toast.error("Error Sending Request");
     }
   }
-  
-  
+
+
 
   // // Slice the data based on the current page and rows per page
   // const slicedData = shopLuggageData?.luggages?.slice(
@@ -230,7 +275,7 @@ console.log("User", User._id)
   return (
     <div
     >
-      <ToastContainer/>
+      <ToastContainer />
       {isLoading ? (
         <CircularWithValueLabel />
       ) : (
@@ -404,12 +449,8 @@ console.log("User", User._id)
               value={time}
               onChange={handleTimeChange}
               renderInput={(params) => <TextField {...params} />}
-              ampm={true}
-              openTo="hours"
-              views={['hours', 'minutes', 'ampm']}
-              mask="__:__ _M"
-              inputFormat="hh:mm A"
             />
+
           </LocalizationProvider>
 
 

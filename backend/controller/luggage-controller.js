@@ -372,7 +372,7 @@ async function getForgottenLuggagesByShopIdandUserID(shopId, userId) {
         $gte: sevenDaysAgo.toISOString().split('T')[0],
         $lt: currentDate.toISOString().split('T')[0],
       },
-    
+
     });
     return luggages;
   } catch (error) {
@@ -737,6 +737,90 @@ const RequestLuggageDelivery = async (req, res, next) => {
   }
 };
 
+//Update luggage upon customer delivery request
+const RequestForgottenLuggageDelivery = async (req, res, next) => {
+  const id = req.params.userid;
+  const exitpoint = req.body.exitpoint;
+  const deliveryTime = req.body.deliverytime;
+
+  let luggage;
+
+  try {
+    // Find the customer by ID
+    const Customer = await User.findById(id);
+
+    const currentDate = new Date();
+    currentDate.setUTCHours(0, 0, 0, 0); // Set the time portion to midnight (00:00:00.000)
+
+    // Retrieve all luggages for the customer within the same date
+    const luggages = await Luggage.find({
+      CustomerEmail: Customer.email,
+      Date: {
+        $lt: currentDate,
+      },
+    });
+
+
+    // Fetch the list of available BaggageEmployees
+    const BaggageEmployees = await BaggageEmployee.find();
+
+    // Create an array to store assigned employees
+    const AssignedBaggageEmployees = [];
+
+    // Find the BaggageEmployee with the least assigned luggage
+    let minAssignedLuggageCount = Infinity;
+    let assignedBaggageEmployee;
+
+    for (const employee of BaggageEmployees) {
+      const employeeID = employee.BaggageEmployeeID;
+      const employees = luggages.filter(
+        (luggage) => luggage.AssignedBaggageEmployeeID === employeeID
+      );
+      if (employees.length < minAssignedLuggageCount) {
+        assignedBaggageEmployee = employee;
+        minAssignedLuggageCount = employees.length;
+      }
+    }
+
+    const result = await Luggage.updateMany(
+      {
+        CustomerEmail: Customer.email,
+        Date: {
+          $gte: new Date(new Date().setHours(0, 0, 0)),
+          $lt: new Date(new Date().setHours(23, 59, 59)),
+        },
+      },
+      {
+        $set: {
+          RequestedDeliveryTime: deliveryTime,
+          RequestedDeliveryDate: new Date(),
+          ExitPoint: exitpoint,
+          AssignedBaggageEmployeeID: assignedBaggageEmployee.BaggageEmployeeID,
+          AssignedBaggageEmployeeName: assignedBaggageEmployee.Name,
+          AssignedBaggageEmployeeEmail: assignedBaggageEmployee.Email,
+          isDeliveryRequested: true,
+          TimeDuration: "45", // You may want to validate and set the correct data type
+        },
+      },
+      { new: true }
+    );
+    console.log("result", result);
+
+    if (result.nModified === 0) {
+      return res.status(404).json({
+        message: "No luggage was updated",
+      });
+    }
+
+    return res.status(200).json({ message: "Luggage updated successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "An error occurred while updating luggage",
+    });
+  }
+};
+
 
 // Define the task to run at 11:50 PM every day
 cron.schedule('50 23 * * *', async () => {
@@ -771,6 +855,7 @@ export {
   getLuggages,
   gettotalLuggages,
   deleteLuggage,
+  RequestForgottenLuggageDelivery,
   getForgottenLuggagesByShopIdandUserID,
   getallLuggages,
   validateShopToken,
