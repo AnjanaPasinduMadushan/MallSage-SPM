@@ -34,6 +34,10 @@ const locationSchema = new Schema({
       type: Boolean,
       default: false
     },
+    getsInTime: {
+      type: Date,
+      default: new Date()
+    },
     no: Number,
     qrCode: Number
   }],

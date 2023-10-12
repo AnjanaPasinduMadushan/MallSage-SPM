@@ -102,13 +102,12 @@ const login = async (req, res) => {
 
     //Create and setting a cookie with the user's ID and token
     const token = createToken(loggedUser._id, loggedUser.role)
-    const cook = res.cookie(`User:${String(loggedUser._id)}`, token, {
+    res.cookie(String(loggedUser._id), token, {
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60),
       httpOnly: true,//if this option isn't here cookie will be visible to the frontend
       sameSite: "lax"
     })
-    console.log(cook);
 
     //we send this msg along with the token and user details
     return res.status(200).json({ message: "Successfully logged in", User: loggedUser, token })

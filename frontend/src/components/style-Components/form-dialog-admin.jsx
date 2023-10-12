@@ -14,7 +14,8 @@ export default function FormDialogAdmin({ locationId, availability, currentNoRes
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState({
     no: 0,
-    qrCode: 0
+    qrCode: 0,
+    isGetsIn: true
   });
   let intoNumber;
   let intoQrNumber;
@@ -38,7 +39,8 @@ export default function FormDialogAdmin({ locationId, availability, currentNoRes
     try {
       const res = await axios.patch(`http://localhost:5000/restingLocation/decreaseReserved/${locationId}`, {
         no: intoNumber,
-        qrCode: intoQrNumber
+        qrCode: intoQrNumber,
+        isGetsIn: input.isGetsIn
       }
       );
       const data = await res.data;
