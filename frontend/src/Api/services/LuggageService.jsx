@@ -127,6 +127,7 @@ export const validateToken = async (token) => {
 
 //Get Luggages by userId and Date
 export const getLuggagesByuserIdandDate = async (userId, date) => {
+  console.log("userId", userId);
   const response = await apiClient.get(`luggage/getluggagesbyshop/${userId}/${date}`);
   return response.data;
 };

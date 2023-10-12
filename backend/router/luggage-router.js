@@ -1,23 +1,27 @@
-import { addLuggage, getOneLuggage, getLuggages, deleteLuggage,getForgottenLuggagesByShopIdandUserID, gettotalLuggagesForOlderDates, getLuggagesByShopId, updateLuggage, getLuggagesByShopAndDate, getallLuggages, validateShopToken, getLuggageByCustomerEmail, gettotalLuggages, getLuggagesByShopIdandUserID, RequestLuggageDelivery, RequestForgottenLuggageDelivery } from '../controller/luggage-controller.js';
+import { addLuggage, getOneLuggage, getLuggages, deleteLuggage,getForgottenLuggagesByShopIdandUserID, gettotalLuggagesForOlderDates, getLuggagesByShopId, updateLuggage, getLuggagesByShopAndDate, getallLuggages, validateShopToken, getLuggageByCustomerEmail, gettotalLuggages, getLuggagesByShopIdandUserID, RequestLuggageDelivery, RequestForgottenLuggageDelivery, BaggageEmployeeLuggagesHistory, getLuggagesByEmployeeAndSecurity } from '../controller/luggage-controller.js';
 import { checkToken, checkAdmin } from '../middlewares/user.js';
 import express from 'express';
 
 const luggage_router = express.Router();
 
 luggage_router.get("/getallLuggagescustomer/:email", gettotalLuggages);
+luggage_router.get("/getLuggagesByBaggage/:id", getLuggagesByEmployeeAndSecurity);
 luggage_router.get("/getallOlderLuggagescustomer/:email", gettotalLuggagesForOlderDates);
 luggage_router.get("/getLuggagebyUsershop/:email", getallLuggages);
 luggage_router.post("/addLuggage", addLuggage);
 luggage_router.get("/", getLuggages);
+luggage_router.get("/getBaggageEmployeeLuggageHistory/:id", BaggageEmployeeLuggagesHistory);
 luggage_router.get("/:luggageId", getOneLuggage);
 luggage_router.patch("/updateLuggage/:id", updateLuggage);
 luggage_router.patch("/validateShopToken/:shopToken", validateShopToken);
 luggage_router.patch("/requestluggagedelivery/:userid", RequestLuggageDelivery);
 luggage_router.patch("/requestforgottenluggagedelivery/:userid", RequestForgottenLuggageDelivery);
-luggage_router.get("/getluggagesbyshop/:shop/:date", async (req, res) => {
+luggage_router.get("/getluggagesbyshop/:userid/:date", async (req, res) => {
   try {
     const { userid, date } = req.params;
     const luggages = await getLuggagesByShopAndDate(userid, date);
+    console.log("luggages", luggages);
+    console.log("date", date);
     console.log(luggages)
     res.status(200).json({ luggages });
   } catch (error) {
