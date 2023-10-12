@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import ShowAllLocations from "../../components/RestLocation/showAllLocations"
+import { Button } from "@mui/material";
 
 const ShowRestLocations = () => {
 
@@ -9,8 +10,15 @@ const ShowRestLocations = () => {
     navigate(`/RestLocation/${locationId}`)
   }
 
+  const handleGenerateReport = () => {
+    navigate('/resting-report');
+  };
+
   return (
-    <><ShowAllLocations handleOnClick={navigatePage} /></>
+    <>
+      <Button onClick={handleGenerateReport}> Genarate Report</Button>
+      <ShowAllLocations handleOnClick={navigatePage} />
+    </>
   )
 }
 
