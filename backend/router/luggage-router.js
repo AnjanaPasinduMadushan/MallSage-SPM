@@ -1,4 +1,4 @@
-import { addLuggage, getOneLuggage, getLuggages, deleteLuggage,getForgottenLuggagesByShopIdandUserID, gettotalLuggagesForOlderDates, getLuggagesByShopId, updateLuggage, getLuggagesByShopAndDate, getallLuggages, validateShopToken, getLuggageByCustomerEmail, gettotalLuggages, getLuggagesByShopIdandUserID, RequestLuggageDelivery } from '../controller/luggage-controller.js';
+import { addLuggage, getOneLuggage, getLuggages, deleteLuggage,getForgottenLuggagesByShopIdandUserID, gettotalLuggagesForOlderDates, getLuggagesByShopId, updateLuggage, getLuggagesByShopAndDate, getallLuggages, validateShopToken, getLuggageByCustomerEmail, gettotalLuggages, getLuggagesByShopIdandUserID, RequestLuggageDelivery, RequestForgottenLuggageDelivery } from '../controller/luggage-controller.js';
 import { checkToken, checkAdmin } from '../middlewares/user.js';
 import express from 'express';
 
@@ -13,6 +13,7 @@ luggage_router.get("/:luggageId", getOneLuggage);
 luggage_router.patch("/updateLuggage/:id", updateLuggage);
 luggage_router.patch("/validateShopToken/:shopToken", validateShopToken);
 luggage_router.patch("/requestluggagedelivery/:userid", RequestLuggageDelivery);
+luggage_router.patch("/requestforgottenluggagedelivery/:userid", RequestForgottenLuggageDelivery);
 luggage_router.get("/getluggagesbyshop/:shop/:date", async (req, res) => {
   try {
     const { userid, date } = req.params;

@@ -62,6 +62,20 @@ export const RequestTodayGoodsDelivery = async (
     deliverytime: deliverytime,
   },
   );
+};
+
+  // Request Forgotten Delivery 
+export const RequestForgotGoodsDelivery = async (
+  userid,
+  exitpoint,
+  deliverytime,
+
+) => {
+  const response = await apiClient.patch(`luggage/requestforgottenluggagedelivery/${userid}`, {
+    exitpoint: exitpoint,
+    deliverytime: deliverytime,
+  },
+  );
 
   return response.data;
 };
