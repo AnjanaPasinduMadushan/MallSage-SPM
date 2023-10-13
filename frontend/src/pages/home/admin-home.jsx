@@ -64,7 +64,7 @@ export const AdminHome = () => {
             <Item>Car Parking Reservation System<LocalParkingIcon /></Item>
           </Grid>
           <Grid item xs={6}>
-            <Item>Promotional Bloging System<BookIcon /></Item>
+            <Item onClick={() => navigate('/securityHome')}>Security Luggage Collection<BookIcon /></Item>
           </Grid>
         </Grid>
       </Box>
