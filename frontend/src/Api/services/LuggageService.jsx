@@ -131,3 +131,10 @@ export const getLuggagesByuserIdandDate = async (userId, date) => {
   const response = await apiClient.get(`luggage/getluggagesbyshop/${userId}/${date}`);
   return response.data;
 };
+
+//Get Ongoing luggages for baggager
+export const getLuggagesByBaggage = async (userId) => {
+  const response = await apiClient.get(`luggage/getLuggagesByBaggage/${userId}`);
+  return response.data;
+};
+
