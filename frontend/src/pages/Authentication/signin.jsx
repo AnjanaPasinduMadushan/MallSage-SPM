@@ -121,11 +121,11 @@ export default function SignIn() {
         navigate("/shopHome", { replace: true });
         //          window.location.reload();
 
-      } else if( isLoggedrole === "securityofficer") {
+      } else if (isLoggedrole === "securityofficer") {
         navigate("/securityHome", { replace: true });
         //          window.location.reload();
-      }else if (isLoggedrole?.role === "customer") {
-        console.log("isLoggedrole",isLoggedrole);
+      } else if (isLoggedrole?.role === "customer") {
+        console.log("isLoggedrole", isLoggedrole);
 
         navigate('/')
       }
@@ -146,7 +146,7 @@ export default function SignIn() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: 'url(https://images.app.goo.gl/B6m39LC8eVTtJPwd9)',
+            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
