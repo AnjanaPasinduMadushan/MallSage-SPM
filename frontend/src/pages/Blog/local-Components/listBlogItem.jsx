@@ -5,14 +5,20 @@ import PropTypes from "prop-types";
 import { formatDate } from "../../../util/formatDate";
 
 
-const ListBlogItem = ({ blog }) => {
+const ListBlogItem = ({ blog, onDeleteClick }) => {
   // prop validations
   ListBlogItem.propTypes = {
     blog: PropTypes.shape({
+      _id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       createdDate: PropTypes.string.isRequired,
       author: PropTypes.string.isRequired,
+      images: PropTypes.shape([{
+        name: PropTypes.string,
+        url: PropTypes.string,
+      }]),
     }).isRequired,
+    onDeleteClick: PropTypes.func,
   };
 
   return (
@@ -26,26 +32,32 @@ const ListBlogItem = ({ blog }) => {
         }}
       >
         <Card.Body className="p-0 d-flex">
-          <div
-            className="rounded-start-5"
-            style={{
-              height: "100%",
-              width: "40%",
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <img
-              src={"https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?cs=srgb&dl=pexels-ash-376464.jpg&fm=jpg"}
-              alt="Card"
+          {blog.images != []}{
+            <div
+              className="rounded-start-5"
               style={{
-                height: '100%',
-                width: '100%',
-                objectFit: 'cover',
-                borderRadius: 'inherit',
+                height: "100%",
+                width: "40%",
+                position: 'relative',
+                overflow: 'hidden',
               }}
-            />
-          </div>
+            >
+              <img
+                src={
+                  blog.images.length > 0
+                    ? blog.images[0].url
+                    : "https://contenthub-static.grammarly.com/blog/wp-content/uploads/2017/11/how-to-write-a-blog-post.jpeg"
+                }
+                alt="Card"
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  objectFit: 'cover',
+                  borderRadius: 'inherit',
+                }}
+              />
+            </div>
+          }
 
           <div
             className="p-3"
@@ -102,8 +114,10 @@ const ListBlogItem = ({ blog }) => {
                   className="p-2"
                   style={{
                     height: "100%",
-                    width: "100%"
+                    width: "100%",
+                    backgroundColor: "red"
                   }}
+                  onClick={onDeleteClick}
                 >
                   <FontAwesomeIcon style={{ height: "100%", width: "100%" }} icon={faTrashCan} />
                 </Button>
@@ -111,7 +125,6 @@ const ListBlogItem = ({ blog }) => {
             </div>
           </div>
         </Card.Body>
-
       </Card>
     </>
   );

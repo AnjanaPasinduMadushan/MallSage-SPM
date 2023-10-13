@@ -1,6 +1,7 @@
 import Blog from "../model/blog-model.js";
 import FirebaseStorage from "../configs/firebaseConfig.js";
 
+// Creates a new Blog
 const createBlog = async (req, res) => {
   const shop = req.userId;
   const { title, content, author } = req.body;
@@ -32,7 +33,7 @@ const createBlog = async (req, res) => {
       });
 
       // Store the signed URL in the array
-      imageUrls.push(signedUrl.toString());
+      imageUrls.push({ name: imageFileName, url: signedUrl.toString() });
     }
 
     // Create a new Blog document with the uploaded images' URLs
@@ -56,6 +57,50 @@ const createBlog = async (req, res) => {
   }
 };
 
+// Returns all blogs that were created by this user in this account
+const getAllBlogs = async (req, res) => {
+  const shop = req.userId;
+  try {
+    const blogs = await Blog.find({ shop: shop });
+
+    if (!blogs) {
+      return res.status(404).json({ message: "Blogs not found" })
+    } else {
+      res.status(200).json({ blogs })
+    }
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "Error in retrieving Blogs" })
+  }
+}
+
+//Delete a Blog and remove its images
+const deleteBlog = async (req, res, next) => {
+  const id = req.params.id;
+  let data;
+
+  try {
+    data = await Blog.findByIdAndDelete(id);
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ msg: "Error in deleting Blog", err: err })
+  }
+
+  if (!data) {
+    return res.status(404).json({ msg: "Blog not found!" })
+  }
+
+  data.images.forEach(img => {
+    FirebaseStorage.file(img.name).delete().then(() => {
+      console.log('File deleted successfully');
+    }).catch(() => {
+      console.error('Error deleting one or more images');
+    });
+  });
+
+  return res.status(200).json({ msg: "Blog deleted successfully" })
+}
+
 
 const getBlog = async (req, res) => {
   const blogId = req.params.id;
@@ -72,39 +117,6 @@ const getBlog = async (req, res) => {
     console.log(err)
     return res.status(500).json({ message: "Error in getting Blog", error: err })
   }
-}
-
-const getBlogs = async (req, res) => {
-  try {
-    const blogs = await Blog.find();
-
-    if (!blogs) {
-      return res.status(404).json({ message: "Blogs not found" })
-    } else {
-      res.status(200).json({ blogs })
-    }
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({ message: "Error in retrieving Blogs" })
-  }
-}
-
-const deleteBlog = async (req, res, next) => {
-  const id = req.params.id;
-  let blog;
-
-  try {
-    blog = await Blog.findByIdAndDelete(id)
-  } catch (err) {
-    console.log(err)
-    return res.status(500).json({ message: "Error in deleting Blog", error: err })
-  }
-
-  if (!blog) {
-    return res.status(404).json({ message: "Blog not found!" })
-  }
-
-  return res.status(200).json({ message: "Blog deleted successfully" })
 }
 
 const updateBlog = async (req, res, next) => {
@@ -125,4 +137,4 @@ const updateBlog = async (req, res, next) => {
   return res.status(200).json({ message: "Blog Updated successfully" })
 }
 
-export { createBlog, getBlog, getBlogs, deleteBlog, updateBlog }
+export { createBlog, getBlog, getAllBlogs, deleteBlog, updateBlog }

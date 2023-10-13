@@ -11,9 +11,10 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from '../../styles/blog-styles.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const CreateBlogPost = () => {
-
+    const navigate = useNavigate();
     // State variables
     const [editing, setEditing] = useState(false);
     const [title, setTitle] = useState('');
@@ -119,15 +120,17 @@ const CreateBlogPost = () => {
         const res = await createBlog(title, authorName, content, images);
 
         if (res.status == 201) {
-            console.log({ msg: "success", data: res });
             toast.update(toastId, {
                 render: "Blog Created",
                 type: "success",
                 isLoading: false,
-                autoClose: 5000,
+                autoClose: 1500,
             });
+
+            setTimeout(() => {
+                navigate('/showBlogs'); // Navigate to another page after a 2-second delay
+            }, 1500);
         } else {
-            console.error({ msg: "error", data: res });
             var msg;
             if (res.status == 403) {
                 msg = "Unauthorised! Please Login!"
@@ -151,8 +154,8 @@ const CreateBlogPost = () => {
         <>
             <ToastContainer />
             <Card
-                className="p-3 mx-auto my-5 rounded-4"
-                style={{ width: '70%', minWidth: '325px' }}
+                className="p-3 mx-auto rounded-4"
+                style={{ width: '70%', minWidth: '325px', marginTop: '100px', marginBottom: '40px' }}
             >
                 <Card.Body>
                     {editing ? (

@@ -16,7 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import AdminHeader from "./components/Headers/adminHeader";
 import Header from "./components/Headers/header";
 import CreateBlogPost from "./pages/Blog/createBlog";
-import ViewAllShopBlogs from "./pages/Blog/viewBlogs";
+import ShowShopBlogs from "./pages/Blog/showBlogs";
 import AddBaggageEmployee from "./pages/Employees/AddBaggageEmployee";
 import AddEmployee from "./pages/Employees/AddEmployee";
 import AddShop from "./pages/Employees/AddShop";
@@ -96,7 +96,7 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
         <Route path="/createBlog" element={<CreateBlogPost />} />
-        <Route path="/allShopBlogs" element={<ViewAllShopBlogs />} />
+        <Route path="/showBlogs" element={<ShowShopBlogs />} />
 
         <Route path="/resting-report" element={<RestingLocationReport />} />
         {/* <Route path="*" element={<h1><center>Page Not Found</center></h1>} /> */}

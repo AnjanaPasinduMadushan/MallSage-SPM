@@ -24,11 +24,10 @@ const blogScema = new Schema({
     type: Date,
     required: true
   },
-  images: [
-    {
-      type: String,
-    }
-  ],
+  images: [{
+    name: String,
+    url: String
+  }],
 })
 
 const Blog = mongoose.model("Blog", blogScema);
