@@ -62,6 +62,20 @@ export const RequestTodayGoodsDelivery = async (
     deliverytime: deliverytime,
   },
   );
+};
+
+  // Request Forgotten Delivery 
+export const RequestForgotGoodsDelivery = async (
+  userid,
+  exitpoint,
+  deliverytime,
+
+) => {
+  const response = await apiClient.patch(`luggage/requestforgottenluggagedelivery/${userid}`, {
+    exitpoint: exitpoint,
+    deliverytime: deliverytime,
+  },
+  );
 
   return response.data;
 };
@@ -113,6 +127,14 @@ export const validateToken = async (token) => {
 
 //Get Luggages by userId and Date
 export const getLuggagesByuserIdandDate = async (userId, date) => {
+  console.log("userId", userId);
   const response = await apiClient.get(`luggage/getluggagesbyshop/${userId}/${date}`);
   return response.data;
 };
+
+//Get Ongoing luggages for baggager
+export const getLuggagesByBaggage = async (userId) => {
+  const response = await apiClient.get(`luggage/getLuggagesByBaggage/${userId}`);
+  return response.data;
+};
+

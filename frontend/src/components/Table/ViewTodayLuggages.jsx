@@ -11,7 +11,7 @@ function ViewTodayLuggages() {
     const userid = useSelector((state) => state.auth.User._id);
 
     const currentdate = new Date();
-
+console.log("userid",userid)
     const date = currentdate.getFullYear() + '-' + (currentdate.getMonth() + 1) + '-' + currentdate.getDate();
     const { data, isLoading, error, isError } = useQuery({
         queryFn: () => getLuggagesByuserIdandDate(userid, date),

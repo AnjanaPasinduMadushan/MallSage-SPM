@@ -1,4 +1,4 @@
-import { addBaggageEmployee } from '../controller/BaggageEmployee-controller.js';
+import { addBaggageEmployee } from '../controller/baggageemployee-controller.js';
 import { checkToken, checkAdmin } from '../middlewares/user.js';
 import express from 'express';
 
