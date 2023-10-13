@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import ShowAllLocations from "../../components/RestLocation/showAllLocations"
+import { Button } from "@mui/material";
 
 const ShowRestLocations = () => {
 
@@ -9,8 +10,20 @@ const ShowRestLocations = () => {
     navigate(`/RestLocation/${locationId}`)
   }
 
+  const handleGenerateReport = () => {
+    navigate('/resting-report');
+  };
+
+  const handleNewLocation = () => {
+    navigate('/admin/addRestLocation');
+  };
+
   return (
-    <><ShowAllLocations handleOnClick={navigatePage} /></>
+    <>
+      <Button onClick={handleNewLocation} variant="outlined">ADD A NEW RESTING LOCATION</Button>
+      <Button onClick={handleGenerateReport} variant="outlined" color="info"> Genarate Report</Button>
+      <ShowAllLocations handleOnClick={navigatePage} />
+    </>
   )
 }
 

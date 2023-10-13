@@ -21,7 +21,7 @@ const ViewRestLocation = () => {
   useEffect(() => {
     const getLocation = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/restingLocation/${id}`);
+        const res = await axios.get(`http://localhost:5050/restingLocation/${id}`);
         setLocation(res.data.location);
         console.log(res.data.location);
       } catch (err) {
