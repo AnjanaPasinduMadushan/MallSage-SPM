@@ -33,7 +33,7 @@ export const AdminHome = () => {
   //Testing api call(line no 8 - 25)
   const userProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/profile", {
+      const res = await axios.get("http://localhost:5050/user/profile", {
         withCredentials: true,
       })
 
@@ -64,7 +64,7 @@ export const AdminHome = () => {
             <Item>Car Parking Reservation System<LocalParkingIcon /></Item>
           </Grid>
           <Grid item xs={6}>
-            <Item>Promotional Bloging System<BookIcon /></Item>
+            <Item onClick={() => navigate('/securityHome')}>Security Luggage Collection<BookIcon /></Item>
           </Grid>
         </Grid>
       </Box>

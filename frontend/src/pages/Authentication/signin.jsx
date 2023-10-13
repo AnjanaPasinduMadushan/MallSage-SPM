@@ -48,7 +48,7 @@ export default function SignIn() {
   // const sendData = async () => {
 
   //   try {
-  //     const res = await axios.post("http://localhost:5000/User/login", {
+  //     const res = await axios.post("http://localhost:5050/User/login", {
   //       email: inputs.email,
   //       password: inputs.password
   //     })
@@ -120,8 +120,13 @@ export default function SignIn() {
       } else if (isLoggedrole === "shop") {
         navigate("/shopHome", { replace: true });
         //          window.location.reload();
-      } else if (isLoggedrole?.role === "customer") {
-        console.log("isLoggedrole", isLoggedrole);
+
+      } else if( isLoggedrole === "securityofficer") {
+        navigate("/securityHome", { replace: true });
+        //          window.location.reload();
+      }else if (isLoggedrole?.role === "customer") {
+        console.log("isLoggedrole",isLoggedrole);
+
         navigate('/')
       }
       // dispatch(autheticationActions.login());

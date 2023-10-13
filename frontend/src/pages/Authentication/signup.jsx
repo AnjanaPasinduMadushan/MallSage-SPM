@@ -47,7 +47,7 @@ export default function SignUp() {
   // const sendData = async () => {
 
   //   try {
-  //     const res = await axios.post("http://localhost:5000/user/signup", {
+  //     const res = await axios.post("http://localhost:5050/user/signup", {
   //       name: inputs.name,
   //       mobile: inputs.mobile,
   //       email: inputs.email,

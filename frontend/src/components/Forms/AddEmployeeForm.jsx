@@ -196,7 +196,7 @@ function AddEmployeeForm() {
       >
         <MenuItem value={""}>None</MenuItem>
         <MenuItem value={"shop"}>Shop</MenuItem>
-        <MenuItem value={"Security"}>Security Officer</MenuItem>
+        <MenuItem value={"securityofficer"}>Security Officer</MenuItem>
         <MenuItem value={"baggageemployee"}>Baggage Employee</MenuItem>
       </Select>
       <InputLabel sx={labelStyles}>Password</InputLabel>

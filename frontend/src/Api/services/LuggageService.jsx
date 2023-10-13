@@ -132,9 +132,39 @@ export const getLuggagesByuserIdandDate = async (userId, date) => {
   return response.data;
 };
 
+//Get Luggages by userId and Date
+export const deleteluggagebyId = async (id) => {
+  console.log("id", id);
+  const response = await apiClient.delete(`luggage/deleteLuggage/byshop/${id}`);
+  return response.data;
+};
+
+//Validate Customer Token
+export const validateCustomerToken = async (token) => {
+  console.log("token", token)
+  const response = await apiClient.patch(`luggage/customercollection/${token}`);
+  return response.data;
+};
+
+//Validate Customer ID
+export const validateCustomerID = async (token) => {
+  console.log("token", token)
+  const response = await apiClient.patch(`luggage/forgottencustomercollection/${token}`);
+  return response.data;
+};
+
+
+
 //Get Ongoing luggages for baggager
 export const getLuggagesByBaggage = async (userId) => {
   const response = await apiClient.get(`luggage/getLuggagesByBaggage/${userId}`);
   return response.data;
 };
+
+//Get History luggages for baggager
+export const getLuggagesHistoryByBaggage = async (userId) => {
+  const response = await apiClient.get(`luggage/getBaggageEmployeeLuggageHistory/${userId}`);
+  return response.data;
+};
+
 

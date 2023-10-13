@@ -13,18 +13,25 @@ import ViewRestLocations from "./pages/Rest-Customers/viewRestLocations";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AdminHeader from "./components/Headers/adminHeader";
+import CreateBlogPost from "./pages/Blog/createBlog";
 import Header from "./components/Headers/header";
 import AddEmployee from "./pages/Employees/AddEmployee";
 import AddShop from "./pages/Employees/AddShop";
 import { ShopHome } from "./pages/Shop/ShopHome";
 import AddLuggage from "./pages/Luggage/AddLuggage";
 import ViewLuggage from "./pages/Luggage/ViewLuggage";
+import ViewAllShopBlogs from "./pages/Blog/viewBlogs";
 import AddBaggageEmployee from "./pages/Employees/AddBaggageEmployee";
 import BaggageEmployeeHome from "./pages/home/baggage-employee-home";
+
+import AddParkingSlot from "./pages/Administration/addParkingSlots";
+import ViewParkingSlots from "./pages/Administration/viewParkingSlots";
+import AvailableParkingSlots from "./pages/Administration/bookParking"
 import MiniDrawer from "./components/ShopDrawer/shopDrawer";
 import VerifyToken from "./pages/Shop/VerifyToken";
 import ShopLuggageHistory from "./pages/Shop/ShopLuggageHistory";
 import ForgotLuggages from "./pages/Luggage/ForgotLuggages";
+import SecurityHome from "./pages/Security/SerutiyHome";
 import RestingLocationReport from "./pages/Administration/Reports/resting-location";
 
 function App() {
@@ -34,8 +41,10 @@ function App() {
   return (
     <BrowserRouter>
       {isLoggedrole === "admin" && <AdminHeader />}
+      {/* {isLoggedrole === "customer" && <Header />} */}
       {isLoggedrole === "customer" && <Header />}
       {isLoggedrole === "shop" && <MiniDrawer />}
+      {/* {isLoggedrole === "securityofficer" && <securityDrawer />} */}
       {isLoggedrole !== "customer" &&
         isLoggedrole !== "admin" &&
         isLoggedrole !== "shop" && <Header />}
@@ -61,12 +70,12 @@ function App() {
             <Route path="/shopHome" element={<ShopHome />} />
           </>
         )}
-
         {isLoggedrole === "baggageemployee" && (
           <Route path="/baggageHome" element={<BaggageEmployeeHome />} />
         )}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
         <Route path="/verifyshopToken" element={<VerifyToken />} />
+        <Route path="/securityHome" element={<SecurityHome />} />
         <Route path="/addluggage" element={<AddLuggage />} />
         <Route path="/viewLuggage" element={<ViewLuggage />} />
         <Route path="/shopHome" element={<ShopHome />} />
@@ -75,15 +84,25 @@ function App() {
           element={<ViewRestLocations />}
         />
         <Route path="/admin/addRestLocation" element={<AddRestLocations />} />
+        <Route path="/admin/addParkingSlot" element={<AddParkingSlot />} />
+        <Route path="/admin/viewParkingSlots" element={<ViewParkingSlots />} />
+        <Route path="/admin/availableParkingSlots" element={<AvailableParkingSlots />} />
         <Route path="/RestLocation/:id" element={<ViewLocation />} />
         <Route
           path="/Shopper/RestLocation/:id"
           element={<ViewRestLocation />}
         />
+        <Route path="/Shopper/RestLocation/:id" element={<ViewRestLocation />} />
+        
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
+
+        <Route path="/createPost" element={<CreateBlogPost />} />
+        <Route path="/allShopBlogs" element={<ViewAllShopBlogs />} />
+
         <Route path="/resting-report" element={<RestingLocationReport />} />
+
         {/* <Route path="*" element={<h1><center>Page Not Found</center></h1>} /> */}
       </Routes>
       {/* {isLoggedrole === "shop" && <MiniDrawer />} */}

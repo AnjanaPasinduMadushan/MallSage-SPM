@@ -263,6 +263,85 @@ const validateShopToken = async (req, res) => {
   }
 };
 
+//Conustomer Confirmation 
+async function updateLuggageForCustomerToken(req, res) {
+  const customerToken = req.params.customertoken;
+  try {
+    const currentDate = new Date();
+
+    // First, fetch all luggage items for the customerToken
+    const luggageItems = await Luggage.find({ CustomerToken: customerToken });
+
+    if (luggageItems.length > 0) {
+      // Date the luggage items and mark them as confirmed
+      for (const luggageItem of luggageItems) {
+        luggageItem.CollectedDate = currentDate;
+        luggageItem.isCustomerConfirmed = true;
+        luggageItem.isSecurityConfirmed = true;
+        await luggageItem.save();
+      }
+
+      console.log(`Updated ${luggageItems.length} luggage items for CustomerToken: ${customerToken}`);
+    } else {
+      console.log(`No luggage items found for CustomerToken: ${customerToken}`);
+    }
+  } catch (error) {
+    console.error(`Error updating luggage items: ${error}`);
+  }
+}
+
+
+//Forgotten Customer Confirmation 
+async function updateLuggagesByCustomerID(req, res) {
+  const CustomerID = req.params.customerId;
+  console.log("CustomerID", CustomerID);
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0); // Set the time to midnight to compare dates only
+
+  try {
+    // First, fetch all luggage items that match the criteria
+    const luggageItems = await Luggage.find({
+      CustomerID,
+    });
+
+    if (luggageItems.length > 0) {
+      // Date and mark the luggage items as confirmed
+      for (const luggageItem of luggageItems) {
+        luggageItem.CollectedDate = currentDate;
+        luggageItem.isCustomerConfirmed = true;
+        luggageItem.isSecurityConfirmed = true;
+        await luggageItem.save();
+      }
+
+      console.log(`Updated ${luggageItems.length} luggage items for CustomerID: ${CustomerID}`);
+    } else {
+      console.log(`No luggage items found for CustomerID: ${CustomerID}`);
+    }
+  } catch (error) {
+    console.error('Error updating luggages:', error);
+  }
+}
+
+
+//Get all luggages for security confirmation
+async function getLuggagesByEmployeeAndSecurity(req, res) {
+  try {
+    const completedLuggage = await Luggage.find({
+      AssignedBaggageEmployeeID: { $exists: true },
+      isDeliveryRequested: true,
+      isComplete: true,
+    });
+
+    if (completedLuggage) {
+      return res.status(200).json(completedLuggage);
+    } else {
+      return res.status(404).json({ message: 'No completed luggage found.' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 
 const getLuggages = async (req, res) => {
   try {
@@ -276,6 +355,21 @@ const getLuggages = async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Error in getting the Luggages" });
+  }
+};
+
+const deleteLuggageByID = async (req, res) => {
+  const luggageId = req.params.deleteid;
+  try {
+    console.log("luggageId", luggageId);
+    const result = await Luggage.findByIdAndDelete(luggageId);
+    console.log("result", result);
+    if (!result) {
+      return { success: false, message: 'Luggage not found' };
+    }
+    return { success: true, message: 'Luggage deleted successfully' };
+  } catch (error) {
+    return { success: false, message: 'An error occurred while deleting luggage' };
   }
 };
 
@@ -825,16 +919,16 @@ const RequestForgottenLuggageDelivery = async (req, res, next) => {
 
 //Get luggages ongoing assigned to baggage employee
 const BaggageEmployeeLuggagesHistory = async (req, res, next) => {
-  const id = req.params.userid;
+  const id = req.params.id;
 
   try {
     // Find the baggage employee by ID
     const baggageEmployee = await BaggageEmployee.findOne({ userId: id });
-
+    console.log("id", id)
     if (!baggageEmployee) {
       return res.status(404).json({ message: "Baggage employee not found" });
     }
-console.log("baggageEmployee", baggageEmployee)
+    console.log("baggageEmployee", baggageEmployee)
     // Retrieve all luggages assigned to the baggage employee that are not security confirmed
     const ongoingLuggages = await Luggage.find({
       AssignedBaggageEmployeeID: baggageEmployee.BaggageEmployeeID,
@@ -879,7 +973,7 @@ cron.schedule('50 23 * * *', async () => {
 });
 
 //Baggage Employe
-const getLuggagesByEmployeeAndSecurity = async (req, res) => {
+const getLuggagesForSecurity = async (req, res) => {
   try {
     const { id } = req.params;
     const currentDate = new Date();
@@ -896,7 +990,7 @@ const getLuggagesByEmployeeAndSecurity = async (req, res) => {
       return res.status(404).json({
         message: "No luggages found for the specified criteria",
       });
-    }
+    }    
 
     // Create a mapping of unique shops using ShopToken as the key
     const uniqueShops = new Map();
@@ -943,10 +1037,30 @@ const getLuggagesByEmployeeAndSecurity = async (req, res) => {
 };
 
 
+async function updateIsSecurityConfirmed(req, res) {
+  try {
+    const luggageID = req.params.luggageisid;
+    const luggage = await LuggageTracking.findOne({ luggageID });
+
+    if (!luggage) {
+      return res.status(404).json({ success: false, message: 'Luggage not found' });
+    }
+
+    // Update the isSecurityConfirmed field to true
+    luggage.isSecurityConfirmed = true;
+    await luggage.save();
+
+    return res.status(200).json({ success: true, message: 'isSecurityConfirmed updated successfully' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'An error occurred while updating isSecurityConfirmed' });
+  }
+}
+
 export {
   addLuggage,
   getOneLuggage,
   getLuggagesByShopAndDate,
+  updateIsSecurityConfirmed,
   getLuggagesByEmployeeAndSecurity,
   getLuggagesByShopIdandUserID,
   getLuggages,
@@ -954,11 +1068,15 @@ export {
   deleteLuggage,
   RequestForgottenLuggageDelivery,
   getForgottenLuggagesByShopIdandUserID,
+  deleteLuggageByID,
   getallLuggages,
   validateShopToken,
   RequestLuggageDelivery,
+  updateLuggageForCustomerToken,
+  updateLuggagesByCustomerID,
   BaggageEmployeeLuggagesHistory,
   gettotalLuggagesForOlderDates,
+  getLuggagesForSecurity,
   getLuggagesByShopId,
   updateLuggage,
   getLuggageByCustomerEmail,
