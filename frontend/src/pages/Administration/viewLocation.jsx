@@ -1,3 +1,4 @@
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,11 +18,13 @@ import FormDialog from '../../components/style-Components/form-dialog';
 import '../../styles/style.css'
 import Divider from '@mui/material/Divider';
 import CheckBtn from '../../components/RestLocation/checkBtn';
+import { toast, ToastContainer } from 'react-toastify';
 
 const defaultTheme = createTheme();
 
 const ViewLocation = () => {
 
+  const [msg, setMsg] = React.useState("");
   const [location, setLocation] = useState({
     locationName: '',
     locationPlaced: '',
@@ -35,7 +38,7 @@ const ViewLocation = () => {
   useEffect(() => {
     const getLocation = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/restingLocation/${id}`)
+        const res = await axios.get(`http://localhost:5050/restingLocation/${id}`)
         setLocation(res.data.location);
       } catch (e) {
         console.log(e)
@@ -75,16 +78,21 @@ const ViewLocation = () => {
     e.preventDefault();
     setIsChanged(false);
     try {
-      const res = await axios.patch(`http://localhost:5000/restingLocation/${id}`, {
+      const res = await axios.patch(`http://localhost:5050/restingLocation/${id}`, {
         locationName: location?.locationName,
         locationPlaced: location?.locationPlaced,
         locationFeatures: location?.locationFeatures,
         availability: location?.availability
       })
-
+      console.log(res.data.message)
+      setMsg(res.data.message);
+      toast.success(res.data.message);
       await res.data;
     } catch (err) {
       console.log(err);
+      if (err.response) {
+        toast.error(err.response.data.message)
+      }
     }
 
   };
