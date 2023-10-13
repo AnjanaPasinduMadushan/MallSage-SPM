@@ -15,6 +15,7 @@ import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 const defaultTheme = createTheme();
 
@@ -43,7 +44,8 @@ const ViewParkingSlots = () => {
   const deleteBook = async (id) => {
     await axios.delete(`http://localhost:5050/slot/delete/${id}`)
       .then((res) => {
-        console.log(`product ${id} deleted`);        
+        console.log(`product ${id} deleted`); 
+        location.reload();      
       })
       .then((res) => {
         console.log(res);
@@ -86,7 +88,6 @@ const ViewParkingSlots = () => {
             <TableCell>Floor</TableCell>
             <TableCell>Vehicle Type</TableCell>
             <TableCell>Availability</TableCell>
-            <TableCell>Update</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
@@ -99,7 +100,6 @@ const ViewParkingSlots = () => {
               <TableCell>{row.floor}</TableCell>
               <TableCell>{row.vehicleType}</TableCell>
               <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
-              <TableCell><Button variant="contained" style={{ width: '150px' }} onClick={handleButtonClick}>Edit</Button></TableCell>
               <TableCell><Button variant="contained"color="error" style={{ width: '150px' }} onClick={() => deleteBook(row._id)}>Delete</Button></TableCell>
             </TableRow>
           ))}
