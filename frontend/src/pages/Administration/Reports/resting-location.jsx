@@ -3,12 +3,19 @@ import { useState, useEffect } from 'react';
 import LocationFeatures from '../../../components/Table/RestingLocationFeatures';
 import RlBarChart from '../../../components/Charts/rlBarChart';
 import axios from 'axios';
-import { Typography, Grid, Button } from '@mui/material';
+import { Typography, Grid, Box, Button } from '@mui/material';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { useNavigate } from 'react-router-dom';
+import html2canvas from 'html2canvas';
 
 const RestingLocationReport = () => {
   const [locations, setLocations] = useState([]);
+
+  const navigate = useNavigate();
+  const handleAllZones = () => {
+    navigate('/showAllLocations');
+  };
 
   useEffect(() => {
     const getLocations = async () => {
@@ -34,51 +41,66 @@ const RestingLocationReport = () => {
 
   const downloadPdf = () => {
     const pdf = new jsPDF();
+    const pdfElement = document.getElementById('pdf-content');
 
-    // Add content to the PDF
-    pdf.text("Availability Distribution", 20, 10);
+    // Remove the button from the PDF content
+    const buttonElement = document.getElementById('pdf-button');
+    if (buttonElement) {
+      buttonElement.style.display = 'none'; // Hide the button
+    }
 
-    // Use jspdf-autotable plugin
-    pdf.autoTable({
-      html: '#pdf-content', // ID of the container holding your components
-      startY: 20, // Adjust the starting Y position as needed
+    html2canvas(pdfElement, { scale: 1 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+
+      pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+      pdf.save('resting_location_report.pdf');
+
+      // Restore the button's display after generating the PDF
+      if (buttonElement) {
+        buttonElement.style.display = 'block';
+      }
     });
-
-    // Save the PDF
-    pdf.save('resting_location_report.pdf');
   };
 
   return (
-    <div id="pdf-content">
-      <div style={{ marginTop: '10px', maxWidth: '100%', overflowX: 'hidden' }}>
-        <Grid container spacing={1} justifyContent="center" marginLeft={3} marginRight={1}>
-          <Grid item xs={12} sm={3.5}>
-            <Typography variant='h4' align='center' >
-              Availability Distribution
-            </Typography>
-            <PieChart width={400} height={400}>
-              <Pie
-                dataKey="value"
-                isAnimationActive={false}
-                data={chartData}
-                outerRadius={120}
-                label={({ name, value }) => `${name}: ${value} %`}
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
+
+    <>
+      <Box display="flex" justifyContent="center" alignItems="center" gap={20} mt={2} style={{ position: "sticky", top: 0, zIndex: 100 }}>
+        <Button onClick={handleAllZones} variant="outlined" color='error'>
+          RESTING HOME
+        </Button>
+        <Button id="pdf-button" onClick={downloadPdf} variant="outlined" color="warning">Download PDF</Button>
+      </Box>
+      <div id="pdf-content">
+        <div id="pdf-content" style={{ margin: 'auto', width: '80%', backgroundColor: 'white', padding: 20, marginTop: '50px' }}>
+          <Grid container spacing={1} justifyContent="center" marginLeft={3} marginRight={1}>
+            <Grid item xs={12} sm={4}>
+              <Typography variant='h4' align='center' >
+                Availability Distribution
+              </Typography>
+              <PieChart width={400} height={400}>
+                <Pie
+                  dataKey="value"
+                  isAnimationActive={false}
+                  data={chartData}
+                  outerRadius={120}
+                  label={({ name, value }) => `${name}: ${value} %`}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <RlBarChart />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <RlBarChart />
-          </Grid>
-        </Grid>
-        <LocationFeatures />
+          <LocationFeatures />
+        </div>
       </div>
-      <Button onClick={downloadPdf}>Download PDF</Button>
-    </div>
+    </>
   );
 }
 

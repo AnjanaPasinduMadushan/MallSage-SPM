@@ -19,6 +19,7 @@ import '../../styles/style.css'
 import Divider from '@mui/material/Divider';
 import CheckBtn from '../../components/RestLocation/checkBtn';
 import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
@@ -117,10 +118,34 @@ const ViewLocation = () => {
     }
   };
 
+  const navigate = useNavigate();
+
+  const navigatePage = () => {
+    navigate('/showAllLocations')
+  }
+
+  const handleGenerateReport = () => {
+    navigate('/resting-report');
+  };
+
+  const handleNewLocation = () => {
+    navigate('/admin/addRestLocation');
+  };
 
   return (
     <>
       <ThemeProvider theme={defaultTheme}>
+        <Box display="flex" justifyContent="center" alignItems="center" gap={20} mt={2} style={{ position: "sticky", top: 0, zIndex: 100 }}>
+          <Button onClick={navigatePage} variant="outlined" color='error'>
+            RESTING HOME
+          </Button>
+          <Button onClick={handleGenerateReport} variant="outlined" color="error">
+            GENERATE REPORT
+          </Button>
+          <Button onClick={handleNewLocation} variant="outlined" color='error'>
+            NEW RESTING ZONE
+          </Button>
+        </Box>
         <Typography mt={3} fontSize={35} display="flex" justifyContent="center">LOCATION CONTROLLING PANEL</Typography>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -242,6 +267,7 @@ const ViewLocation = () => {
           </Box>
         </Container>
       </ThemeProvider >
+      <ToastContainer />
     </>
   )
 }

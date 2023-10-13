@@ -78,9 +78,25 @@ const AddRestLocations = () => {
     }
   }
 
+  const navigatePage = () => {
+    navigate('/showAllLocations')
+  }
+
+  const handleGenerateReport = () => {
+    navigate('/resting-report');
+  };
+
   return (
     <>
       <ThemeProvider theme={defaultTheme}>
+        <Box display="flex" justifyContent="center" alignItems="center" gap={20} mt={2} style={{ position: "sticky", top: 0, zIndex: 100 }}>
+          <Button onClick={navigatePage} variant="outlined" color="error">
+            RESTING HOME
+          </Button>
+          <Button onClick={handleGenerateReport} variant="outlined" color="error">
+            GENERATE REPORT
+          </Button>
+        </Box>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box

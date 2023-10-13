@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Box, Card, CardContent } from "@mui/material";
 import FormDialog from "../../components/style-Components/form-dialog";
-import Header from "../../components/Headers/header";
 
 const ViewRestLocation = () => {
 

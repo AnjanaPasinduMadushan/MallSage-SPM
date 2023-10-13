@@ -2,6 +2,9 @@
 import { authSlice, resetState, setLoginResponse, setMessage } from "./authSlice";
 import { login, signout, signup } from "../../Api/services/authService";
 import { useDispatch } from "react-redux";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 // import { AnyAction, ThunkAction } from "@reduxjs/toolkit";
 
 const authActions = authSlice.actions;
@@ -11,10 +14,13 @@ export const loginAction = (email, password) => {
   return async (dispatch) => {
     try {
       const response = await login(email, password);
-      
+
       dispatch(setLoginResponse(response));
     } catch (error) {
       dispatch(setMessage(error.response.data.message));
+      if (error.response) {
+        toast.info(error.response.data.message)
+      }
     }
   };
 };
@@ -28,6 +34,9 @@ export const signUpAction = (name, mobile, email, password, role) => {
       dispatch(setLoginResponse(response));
     } catch (error) {
       dispatch(setMessage(error.response.data.message));
+      if (error.response) {
+        toast.info(error.response.data.message)
+      }
     }
   };
 };

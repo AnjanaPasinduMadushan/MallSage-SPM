@@ -16,7 +16,8 @@ import Copyright from '../../components/copyright';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 // import { autheticationActions } from '../../components/store';
-import { loginAction } from '../../Redux/auth/authAction';
+import { loginAction } from '../../Redux/auth/authAction'; 4
+import { toast, ToastContainer } from 'react-toastify';
 
 
 <Copyright />
@@ -81,24 +82,24 @@ export default function SignIn() {
 
   // }
 
-    //UseEffect for checking logged role
-  useEffect( 
+  //UseEffect for checking logged role
+  useEffect(
     () => {
       if (isLoggedrole) {
-        console.log("isLoggedrole",isLoggedrole);
+        console.log("isLoggedrole", isLoggedrole);
         //        history.push("/dashboard");
         if (isLoggedrole === "admin") {
           navigate("/adminhome", { replace: true });
-        } else if( isLoggedrole === "customer") {
+        } else if (isLoggedrole === "customer") {
           navigate("/", { replace: true });
           //          window.location.reload();
-        } else if( isLoggedrole === "shop") {
+        } else if (isLoggedrole === "shop") {
           navigate("/shopHome", { replace: true });
           //          window.location.reload();
-        }else if( isLoggedrole === "baggageemployee") {
+        } else if (isLoggedrole === "baggageemployee") {
           navigate("/baggageHome", { replace: true });
           //          window.location.reload();
-        }else{
+        } else {
           navigate("/", { replace: true });
         }
       }
@@ -111,21 +112,26 @@ export default function SignIn() {
     console.log("logging-In");
 
     try {
-     dispatch(loginAction(inputs?.email, inputs?.password));
+      dispatch(loginAction(inputs?.email, inputs?.password));
       // const data = await sendData();
-      if (isLoggedrole?.role=== "admin") {
-        console.log("isLoggedrole",isLoggedrole);
+      if (isLoggedrole?.role === "admin") {
+        console.log("isLoggedrole", isLoggedrole);
         navigate('/adminhome')
-      } else if( isLoggedrole === "shop") {
+      } else if (isLoggedrole === "shop") {
         navigate("/shopHome", { replace: true });
+        //          window.location.reload();
+
+      } else if( isLoggedrole === "securityofficer") {
+        navigate("/securityHome", { replace: true });
         //          window.location.reload();
       }else if (isLoggedrole?.role === "customer") {
         console.log("isLoggedrole",isLoggedrole);
+
         navigate('/')
       }
       // dispatch(autheticationActions.login());
     } catch (err) {
-      console.log("isLoggedrole",isLoggedrole);
+      console.log("isLoggedrole", isLoggedrole);
       console.error(err)
     }
   };
@@ -140,7 +146,7 @@ export default function SignIn() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+            backgroundImage: 'url(https://images.app.goo.gl/B6m39LC8eVTtJPwd9)',
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -212,6 +218,7 @@ export default function SignIn() {
           </Box>
         </Grid>
       </Grid>
+      <ToastContainer />
     </ThemeProvider>
   );
 }
