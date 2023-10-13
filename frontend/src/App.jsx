@@ -25,6 +25,7 @@ import MiniDrawer from "./components/ShopDrawer/shopDrawer";
 import VerifyToken from "./pages/Shop/VerifyToken";
 import ShopLuggageHistory from "./pages/Shop/ShopLuggageHistory";
 import ForgotLuggages from "./pages/Luggage/ForgotLuggages";
+import SecurityHome from "./pages/Security/SerutiyHome";
 
 function App() {
   //Use Selector to getv logged role
@@ -33,8 +34,10 @@ function App() {
   return (
     <BrowserRouter>
       {isLoggedrole === "admin" && <AdminHeader />}
+      {/* {isLoggedrole === "customer" && <Header />} */}
       {isLoggedrole === "customer" && <Header />}
       {isLoggedrole === "shop" && <MiniDrawer />}
+      {/* {isLoggedrole === "securityofficer" && <securityDrawer />} */}
       {isLoggedrole !== "customer" &&
         isLoggedrole !== "admin" &&
         isLoggedrole !== "shop" && <Header />}
@@ -60,12 +63,17 @@ function App() {
             <Route path="/shopHome" element={<ShopHome />} />
           </>
         )}
-
+  {isLoggedrole === "securityofficer" && (
+          <>
+            <Route path="/securityHome" element={<SecurityHome />} />
+          </>
+        )}
         {isLoggedrole === "baggageemployee" && (
           <Route path="/baggageHome" element={<BaggageEmployeeHome />} />
         )}
         <Route path="/showAllLocations" element={<ShowRestLocations />} />
         <Route path="/verifyshopToken" element={<VerifyToken />} />
+        <Route path="/securityHome" element={<SecurityHome />} />
         <Route path="/addluggage" element={<AddLuggage />} />
         <Route path="/viewLuggage" element={<ViewLuggage />} />
         <Route path="/shopHome" element={<ShopHome />} />
