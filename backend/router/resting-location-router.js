@@ -11,6 +11,6 @@ location_router.patch("/:id", updateLocation);
 location_router.patch("/addReserved/:id", addNoReserved);
 location_router.patch("/decreaseReserved/:id", decreaseNoAndDeleteReserved);
 location_router.patch("/updateToTrue/:id", updateGetsIn);
-location_router.delete("/:id", checkToken, checkAdmin, deleteLocation);
+location_router.delete("/:id", checkToken, deleteLocation);
 
 export default location_router;

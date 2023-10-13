@@ -1,3 +1,4 @@
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import InterestsIcon from '@mui/icons-material/Interests';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const defaultTheme = createTheme();
 
@@ -20,6 +23,7 @@ const AddRestLocations = () => {
   // const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [msg, setMsg] = React.useState("");
   const [inputs, setInputs] = useState({
     name: "",
     place: "",
@@ -50,21 +54,29 @@ const AddRestLocations = () => {
   const handleSubmit = async (e) => {
 
     e.preventDefault();
-    console.log(inputs)
+    console.log(inputs);
     try {
-      const res = await axios.post('http://localhost:5000/restingLocation/addRestingLocation', {
+      const res = await axios.post('http://localhost:5050/restingLocation/addRestingLocation', {
         locationName: inputs.name,
         locationPlaced: inputs.place,
         availability: inputs.availability,
         locationFeatures: inputs.features
       });
+      console.log(res.data.message)
+      setMsg(res.data.message);
+      toast.success(res.data.message);
       const data = await res.data;
       console.log(data);
-      navigate('/adminhome');
+      setTimeout(() => {
+        navigate('/showAllLocations');
+      }, 3000);
     } catch (err) {
-      console.log(err)
+      console.log(err);
+      if (err.response.data.message) {
+        toast.error(err.response.data.message);
+      }
     }
-  };
+  }
 
   return (
     <>
@@ -83,7 +95,7 @@ const AddRestLocations = () => {
               <InterestsIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              ADD LOCATIONs
+              ADD LOCATIONS
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
@@ -152,6 +164,8 @@ const AddRestLocations = () => {
 
         </Container>
       </ThemeProvider>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnHover draggable pauseOnVisibilityChange />
+
     </>
   )
 }
