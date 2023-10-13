@@ -132,6 +132,14 @@ export const getLuggagesByuserIdandDate = async (userId, date) => {
   return response.data;
 };
 
+//Get Luggages by userId and Date
+export const deleteluggagebyId = async (id) => {
+  console.log("id", id);
+  const response = await apiClient.delete(`luggage/deleteLuggage/byshop/${id}`);
+  return response.data;
+};
+
+
 //Get Ongoing luggages for baggager
 export const getLuggagesByBaggage = async (userId) => {
   const response = await apiClient.get(`luggage/getLuggagesByBaggage/${userId}`);
