@@ -6,11 +6,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
 
 // eslint-disable-next-line react/prop-types
 export default function FormDialogAdmin({ locationId, availability, currentNoReserved }) {
 
+  const [msg, setMsg] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState({
     no: 0,
@@ -43,11 +45,17 @@ export default function FormDialogAdmin({ locationId, availability, currentNoRes
         isGetsIn: input.isGetsIn
       }
       );
+      console.log(res.data.message)
+      setMsg(res.data.message);
+      toast.success(res.data.message);
       const data = await res.data;
       console.log(data);
       setOpen(false);
     } catch (err) {
       console.log(err);
+      if (err.response) {
+        toast.error(err.response.data.message)
+      }
     }
   }
 
@@ -59,7 +67,7 @@ export default function FormDialogAdmin({ locationId, availability, currentNoRes
   return (
     <>
       <Tooltip title="To Check out a customer from here">
-        <Button variant="outlined" onClick={handleClickOpen} disabled={!isChecking} color="warning">
+        <Button variant="contained" onClick={handleClickOpen} disabled={!isChecking} color="warning">
           Leave
         </Button>
       </Tooltip>

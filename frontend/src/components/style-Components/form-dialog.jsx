@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
 
 // eslint-disable-next-line react/prop-types
@@ -17,6 +18,7 @@ export default function FormDialog({ locationName, locationId, availability, onR
   const loggedUserMail = useSelector((state) => state.auth.User.email);
 
   console.log(loggeduserRole)
+  const [msg, setMsg] = React.useState("");
 
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState({
@@ -49,6 +51,9 @@ export default function FormDialog({ locationName, locationId, availability, onR
         email: loggedUserMail,
         locationName: locationName
       });
+      console.log(res.data.message)
+      setMsg(res.data.message);
+      toast.success(res.data.message);
       const data = await res.data;
       console.log(data);
       onReservationComplete(data);
@@ -56,6 +61,9 @@ export default function FormDialog({ locationName, locationId, availability, onR
       // location.reload();
     } catch (err) {
       console.log(err);
+      if (err.response) {
+        toast.error(err.response.data.message)
+      }
     }
   }
 
@@ -69,7 +77,7 @@ export default function FormDialog({ locationName, locationId, availability, onR
   return (
     <>
       <Tooltip title="To add a shopper to the Location">
-        <Button variant="outlined" onClick={handleClickOpen} disabled={isChecking && isChecking === false} >
+        <Button variant="contained" onClick={handleClickOpen} disabled={isChecking && isChecking === false} >
           Hold
         </Button>
       </Tooltip>

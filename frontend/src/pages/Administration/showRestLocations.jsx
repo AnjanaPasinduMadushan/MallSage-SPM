@@ -14,9 +14,14 @@ const ShowRestLocations = () => {
     navigate('/resting-report');
   };
 
+  const handleNewLocation = () => {
+    navigate('/admin/addRestLocation');
+  };
+
   return (
     <>
-      <Button onClick={handleGenerateReport}> Genarate Report</Button>
+      <Button onClick={handleNewLocation} variant="outlined">ADD A NEW RESTING LOCATION</Button>
+      <Button onClick={handleGenerateReport} variant="outlined" color="info"> Genarate Report</Button>
       <ShowAllLocations handleOnClick={navigatePage} />
     </>
   )

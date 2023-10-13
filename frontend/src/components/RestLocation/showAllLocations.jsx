@@ -22,13 +22,13 @@ const ShowAllLocations = ({ handleOnClick }) => {
   console.log(locations)
   return (
     <Box mt={3}>
-      < Typography variant='h3' align='center' gutterBottom >
-        Resting Zones
+      <Typography variant='h3' align='center' gutterBottom style={{ fontFamily: 'Ninoto', fontWeight: 'bold' }}>
+        RESTING ZONES
       </Typography >
       <Grid container spacing={3}>
         {locations.map((location, key) => (
           <Grid item xs={12} sm={6} md={4} key={key}>
-            <Card>
+            <Card style={{ backgroundColor: "#94E4FF", color: 'darkblue', border: '2px solid black', margin: '6px', textAlign: 'center' }} >
               <CardContent>
                 <Typography variant="h5" component="div">
                   {location.locationName}
@@ -44,12 +44,12 @@ const ShowAllLocations = ({ handleOnClick }) => {
                 </Typography>
                 <ul>
                   {location.locationFeatures.map((feature, key) => (
-                    <li key={key}>{feature}</li>
+                    <li key={key} style={{ textAlign: 'left' }}>{feature}</li>
                   ))}
                 </ul>
                 <Button
-                  variant="outlined"
-                  color="primary"
+                  variant="contained"
+                  color="info"
                   onClick={() => handleOnClick(location._id)}
                   style={{ marginTop: '10px' }}
                 >

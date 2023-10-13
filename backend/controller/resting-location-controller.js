@@ -14,8 +14,11 @@ const addLocation = async (req, res) => {
   const { locationName, locationPlaced, locationFeatures, availability } = req.body;
 
   console.log(req.body);
-
+  console.log(availability)
   try {
+    if (!_.isNaN(availability)) {
+      return res.status(400).json({ message: "Invalid value for availability" });
+    }
     const location = new RestingLocations({
       locationName,
       locationPlaced,
@@ -23,7 +26,7 @@ const addLocation = async (req, res) => {
       availability
     })
     await location.save();
-    return res.status(201).json({ message: "Location is Added", RestingLocations: location })
+    return res.status(201).json({ message: "Location is Added successfully", RestingLocations: location })
   } catch (err) {
     console.error(err);
     return res.status(400).json({ message: "Error in saving admin in DB" });
@@ -35,7 +38,6 @@ const getOneLocation = async (req, res) => {
   const locationId = req.params.locationId;
 
   try {
-
     const location = await RestingLocations.findById(locationId);
 
     if (!location) {
@@ -90,10 +92,14 @@ const deleteLocation = async (req, res, next) => {
 const updateLocation = async (req, res, next) => {
 
   const id = req.params.id;
+  const no = req.body.availability;
 
   let location;
-
+  console.log(no)
   try {
+    if (!_.isNumber(parseInt(no))) {
+      return res.status(400).json({ message: "Invalid value for availability" });
+    }
     location = await RestingLocations.findByIdAndUpdate(id, req.body, { new: true })
   } catch (err) {
     console.log(err)
@@ -131,7 +137,7 @@ const addNoReserved = async (req, res) => {
     const userId = firstIndex.userId;
 
     if (!_.isNumber(firstIndex.no)) {
-      return res.status(400).json({ message: "Invalid 'no' value" });
+      return res.status(400).json({ message: "Invalid value" });
     }
 
     if (userRole === "customer") {
@@ -189,7 +195,11 @@ const addNoReserved = async (req, res) => {
       return res.status(500).json({ message: "Error saving location" });
     }
 
-    return res.status(200).json({ message: "Location Updated successfully", uniqueNo });
+    if (userRole === "customer") {
+      return res.status(200).json({ message: "Successfully added to the Location and we've just sent you an email with the code.", uniqueNo });
+    }
+
+    return res.status(200).json({ message: "Successfully added to the Location!!!", uniqueNo });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
@@ -245,7 +255,7 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
     );
 
     if (indexToRemove === -1) {
-      return res.status(404).json({ message: "QR code not found in reservations" });
+      return res.status(404).json({ message: "Code is not found in reservations" });
     }
 
     console.log('indexToRemove ', indexToRemove)
@@ -273,7 +283,11 @@ const decreaseNoAndDeleteReserved = async (req, res) => {
     }
     await location.save();
 
-    return res.status(200).json({ message: "Location Updated successfully" })
+    if (body.no === null) {
+      return res.status(200).json({ message: `Successfully removed the user` })
+    }
+
+    return res.status(200).json({ message: `Location availability is increased by ${body.no}` })
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
@@ -294,7 +308,7 @@ const DeleteTimeExceededReservations = async (req, res) => {
 
     if (exceededReservations.length === 0) {
       console.log('No exceeded reservations found');
-      return res.status(200).json({ message: "No exceeded reservations found" });
+      // return res.status(200).json({ message: "No exceeded reservations found" });
     }
     console.log('exceededReservations', exceededReservations)
     for (const doc of exceededReservations) {

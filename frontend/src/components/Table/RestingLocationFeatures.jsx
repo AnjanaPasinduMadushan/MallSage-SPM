@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Typography } from '@mui/material';
 
 export default function BasicTable() {
 
@@ -28,7 +29,10 @@ export default function BasicTable() {
 
   return (
     <>
-      <TableContainer component={Paper}>
+      <Typography variant='h4' align='center' >
+        Distribution of Location Features
+      </Typography>
+      <TableContainer component={Paper} style={{ marginTop: '20px', marginLeft: '10%', marginRight: '10%', marginBottom: '5%', width: 'auto' }}>
         <Table sx={{ minWidth: 450 }}>
           <TableHead>
             <TableRow>
@@ -58,7 +62,7 @@ export default function BasicTable() {
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer >
     </>
   );
 }
