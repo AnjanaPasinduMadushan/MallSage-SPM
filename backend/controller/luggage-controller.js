@@ -279,6 +279,21 @@ const getLuggages = async (req, res) => {
   }
 };
 
+const deleteLuggageByID = async (req, res) => {
+  const luggageId = req.params.deleteid;
+  try {
+    console.log("luggageId", luggageId);
+    const result = await Luggage.findByIdAndDelete(luggageId);
+    console.log("result", result);
+    if (!result) {
+      return { success: false, message: 'Luggage not found' };
+    }
+    return { success: true, message: 'Luggage deleted successfully' };
+  } catch (error) {
+    return { success: false, message: 'An error occurred while deleting luggage' };
+  }
+};
+
 // Get luggages for the passed date and shopId
 async function getLuggagesByShopAndDate(userId, date) {
   try {
@@ -954,6 +969,7 @@ export {
   deleteLuggage,
   RequestForgottenLuggageDelivery,
   getForgottenLuggagesByShopIdandUserID,
+  deleteLuggageByID,
   getallLuggages,
   validateShopToken,
   RequestLuggageDelivery,

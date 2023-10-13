@@ -21,13 +21,13 @@ import {
   TablePagination,
 } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
-import { Modal, Table, ToastContainer } from "react-bootstrap";
+import { Modal, Table } from "react-bootstrap";
 import "react-calendar/dist/Calendar.css";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import { MobileTimePicker } from "@mui/x-date-pickers";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 function LuggageBox() {

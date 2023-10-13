@@ -2,7 +2,9 @@ import MaterialReactTable from 'material-react-table';
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { getLuggagesByShopIDandDate, getLuggagesByuserIdandDate } from '../../Api/services/LuggageService';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { ToastContainer, toast } from "react-toastify";
+import { deleteluggagebyId, getLuggagesByShopIDandDate, getLuggagesByuserIdandDate } from '../../Api/services/LuggageService';
 import { getShopIdByUserId } from '../../Api/services/shopService';
 import { Paper, Table, TableCell, TableContainer, TableHead, TableRow, TableBody, Button, Badge, TablePagination } from '@mui/material';
 
@@ -39,7 +41,22 @@ console.log("userid",userid)
         setPage(0); // Reset page to 0 when rows per page changes
     };
 
+    const handleLuggageDelete = async (id) => {
+        try {
+            const res = await deleteluggagebyId(id)
+            .then((res) => {
+                toast.success('Luggage deleted successfully');
+                refetch();
+            })
+            }catch (err) {
+            console.log(err);
+           toast.error('Something went wrong');
+        }
+    }
+
     return (
+        <>
+        <ToastContainer />
         <Paper sx={{ width: '50%', boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)", borderRadius: "20px" }}>
             <TableContainer sx={{ maxHeight: 440, borderRadius: "20px" }}>
                 <Table stickyHeader aria-label="sticky table">
@@ -59,6 +76,9 @@ console.log("userid",userid)
                             </TableCell>
                             <TableCell align="center" colSpan={3}>
                                 Bill
+                            </TableCell>
+                            <TableCell align="center" colSpan={3}>
+                                Delete
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -101,6 +121,26 @@ console.log("userid",userid)
                                         >
                                             Download PDF
                                         </Button>
+                                        
+                                    </TableCell>
+                                    <TableCell align="center" colSpan={3}>
+                                        <Button
+                                          onClick={() => handleLuggageDelete(row._id)}
+                                            sx={{
+                                                boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                                                color: "black",
+                                                borderRadius: "20px",
+                                                '&:hover': {
+                                                    backgroundColor: "#fff",
+                                                    color: "#1A2027",
+                                                    border: "1px solid #1A2027",
+                                                },
+                                            }}
+                                            startIcon={<DeleteIcon />}
+                                        >
+                                          Delete
+                                        </Button>
+                                        
                                     </TableCell>
                                 </TableRow>
                             ))
@@ -124,6 +164,7 @@ console.log("userid",userid)
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
         </Paper >
+        </>
     );
 }
 
