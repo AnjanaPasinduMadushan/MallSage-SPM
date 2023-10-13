@@ -57,7 +57,7 @@ console.log("userid",userid)
     return (
         <>
         <ToastContainer />
-        <Paper sx={{ width: '50%', boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)", borderRadius: "20px" }}>
+        <Paper sx={{ width: '70%', boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)", borderRadius: "20px" }}>
             <TableContainer sx={{ maxHeight: 440, borderRadius: "20px" }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
@@ -119,7 +119,7 @@ console.log("userid",userid)
                                                 },
                                             }}
                                         >
-                                            Download PDF
+                                             PDF
                                         </Button>
                                         
                                     </TableCell>

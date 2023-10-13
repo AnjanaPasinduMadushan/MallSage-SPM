@@ -31,7 +31,6 @@ function BaggageEmployeeHome() {
   const { data: historydata, isLoading: historyloading, error: historyerror, isError: historyisError } = useQuery({
     queryFn: () => getLuggagesHistoryByBaggage(userid),
   });
-
   const columns = [
     {
       header: "ShopName",
@@ -249,8 +248,8 @@ function BaggageEmployeeHome() {
             style={{ width: '90%', marginLeft: '4%', marginTop: '10%' }}
           >
             <MaterialReactTable
-              columns={columns}
-              data={mappedData}
+              columns={columns2}
+              data={mappedData2}
 
             />
           </div>

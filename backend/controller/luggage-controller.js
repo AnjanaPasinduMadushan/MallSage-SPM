@@ -936,7 +936,7 @@ const BaggageEmployeeLuggagesHistory = async (req, res, next) => {
     // Retrieve all luggages assigned to the baggage employee that are not security confirmed
     const ongoingLuggages = await Luggage.find({
       AssignedBaggageEmployeeID: baggageEmployee.BaggageEmployeeID,
-      isSecurityConfirmed: true,
+      isSecurityConfirmed: false,
     });
 
     return res.status(200).json({ message: "Assigned luggages retrieved successfully", luggages: ongoingLuggages });
