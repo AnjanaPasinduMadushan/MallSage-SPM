@@ -139,6 +139,21 @@ export const deleteluggagebyId = async (id) => {
   return response.data;
 };
 
+//Validate Customer Token
+export const validateCustomerToken = async (token) => {
+  console.log("token", token)
+  const response = await apiClient.patch(`luggage/customercollection/${token}`);
+  return response.data;
+};
+
+//Validate Customer ID
+export const validateCustomerID = async (token) => {
+  console.log("token", token)
+  const response = await apiClient.patch(`luggage/forgottencustomercollection/${token}`);
+  return response.data;
+};
+
+
 
 //Get Ongoing luggages for baggager
 export const getLuggagesByBaggage = async (userId) => {

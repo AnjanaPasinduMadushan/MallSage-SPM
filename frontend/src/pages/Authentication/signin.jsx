@@ -119,6 +119,9 @@ export default function SignIn() {
       } else if( isLoggedrole === "shop") {
         navigate("/shopHome", { replace: true });
         //          window.location.reload();
+      }else if( isLoggedrole === "securityofficer") {
+        navigate("/securityHome", { replace: true });
+        //          window.location.reload();
       }else if (isLoggedrole?.role === "customer") {
         console.log("isLoggedrole",isLoggedrole);
         navigate('/')
