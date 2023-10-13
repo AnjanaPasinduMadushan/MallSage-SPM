@@ -144,7 +144,7 @@ const updateBlog = async (req, res, next) => {
       id,
       {
         $set: { ...req.body },
-        $push: { images: { $each: imageUrls } }
+        $push: { images: { $each: imageUrls, $position: 0 } }
       },
       { new: true }
     )

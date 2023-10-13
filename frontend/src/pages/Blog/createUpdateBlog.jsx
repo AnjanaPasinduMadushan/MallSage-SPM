@@ -87,7 +87,7 @@ const CreateUpdateBlogPost = () => {
             }
         }
 
-        setImages([...images, ...newImages]);
+        setImages([...newImages, ...images]);
         e.target.value = ''; // Clear the input field for re-uploading
     };
 
@@ -127,7 +127,7 @@ const CreateUpdateBlogPost = () => {
         var res;
         if (!id) {
             res = await createBlog(title, authorName, content, images);
-        }else{
+        } else {
             res = await updateBlog(id, title, authorName, content, images);
         }
 
@@ -288,20 +288,6 @@ const CreateUpdateBlogPost = () => {
                             <h4>Images:</h4>
                             <Table striped bordered hover>
                                 <tbody>
-                                    {/* Url Images */}
-                                    {imageUrls.map((image) => (
-                                        <tr key={image._id}>
-                                            <td>{image.name}</td>
-                                            <td>
-                                                <Button
-                                                    variant="danger"
-                                                    onClick={async () => deleteUrlImage(image)}
-                                                >
-                                                    <FontAwesomeIcon icon={faTrash} /> Remove
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    ))}
                                     {/* Uploaded images */}
                                     {images.map((image) => (
                                         <tr key={image.id}>
@@ -310,6 +296,20 @@ const CreateUpdateBlogPost = () => {
                                                 <Button
                                                     variant="danger"
                                                     onClick={() => removeImage(image.id)}
+                                                >
+                                                    <FontAwesomeIcon icon={faTrash} /> Remove
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {/* Url Images */}
+                                    {imageUrls.map((image) => (
+                                        <tr key={image._id}>
+                                            <td>{image.name}</td>
+                                            <td>
+                                                <Button
+                                                    variant="danger"
+                                                    onClick={async () => deleteUrlImage(image)}
                                                 >
                                                     <FontAwesomeIcon icon={faTrash} /> Remove
                                                 </Button>
