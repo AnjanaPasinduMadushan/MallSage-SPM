@@ -96,7 +96,7 @@ function App() {
         <Route path="/signIn" element={<SignIn />} />
 
         <Route path="/createPost" element={<CreateBlogPost />} />
-        <Route path="/allShopBlogs" element={<ViewAllShopBlogs />} /
+        <Route path="/allShopBlogs" element={<ViewAllShopBlogs />} />
 
         <Route path="/resting-report" element={<RestingLocationReport />} />
 
