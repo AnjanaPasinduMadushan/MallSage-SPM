@@ -1,11 +1,14 @@
-import { Button, Card } from "react-bootstrap";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faFilePen, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faFilePen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from "prop-types";
+import { Button, Card } from "react-bootstrap";
 import { formatDate } from "../../../util/formatDate";
+import { useNavigate } from 'react-router-dom';
 
 
 const ListBlogItem = ({ blog, onDeleteClick }) => {
+  const navigate = useNavigate();
+
   // prop validations
   ListBlogItem.propTypes = {
     blog: PropTypes.shape({
@@ -100,6 +103,7 @@ const ListBlogItem = ({ blog, onDeleteClick }) => {
                     height: "100%",
                     width: "100%"
                   }}
+                  onClick={() => navigate(`/blog/${blog._id}`)}
                 >
                   <FontAwesomeIcon style={{ height: "100%", width: "100%" }} icon={faFilePen} />
                 </Button>

@@ -1,8 +1,8 @@
 import { faImage, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Card, Form, Table } from 'react-bootstrap';
-import { createBlog } from '../../Api/services/blogService';
+import { createBlog, deleteUrlImg, getOneBlog, updateBlog } from '../../Api/services/blogService';
 import { toast, ToastContainer } from 'react-toastify';
 
 import ImageGallery from 'react-image-gallery';
@@ -11,9 +11,16 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import styles from '../../styles/blog-styles.module.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const CreateBlogPost = () => {
+const CreateUpdateBlogPost = () => {
+    const { id } = useParams();
+
+    /* eslint-disable react-hooks/exhaustive-deps */
+    useEffect(() => {
+        getBlogData(id)
+    }, []);
+
     const navigate = useNavigate();
     // State variables
     const [editing, setEditing] = useState(false);
@@ -21,6 +28,7 @@ const CreateBlogPost = () => {
     const [authorName, setAuthorName] = useState('');
     const [content, setContent] = useState('');
     const [images, setImages] = useState([]);
+    const [imageUrls, setImageUrls] = useState([]);
 
     // Ref
     const authorNameInputRef = useRef(null);
@@ -90,7 +98,6 @@ const CreateBlogPost = () => {
 
     const grayedOutTextClass = title === '' ? styles.textGray : '';
 
-
     // Api call to add blog to server
     const handleSubmit = async () => {
         console.log("submit pressed");
@@ -117,11 +124,16 @@ const CreateBlogPost = () => {
 
 
         const toastId = toast.loading("Saving Blog...");
-        const res = await createBlog(title, authorName, content, images);
+        var res;
+        if (!id) {
+            res = await createBlog(title, authorName, content, images);
+        }else{
+            res = await updateBlog(id, title, authorName, content, images);
+        }
 
         if (res.status == 201) {
             toast.update(toastId, {
-                render: "Blog Created",
+                render: "Blog Saved",
                 type: "success",
                 isLoading: false,
                 autoClose: 1500,
@@ -146,6 +158,46 @@ const CreateBlogPost = () => {
             });
         }
 
+    }
+
+    // Api call to get Blog data for [isUpdate]
+    const getBlogData = async (id) => {
+        if (id) {
+            const res = await getOneBlog(id);
+
+            setTitle(res.data.title);
+            setAuthorName(res.data.author);
+            setContent(res.data.content);
+            setImageUrls(res.data.images);
+
+            console.log(imageUrls)
+        }
+    }
+
+    // Delete a image stored in firebase (only used in update)
+    const deleteUrlImage = async (image) => {
+        const toastId = toast.loading("Deleting Saved Image...");
+
+        const res = await deleteUrlImg(id, image.name);
+        if (res.status == 200) {
+            toast.update(toastId, {
+                render: "Image Removed!",
+                type: "success",
+                isLoading: false,
+                autoClose: 1500,
+            });
+
+            const updatedImages = imageUrls.filter((img) => img._id !== image._id);
+            setImageUrls(updatedImages);
+
+        } else {
+            toast.update(toastId, {
+                render: "Couldn't delete Image",
+                type: "error",
+                isLoading: false,
+                autoClose: 1500,
+            });
+        }
     }
 
 
@@ -214,9 +266,6 @@ const CreateBlogPost = () => {
 
                     {/* Upload Images */}
                     <div className="mb-3">
-                        <label htmlFor="imageUpload" className="form-label">
-                            Upload Images:
-                        </label>
                         <input
                             type="file"
                             id="imageUpload"
@@ -234,17 +283,26 @@ const CreateBlogPost = () => {
                     </div>
 
                     {/* Uploaded Images */}
-                    {images.length > 0 && (
+                    {(imageUrls.length > 0 || images.length > 0) && (
                         <>
-                            <h4>Uploaded Images:</h4>
+                            <h4>Images:</h4>
                             <Table striped bordered hover>
-                                <thead>
-                                    <tr>
-                                        <th>Image Name</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
                                 <tbody>
+                                    {/* Url Images */}
+                                    {imageUrls.map((image) => (
+                                        <tr key={image._id}>
+                                            <td>{image.name}</td>
+                                            <td>
+                                                <Button
+                                                    variant="danger"
+                                                    onClick={async () => deleteUrlImage(image)}
+                                                >
+                                                    <FontAwesomeIcon icon={faTrash} /> Remove
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {/* Uploaded images */}
                                     {images.map((image) => (
                                         <tr key={image.id}>
                                             <td>{image.name}</td>
@@ -264,13 +322,20 @@ const CreateBlogPost = () => {
                     )}
 
                     {/* Image carousel using react-image-gallery */}
-                    {images.length > 0 && (
+                    {(imageUrls.length > 0 || images.length > 0) > 0 && (
                         <ImageGallery
-                            items={images.map((image) => ({
-                                original: image.url,
-                                thumbnail: image.url,
-                                description: `Image ${image.name}`,
-                            }))}
+                            items={[
+                                ...images.map((image) => ({
+                                    original: image.url,
+                                    thumbnail: image.url,
+                                    description: `Image ${image.name}`,
+                                })),
+                                ...imageUrls.map((image) => ({
+                                    original: image.url,
+                                    thumbnail: image.url,
+                                    description: `Image ${image.name}`,
+                                }))
+                            ]}
                             showPlayButton={false}
                             showFullscreenButton={false}
                         />
@@ -286,4 +351,4 @@ const CreateBlogPost = () => {
     );
 };
 
-export default CreateBlogPost;
+export default CreateUpdateBlogPost;

@@ -15,7 +15,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import 'react-toastify/dist/ReactToastify.css';
 import AdminHeader from "./components/Headers/adminHeader";
 import Header from "./components/Headers/header";
-import CreateBlogPost from "./pages/Blog/createBlog";
 import ShowShopBlogs from "./pages/Blog/showBlogs";
 import AddBaggageEmployee from "./pages/Employees/AddBaggageEmployee";
 import AddEmployee from "./pages/Employees/AddEmployee";
@@ -33,6 +32,7 @@ import VerifyToken from "./pages/Shop/VerifyToken";
 import ShopLuggageHistory from "./pages/Shop/ShopLuggageHistory";
 import ForgotLuggages from "./pages/Luggage/ForgotLuggages";
 import RestingLocationReport from "./pages/Administration/Reports/resting-location";
+import CreateUpdateBlogPost from "./pages/Blog/createUpdateBlog";
 
 function App() {
   //Use Selector to getv logged role
@@ -95,7 +95,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
-        <Route path="/createBlog" element={<CreateBlogPost />} />
+        <Route path="/blog/:id?" element={<CreateUpdateBlogPost />} />
         <Route path="/showBlogs" element={<ShowShopBlogs />} />
 
         <Route path="/resting-report" element={<RestingLocationReport />} />

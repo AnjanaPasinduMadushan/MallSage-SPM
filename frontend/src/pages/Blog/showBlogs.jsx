@@ -27,7 +27,7 @@ const ShowShopBlogs = () => {
       <ToastContainer />
       <Button
         style={{ marginTop: '100px', marginLeft: '80px' }}
-        onClick={() => navigate('/createBlog')}
+        onClick={() => navigate('/blog')}
       > Create New </Button>
 
       {blogs.map((blog) => (
