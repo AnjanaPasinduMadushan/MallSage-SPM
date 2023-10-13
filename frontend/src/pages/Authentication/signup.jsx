@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { signUpAction } from '../../Redux/auth/authAction';
 import { useNavigate } from 'react-router-dom';
 import Copyright from '../../components/copyright';
+import { ToastContainer } from 'react-toastify';
 
 <Copyright />
 
@@ -208,6 +209,7 @@ export default function SignUp() {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+      <ToastContainer />
     </ThemeProvider>
   );
 }
