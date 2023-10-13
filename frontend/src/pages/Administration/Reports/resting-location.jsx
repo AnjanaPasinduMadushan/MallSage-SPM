@@ -74,7 +74,7 @@ const RestingLocationReport = () => {
       <div id="pdf-content">
         <div id="pdf-content" style={{ margin: 'auto', width: '80%', backgroundColor: 'white', padding: 20, marginTop: '50px' }}>
           <Grid container spacing={1} justifyContent="center" marginLeft={3} marginRight={1}>
-            <Grid item xs={12} sm={3.5}>
+            <Grid item xs={12} sm={4}>
               <Typography variant='h4' align='center' >
                 Availability Distribution
               </Typography>
