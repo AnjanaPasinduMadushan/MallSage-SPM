@@ -5,7 +5,7 @@ import express from 'express';
 const luggage_router = express.Router();
 
 luggage_router.get("/getallLuggagescustomer/:email", gettotalLuggages);
-luggage_router.get("/getLuggagesByBaggage/:id", getLuggagesByEmployeeAndSecurity);
+luggage_router.get("/getLuggagesByBaggage/:id", BaggageEmployeeLuggagesHistory);
 luggage_router.get("/getallOlderLuggagescustomer/:email", gettotalLuggagesForOlderDates);
 luggage_router.get("/getLuggagebyUsershop/:email", getallLuggages);
 luggage_router.post("/addLuggage", addLuggage);
