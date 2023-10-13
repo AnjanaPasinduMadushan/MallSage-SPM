@@ -8,7 +8,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from '@mui/icons-material/Print';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import ShareIcon from '@mui/icons-material/Share';
-import { getLuggagesByBaggage } from '../../Api/services/LuggageService';
+import { getLuggagesByBaggage, getLuggagesHistoryByBaggage } from '../../Api/services/LuggageService';
 import { useSelector } from "react-redux";
 import { useQuery } from 'react-query';
 import MaterialReactTable from 'material-react-table';
@@ -26,6 +26,10 @@ function BaggageEmployeeHome() {
   const [open, setOpen] = useState(false);
   const { data, isLoading, error, isError } = useQuery({
     queryFn: () => getLuggagesByBaggage(userid),
+  });
+
+  const { data: historydata, isLoading: historyloading, error: historyerror, isError: historyisError } = useQuery({
+    queryFn: () => getLuggagesHistoryByBaggage(userid),
   });
 
   const columns = [
@@ -48,6 +52,25 @@ function BaggageEmployeeHome() {
     }
   ];
 
+  const columns2 = [
+    {
+      header: "ShopName",
+      accessorKey: "ShopName",
+    },
+    {
+      header: "luggage Id",
+      accessorKey: "luggageID",
+    },
+    {
+      header: "Time Duration",
+      accessorKey: "TimeDuration",
+    },
+    {
+      header: "Completed Date",
+      accessorKey: "RequestedDeliveryDate",
+    },
+
+  ];
 
   const handleShopTokenModalView = (ShopToken) => {
     console.log("ShopToken", ShopToken);
@@ -62,6 +85,36 @@ function BaggageEmployeeHome() {
   const handleMouseLeave = () => {
     setOpen(false);
   };
+
+
+  let mappedData2 = [];
+
+  if (data !== undefined) {
+    mappedData2 = historydata?.luggages?.map((shop) => {
+
+
+      const date = new Date(shop.RequestedDeliveryDate);
+
+      // Get the year, month, and date components
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it's 0-indexed
+      const day = date.getDate().toString().padStart(2, '0');
+
+
+      const row = {
+        ShopName: shop.ShopName,
+        luggageID: shop.luggageID,
+        TimeDuration: shop.TimeDuration,
+        RequestedDeliveryDate: `${year}-${month}-${day}`,
+      };
+
+
+
+
+      return row;
+    }) || [];
+  }
+
 
 
   let mappedData = [];
@@ -130,7 +183,6 @@ function BaggageEmployeeHome() {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
-
 
   return (
     <div style={{ position: 'relative' }}>
@@ -243,8 +295,8 @@ function BaggageEmployeeHome() {
             style={{ width: '90%', marginLeft: '4%', marginTop: '10%' }}
           >
             <MaterialReactTable
-              columns={columns}
-              data={mappedData}
+              columns={columns2}
+              data={mappedData2}
 
             />
           </div>
