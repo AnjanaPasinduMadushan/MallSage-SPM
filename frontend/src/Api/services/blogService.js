@@ -2,22 +2,27 @@ import { apiClient } from "../axios/api";
 
 //Create new Blog
 export const createBlog = async (title, author, content, images) => {
-  let formData = new FormData();
-  formData.append('title', title);
-  formData.append('author', author);
-  formData.append('content', content);
-  // Append images to formData
-  images.forEach((image) => {
-    formData.append(`image`, image.file);
-  });
+  try {
+    let formData = new FormData();
+    formData.append('title', title);
+    formData.append('author', author);
+    formData.append('content', content);
+    // Append images to formData
+    images.forEach((image) => {
+      formData.append(`image`, image.file);
+    });
 
-  const response = await fetch('http://localhost:5050/blog/create', {
-    method: 'POST',
-    body: formData,
-    credentials: 'include',
-  });
+    const response = await fetch('http://localhost:5050/blog/create', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+    });
 
-  return { status: response.status, msg: response.statusText }
+    return { status: response.status, msg: response.statusText }
+  } catch (e) {
+    console.log(e);
+    return { message: "error", data: e };
+  }
 }
 
 //Get all blogs created by current logged in user(shop)
@@ -91,9 +96,9 @@ export const updateBlog = async (id, title, authorName, content, images) => {
       body: formData,
       credentials: 'include',
     });
-    var stat ;
+    var stat;
     if (response.status == 200) {
-     stat = 201
+      stat = 201
     }
     return { status: stat, msg: response.statusText }
   } catch (e) {

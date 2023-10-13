@@ -140,7 +140,7 @@ const CreateUpdateBlogPost = () => {
             });
 
             setTimeout(() => {
-                navigate('/showBlogs'); // Navigate to another page after a 2-second delay
+                navigate('/showBlogs'); // Navigate back after a 2-second delay
             }, 1500);
         } else {
             var msg;

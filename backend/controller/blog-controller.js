@@ -5,7 +5,7 @@ import FirebaseStorage from "../configs/firebaseConfig.js";
 const createBlog = async (req, res) => {
   const shop = req.userId;
   const { title, content, author } = req.body;
-  const imageUrls = [];
+  var imageUrls = [];
   let blog;
 
   try {
@@ -109,10 +109,45 @@ const updateBlog = async (req, res, next) => {
   const imageUrls = [];
   let blog;
 
+
+  // Loop through each uploaded image file
+  for (const file of req.files) {
+    const imageBuffer = file.buffer; // Access the image data
+    const imageName = file.originalname;
+
+    // Generate a unique name for the image using current timestamp
+    const dateTime = Date.now();
+    const imageFileName = `${dateTime}-${imageName}`;
+
+    // Create a reference to the Firebase Storage file
+    const fireFile = FirebaseStorage.file(imageFileName);
+
+    // Upload the image buffer to Firebase Storage
+    await fireFile.save(imageBuffer, {
+      contentType: 'image/png', // Set the appropriate content type
+    });
+
+    // Generate a signed URL for the uploaded image (with an expiration date)
+    const signedUrl = await fireFile.getSignedUrl({
+      action: 'read',
+      expires: '03-01-2500', // Set an appropriate expiration date
+    });
+
+    // Store the signed URL in the array
+    imageUrls.push({ name: imageFileName, url: signedUrl.toString() });
+  }
+
   const data = req.body;
 
   try {
-    blog = await Blog.findByIdAndUpdate(id, req.body, { new: true })
+    blog = await Blog.findByIdAndUpdate(
+      id,
+      {
+        $set: { ...req.body },
+        $push: { images: { $each: imageUrls } }
+      },
+      { new: true }
+    )
   } catch (err) {
     console.log(err)
     return res.status(500).json({ message: "error in updating blog!", error: err })

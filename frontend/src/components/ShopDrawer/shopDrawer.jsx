@@ -22,6 +22,7 @@ import ListItemText from "@mui/material/ListItemText";
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import Description from "@mui/icons-material/Description";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, Button, Link, Menu, MenuItem, Tooltip } from "@mui/material";
@@ -358,7 +359,7 @@ export default function MiniDrawer() {
                             navigate("/showBlogs");
                           } }
                         >
-                          <ShoppingBagIcon />
+                          <Description />
                         </ListItemIcon><ListItemText
                             primary={text}
                             sx={{ opacity: open ? 1 : 0, cursor: "pointer" }}
