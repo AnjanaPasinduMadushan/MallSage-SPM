@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import LocationFeatures from '../../../components/Table/RestingLocationFeatures';
 import RlBarChart from '../../../components/Charts/rlBarChart';
 import axios from 'axios';
-import { Typography, Grid } from '@mui/material';
+import { Typography, Grid, Button } from '@mui/material';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const RestingLocationReport = () => {
   const [locations, setLocations] = useState([]);
@@ -30,38 +32,52 @@ const RestingLocationReport = () => {
     color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
   }));
 
-  // const chartWidth = 600;
-  // const chartHeight = 600;
-  // const centerX = chartWidth / 2;
-  // const centerY = chartHeight / 2;
+  const downloadPdf = () => {
+    const pdf = new jsPDF();
+
+    // Add content to the PDF
+    pdf.text("Availability Distribution", 20, 10);
+
+    // Use jspdf-autotable plugin
+    pdf.autoTable({
+      html: '#pdf-content', // ID of the container holding your components
+      startY: 20, // Adjust the starting Y position as needed
+    });
+
+    // Save the PDF
+    pdf.save('resting_location_report.pdf');
+  };
 
   return (
-    <div style={{ marginTop: '10px', maxWidth: '100%', overflowX: 'hidden' }}>
-      <Grid container spacing={1} justifyContent="center" marginLeft={3} marginRight={1}>
-        <Grid item xs={12} sm={3.5}>
-          <Typography variant='h4' align='center' >
-            Availability Distribution
-          </Typography>
-          <PieChart width={400} height={400}>
-            <Pie
-              dataKey="value"
-              isAnimationActive={false}
-              data={chartData}
-              outerRadius={120}
-              label={({ name, value }) => `${name}: ${value} %`}
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
+    <div id="pdf-content">
+      <div style={{ marginTop: '10px', maxWidth: '100%', overflowX: 'hidden' }}>
+        <Grid container spacing={1} justifyContent="center" marginLeft={3} marginRight={1}>
+          <Grid item xs={12} sm={3.5}>
+            <Typography variant='h4' align='center' >
+              Availability Distribution
+            </Typography>
+            <PieChart width={400} height={400}>
+              <Pie
+                dataKey="value"
+                isAnimationActive={false}
+                data={chartData}
+                outerRadius={120}
+                label={({ name, value }) => `${name}: ${value} %`}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <RlBarChart />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <RlBarChart />
-        </Grid>
-      </Grid>
-      <LocationFeatures />
+        <LocationFeatures />
+      </div>
+      <Button onClick={downloadPdf}>Download PDF</Button>
     </div>
   );
 }

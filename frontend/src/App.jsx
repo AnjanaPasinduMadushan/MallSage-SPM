@@ -25,7 +25,7 @@ import MiniDrawer from "./components/ShopDrawer/shopDrawer";
 import VerifyToken from "./pages/Shop/VerifyToken";
 import ShopLuggageHistory from "./pages/Shop/ShopLuggageHistory";
 import ForgotLuggages from "./pages/Luggage/ForgotLuggages";
-import RestingLocationsPage from "./pages/Administration/Reports/restingLocationsPage";
+import RestingLocationReport from "./pages/Administration/Reports/resting-location";
 
 function App() {
   //Use Selector to getv logged role
@@ -83,7 +83,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
-        <Route path="/resting-report" element={<RestingLocationsPage />} />
+        <Route path="/resting-report" element={<RestingLocationReport />} />
         {/* <Route path="*" element={<h1><center>Page Not Found</center></h1>} /> */}
       </Routes>
       {/* {isLoggedrole === "shop" && <MiniDrawer />} */}
