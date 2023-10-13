@@ -25,6 +25,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, Button, Link, Menu, MenuItem, Tooltip } from "@mui/material";
+import { signOutAction } from '../../Redux/auth/authAction';
 
 const drawerWidth = 240;
 
@@ -137,7 +138,7 @@ export default function MiniDrawer() {
     } else if (setting === settings[1]) {
       await dispatch(signOutAction()).then(() => navigate("/signIn"));
     } else {
-      alert("Page is not found");
+      alert("Page is not found");//ttt
     }
   };
 
@@ -252,7 +253,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Dashboard", "Purchase Delivery", "Verify Token", "Luggage History"].map(
+          {["Dashboard", "Purchase Delivery", "Verify Token", "Luggage History", "Blogs"].map(
             (text, index) => (
               <ListItem key={text} disablePadding sx={{ display: "block" }}>
                 <ListItemButton
@@ -346,7 +347,25 @@ export default function MiniDrawer() {
                             onClick={() => {
                               navigate("/viewshopluggagehistory");
                             } } /></>
-                  ) : (
+                  ) :text === "Blogs" ? (
+                    <><ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            mr: open ? 3 : "auto",
+                            justifyContent: "center",
+                          }}
+                          onClick={() => {
+                            navigate("/showBlogs");
+                          } }
+                        >
+                          <ShoppingBagIcon />
+                        </ListItemIcon><ListItemText
+                            primary={text}
+                            sx={{ opacity: open ? 1 : 0, cursor: "pointer" }}
+                            onClick={() => {
+                              navigate("/showBlogs");
+                            } } /></>
+                  ): (
                     <ListItemText
                       primary={text}
                       sx={{ opacity: open ? 1 : 0 }}

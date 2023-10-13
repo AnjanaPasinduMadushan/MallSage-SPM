@@ -8,7 +8,7 @@ const checkToken = async (req, res, next) => {
 
   try {
     const cookies = req.headers.cookie;
-    console.log(cookies);
+    
     if (!cookies) {
       console.error("cookie not found")
       return res.status(403).json({ message: "Login first" })
@@ -18,8 +18,7 @@ const checkToken = async (req, res, next) => {
     if (!token) {
       console.error("token not found")
       return res.status(403).json({ message: "A token is required" })
-    }
-    else {
+    } else {
       const decode = jwt.verify(token, process.env.secret);
 
       req.userId = decode._id;
@@ -65,4 +64,20 @@ const checkCustomer = async (req, res, next) => {
 
 }
 
-export { checkToken, checkAdmin, checkCustomer }
+//TODO: Only created, not tested
+const checkShop = async (req, res, next) => {
+
+  try {
+    if (req.roleIs === "shop") {
+      next();
+    } else {
+      return res.status(403).json("unauthorized")
+    }
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json("Error in authorization")
+  }
+
+}
+
+export { checkToken, checkAdmin, checkCustomer, checkShop }

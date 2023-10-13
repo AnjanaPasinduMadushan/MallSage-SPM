@@ -1,19 +1,19 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
 import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
+import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import { useSelector, useDispatch } from 'react-redux';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import axios from 'axios';
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // import { autheticationActions } from '../store';
 import { useNavigate } from 'react-router-dom';
 // import authSlice from '../../Redux/auth/authSlice';
@@ -80,19 +80,19 @@ function Header() {
     setAnchorElUser(null);
   };
 
-  const navigateToPage = (page)=>{
-    switch(page){
-      case pages[2]:
-        navigate('./allShopBlogs');
-        break;
-    }
-  }
+  // const navigateToPage = (page) => {
+  //   switch (page) {
+  //     case pages[2]:
+  //       navigate('./allShopBlogs');
+  //       break;
+  //   }
+  // }
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters >
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <LocalMallIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
@@ -109,6 +109,7 @@ function Header() {
             }}
           >
             MALL-SAGE
+            {isLoggedrole ? " | Customer" : ""}
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -142,12 +143,12 @@ function Header() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center" ><div onClick={()=>navigateToPage(page)}>{page}</div></Typography>
+                  <Typography textAlign="center" ><div onClick={() =>{}/* navigateToPage(page)*/}>{page}</div></Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <LocalMallIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -164,7 +165,8 @@ function Header() {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            MALL-SAGE
+            {isLoggedrole ? " | Customer" : ""}
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
@@ -173,7 +175,7 @@ function Header() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                <div onClick={()=>navigateToPage(page)}>{page}</div>
+                <div onClick={() =>{}/* navigateToPage(page)*/}>{page}</div>
               </Button>
             ))}
           </Box>
@@ -209,7 +211,7 @@ function Header() {
             </Menu>
           </Box>
           ) : (
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
               {auth.map((auth) => (
                 <Button
                   key={auth}

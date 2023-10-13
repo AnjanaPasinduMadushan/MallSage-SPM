@@ -3,7 +3,7 @@ dotenv.config();
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import db from './db.js';
+import db from './configs/mongooseConfig.js';
 import cookieParser from 'cookie-parser';
 
 //Routes file paths
