@@ -280,12 +280,14 @@ async function updateLuggageForCustomerToken(req, res) {
         luggageItem.isSecurityConfirmed = true;
         await luggageItem.save();
       }
-
+ return res.status(200).json("Updated  luggage items for CustomerToken");
       console.log(`Updated ${luggageItems.length} luggage items for CustomerToken: ${customerToken}`);
     } else {
+      return res.status(404).json({ message: 'No completed luggage found.' });
       console.log(`No luggage items found for CustomerToken: ${customerToken}`);
     }
   } catch (error) {
+    return res.status(500).json({ message: 'Error updating luggages:', error: error.message });
     console.error(`Error updating luggage items: ${error}`);
   }
 }
@@ -312,12 +314,14 @@ async function updateLuggagesByCustomerID(req, res) {
         luggageItem.isSecurityConfirmed = true;
         await luggageItem.save();
       }
-
+      return res.status(200).json("Updated  luggage items for CustomerID");
       console.log(`Updated ${luggageItems.length} luggage items for CustomerID: ${CustomerID}`);
     } else {
+      return res.status(404).json({ message: 'No completed luggage found.' });
       console.log(`No luggage items found for CustomerID: ${CustomerID}`);
     }
   } catch (error) {
+    return res.status(500).json({ message: 'Error updating luggages:', error: error.message });
     console.error('Error updating luggages:', error);
   }
 }
