@@ -3,21 +3,16 @@ import Slot from "../model/slot-model.js";
 const createParkingSlot = async (req, res) => {
     try {
       const { slotNumber, vehicleType , floor } = req.body;
-  
-      
       const existingSlot = await Slot.findOne({ slotNumber });  
       if (existingSlot) {
         return res.status(400).json({ message: 'Parking slot with the same number already exists.' });
-      }  
-      
+      }        
       const newSlot = new Slot({
         slotNumber,
         floor,
         vehicleType,
-      });
-  
-      await newSlot.save();
-  
+      });  
+      await newSlot.save();  
       res.json({ message: 'Parking slot created successfully' });
     } catch (error) {
       console.error(error);
@@ -25,11 +20,9 @@ const createParkingSlot = async (req, res) => {
     }
   };
 
-  const getParkingSlotById = async (req, res) => {
+const getParkingSlotById = async (req, res) => {
     try {
-      const { id } = req.params;
-  
-      
+      const { id } = req.params;        
       const parkingSlot = await Slot.findById(id);
   
       if (!parkingSlot) {
@@ -99,26 +92,28 @@ const createParkingSlot = async (req, res) => {
   }
 
   const slotOccupide = async (req, res) => {
-    try {
-      const {vnumber} =req.body;
-      console.log(vnumber);
-      const {id} =req.params;
-      const parkingSlots = await Slot.findByIdAndUpdate(id,
+   
+      const id =req.params.id;
+      const {vehicleNumber,isAvailable,startTime} =req.body;
+      let slot;
+      try{
+      slot = await Slot.findByIdAndUpdate(id,
         {
         isAvailable:false,
-        startTime:Date.now(),
-        vehicleNumber:vnumber
-      });
-        
-      if (!parkingSlots) {
+        startTime:Date.now()       
+      ,vehicleNumber},{new:true});
+        slot = await slot.save();
+      } catch (error) {
+        console.error(error);
+      }
+      if (!slot ) {
         return res.status(404).json({ message: 'Parking slots not found' });
       }
-      return res.json(parkingSlots);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal server error' });
+      console.log(slot.vehicleNumber);
+      return res.status(200).json({slot});    
     }
-  }
+      
+  
 
   const endOccupide = async (req, res) => {
     try {
@@ -126,15 +121,17 @@ const createParkingSlot = async (req, res) => {
       const {id} =req.params;
       const parkingSlots = await Slot.findByIdAndUpdate(id,{
         isAvailable:true,
-        endTime:Date.now(),
+        endTime:new Date(),
       });
-      const duration = parkingSlots.endTime - parkingSlots.startTime;
-
-      const totalAmount = (duration/1000/60)*2.50;
+      const end = new Date();
+      const start = parkingSlots.startTime;
+      const duration =((end-start)/1000);
+      
+      const totalAmount = (duration/60)*2.50;
       if (parkingSlots.length==0) {
         return res.status(404).json({ message: 'Parking slots not found' });
       }
-      return res.json({ message: 'Parking slot released', totalAmount, duration });
+      return res.json({ message: 'Parking slot released', totalAmount, duration ,Slot:parkingSlots});
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Internal server error' });

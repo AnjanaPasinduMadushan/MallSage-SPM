@@ -36,7 +36,7 @@ export default function FormDialogAdmin({ locationId, availability, currentNoRes
     intoNumber = parseInt(input.no)
     intoQrNumber = parseInt(input.qrCode)
     try {
-      const res = await axios.patch(`http://localhost:5000/restingLocation/decreaseReserved/${locationId}`, {
+      const res = await axios.patch(`http://localhost:5050/restingLocation/decreaseReserved/${locationId}`, {
         no: intoNumber,
         qrCode: intoQrNumber
       }

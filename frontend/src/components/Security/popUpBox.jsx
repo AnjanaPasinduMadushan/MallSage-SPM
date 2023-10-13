@@ -13,9 +13,8 @@ export default function PopUp({Id , available}) {
 
   const [open, setOpen] = React.useState(false);
   const [input, setInput] = React.useState({
-    vNo: "",
+    vehicleNumber: "",
   });
-  let intoNumber;
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -33,13 +32,13 @@ export default function PopUp({Id , available}) {
     e.preventDefault();
     console.log(input);
     try {
-      const res = await axios.patch(`http://localhost:5000/slot/updateSlot/${Id}`, {
-        vehicleNumber: input.vNo
+      const res = await axios.patch(`http://localhost:5050/slot/start/${Id}`, {
+        vehicleNumber: input.vehicleNumber,
       });
       const data = await res.data;
       console.log(data);
       setOpen(false);
-      // location.reload();
+      location.reload();
     } catch (err) {
       console.log(err);
     }
@@ -55,7 +54,7 @@ export default function PopUp({Id , available}) {
   return (
     <>
       <Tooltip title="To book a paking slot">
-        <Button variant="outlined" onClick={handleClickOpen} disabled={isAvailable && isAvailable === true} >
+        <Button variant="contained" onClick={handleClickOpen} disabled={isAvailable && isAvailable=== false} >
           Book
         </Button>
       </Tooltip>
@@ -66,12 +65,11 @@ export default function PopUp({Id , available}) {
           <TextField
             autoFocus
             margin="dense"
-            id="vNo"
-            name="vNo"
+            name="vehicleNumber"
             label="Vehical Number"
             type="String"
             fullWidth
-            value={input.vNo}
+            value={input.vehicleNumber}
             onChange={handleChange}
             variant="standard"
             InputLabelProps={{

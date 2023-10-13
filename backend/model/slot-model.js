@@ -12,7 +12,7 @@ const slotSchema = new Schema({
       },
       vehicleType: {
         type: String,
-        enum: ['car', 'bike','van'],
+        enum: ['car', 'bike'],
         required: true,
       },
       isAvailable: {
@@ -23,12 +23,13 @@ const slotSchema = new Schema({
       startTime: { 
         type: Date,       
       },
-      endTime:{
-        type: Date,
-      },
       vehicleNumber:{
         type: String,
+      },
+      endTime:{
+        type: Date,
       }
+     
 
   })
   

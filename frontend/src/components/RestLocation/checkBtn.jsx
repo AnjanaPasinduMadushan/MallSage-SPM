@@ -14,7 +14,7 @@ const CheckBtn = ({ locationId }) => {
     e.preventDefault();
     const intConvertCode = parseInt(code);
     try {
-      const res = await axios.patch(`http://localhost:5000/restingLocation/updateToTrue/${locationId}`, {
+      const res = await axios.patch(`http://localhost:5050/restingLocation/updateToTrue/${locationId}`, {
         qrCode: intConvertCode
       })
       console.log(res.data.message)

@@ -52,7 +52,7 @@ const AddRestLocations = () => {
     e.preventDefault();
     console.log(inputs)
     try {
-      const res = await axios.post('http://localhost:5000/restingLocation/addRestingLocation', {
+      const res = await axios.post('http://localhost:5050/restingLocation/addRestingLocation', {
         locationName: inputs.name,
         locationPlaced: inputs.place,
         availability: inputs.availability,

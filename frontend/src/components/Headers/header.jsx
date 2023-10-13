@@ -32,7 +32,7 @@ function Header() {
   const dispatch = useDispatch();
   const isLoggedrole = useSelector((state) => state.auth.User.role);
   // const sendLogoutReq = async () => {
-  //   const res = await axios.post("http://localhost:5000/User/logout", null, {
+  //   const res = await axios.post("http://localhost:5050/User/logout", null, {
   //     withCredentials: true,
   //   }); //null means we don't have anything to add with this api
   //   if (res.status === 200) {

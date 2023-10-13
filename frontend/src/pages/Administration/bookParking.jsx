@@ -4,6 +4,7 @@ import { Table, TableBody,Container, TableCell, TableContainer, TableHead, Table
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import PopUp from '../../components/Security/popUpBox';
+import PopUp2 from '../../components/Security/TicketPopUp'
 
 const AvailableParkingSlots = () => {
     const [data, setData] = useState([]);
@@ -15,7 +16,7 @@ const AvailableParkingSlots = () => {
     // Apply filters to the data.
     let filtered = [...data];
     if(filters.vehicleType=='any'){
-        axios.get(`http://localhost:5000/slot/getAll`)
+        axios.get(`http://localhost:5050/slot/getAll`)
         .then((response) => {
           setData(response.data);
         })
@@ -23,7 +24,7 @@ const AvailableParkingSlots = () => {
           console.error('Error fetching data:', error);
         });
     }else{
-    axios.get(`http://localhost:5000/slot/getSlot/${filters.vehicleType}`)
+    axios.get(`http://localhost:5050/slot/getSlot/${filters.vehicleType}`)
       .then((response) => {
         setData(response.data);
       })
@@ -38,7 +39,7 @@ const AvailableParkingSlots = () => {
     const { name, value } = event.target;
     setFilters({ ...filters, [name]: value });
     if(filters.vehicleType=='any'){
-        await axios.get(`http://localhost:5000/slot/getAll`)
+        await axios.get(`http://localhost:5050/slot/getAll`)
         .then((response) => {
           setData(response.data);
         })
@@ -46,7 +47,7 @@ const AvailableParkingSlots = () => {
           console.error('Error fetching data:', error);
         });
     }else{
-    await axios.get(`http://localhost:5000/slot/getSlot/${filters.vehicleType}`)
+    await axios.get(`http://localhost:5050/slot/getSlot/${filters.vehicleType}`)
       .then((response) => {
         setData(response.data);
       })
@@ -55,6 +56,8 @@ const AvailableParkingSlots = () => {
       });
     }
   };
+ 
+
 
   return (
     <div>
@@ -63,6 +66,7 @@ const AvailableParkingSlots = () => {
           <Box
             sx={{
               marginTop: 10,
+              
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -80,15 +84,17 @@ const AvailableParkingSlots = () => {
         </Select>
       </FormControl>
       
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} >
         <Table aria-label="Parking Slots Table">
           <TableHead>
             <TableRow>
               <TableCell>Slot Number</TableCell>
               <TableCell>Floor</TableCell>
               <TableCell>Vehicle Type</TableCell>
+              <TableCell>Vehicle Number</TableCell>
               <TableCell>Availability</TableCell>
               <TableCell>Book</TableCell>
+              <TableCell>End Booking</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -102,9 +108,13 @@ const AvailableParkingSlots = () => {
         <TableCell>{row.slotNumber}</TableCell>
         <TableCell>{row.floor}</TableCell>
         <TableCell>{row.vehicleType}</TableCell>
+        <TableCell>{row.vehicleNumber}</TableCell>
         <TableCell>{row.isAvailable ? "Available" : "Unavailable"}</TableCell>
         <TableCell>
-          <PopUp Id={row._id} available={row.isAvailable} />
+        <PopUp Id={row._id} available={row.isAvailable} />
+        </TableCell>
+        <TableCell>
+       <PopUp2 id={row._id}/>
         </TableCell>
       </TableRow>
     ))
@@ -113,6 +123,8 @@ const AvailableParkingSlots = () => {
 
         </Table>
       </TableContainer>
+     
+      
       </Container>
     </div>
   );

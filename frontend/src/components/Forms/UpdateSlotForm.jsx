@@ -15,7 +15,7 @@ import axios from 'axios';
 
 const defaultTheme = createTheme();
 
-const AddParkingSlot = () => {
+const UpdateParkingSlot = () => {
 
   // const dispatch = useDispatch();    
   const navigate = useNavigate();
@@ -134,4 +134,4 @@ const AddParkingSlot = () => {
   )
 }
 
-export default AddParkingSlot
+export default UpdateParkingSlot
