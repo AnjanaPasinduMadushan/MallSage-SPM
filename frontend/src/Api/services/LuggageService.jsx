@@ -7,7 +7,7 @@ export const addLuggage = async (
   BagNo,
   Bill,
   ShopID,
-  ShopName 
+  ShopName
 ) => {
   const shop = {
     ShopID: ShopID,
@@ -50,14 +50,62 @@ export const updateLuggageCustomer = async (
   return response.data;
 };
 
+// Request Delivery 
+export const RequestTodayGoodsDelivery = async (
+  userid,
+  exitpoint,
+  deliverytime,
+
+) => {
+  const response = await apiClient.patch(`luggage/requestluggagedelivery/${userid}`, {
+    exitpoint: exitpoint,
+    deliverytime: deliverytime,
+  },
+  );
+};
+
+  // Request Forgotten Delivery 
+export const RequestForgotGoodsDelivery = async (
+  userid,
+  exitpoint,
+  deliverytime,
+
+) => {
+  const response = await apiClient.patch(`luggage/requestforgottenluggagedelivery/${userid}`, {
+    exitpoint: exitpoint,
+    deliverytime: deliverytime,
+  },
+  );
+
+  return response.data;
+};
+
 //Get All Luggages all customer view 
 export const getAllLuggages = async (email) => {
   const response = await apiClient.get(`luggage/getallLuggagescustomer/${email}`);
   return response.data;
 };
 
+//Get All Forgotten Luggages
+export const getAllForgottenLuggages = async (email) => {
+  const response = await apiClient.get(`luggage/getallOlderLuggagescustomer/${email}`);
+  return response.data;
+};
+
+//Get All Luggages by Shop ID and user ID 
+export const getAllLuggagesbyUserIDandShopID = async (shopID, userId) => {
+  const response = await apiClient.get(`luggage/getluggagesbyshopIDandUserID/${shopID}/${userId}`);
+  return response.data;
+};
+
+//Get All Forgotten Luggages by Shop ID and user ID 
+export const getAllForgottenLuggagesbyUserIDandShopID = async (shopID, userId) => {
+  const response = await apiClient.get(`luggage/getForgottenluggagesbyshopIDandUserID/${shopID}/${userId}`);
+  return response.data;
+};
+
 //Get All Luggages by ShopID and Date
-export const getLuggagesByShopIDandDate = async (shopID,date) => {
+export const getLuggagesByShopIDandDate = async (shopID, date) => {
   console.log("shopID", shopID);
   const response = await apiClient.get(`luggage/getluggagesbyshop/${shopID}/${date}`);
   return response.data;
@@ -79,6 +127,29 @@ export const validateToken = async (token) => {
 
 //Get Luggages by userId and Date
 export const getLuggagesByuserIdandDate = async (userId, date) => {
+  console.log("userId", userId);
   const response = await apiClient.get(`luggage/getluggagesbyshop/${userId}/${date}`);
   return response.data;
 };
+
+//Get Luggages by userId and Date
+export const deleteluggagebyId = async (id) => {
+  console.log("id", id);
+  const response = await apiClient.delete(`luggage/deleteLuggage/byshop/${id}`);
+  return response.data;
+};
+
+
+//Get Ongoing luggages for baggager
+export const getLuggagesByBaggage = async (userId) => {
+  const response = await apiClient.get(`luggage/getLuggagesByBaggage/${userId}`);
+  return response.data;
+};
+
+//Get History luggages for baggager
+export const getLuggagesHistoryByBaggage = async (userId) => {
+  const response = await apiClient.get(`luggage/getBaggageEmployeeLuggageHistory/${userId}`);
+  return response.data;
+};
+
+

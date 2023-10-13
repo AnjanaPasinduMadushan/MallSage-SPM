@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { RequestTodayGoodsDelivery, getAllLuggages, getAllLuggagesbyUserIDandShopID } from "../../Api/services/LuggageService";
-import Calendar from "react-calendar";
+import { RequestForgotGoodsDelivery, getAllForgottenLuggages, getAllForgottenLuggagesbyUserIDandShopID, getAllLuggages, getAllLuggagesbyUserIDandShopID } from "../../Api/services/LuggageService";
 import { useQuery } from "react-query";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
@@ -19,6 +18,7 @@ import {
   TableCell,
   TableBody,
   TablePagination,
+  TextField,
 } from "@mui/material";
 import { MaterialReactTable } from "material-react-table";
 import { Modal, Table } from "react-bootstrap";
@@ -30,11 +30,12 @@ import { MobileTimePicker } from "@mui/x-date-pickers";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function LuggageBox() {
+
+function ForgotLuggages() {
   const customeremail = useSelector((state) => state.auth.User.email);
   const name = useSelector((state) => state.auth.User.name);
   const { data, isLoading, error, isError } = useQuery({
-    queryFn: () => getAllLuggages(customeremail),
+    queryFn: () => getAllForgottenLuggages(customeremail),
   });
   const [page, setPage] = useState(0);
   const [date, setDate] = useState(new Date());
@@ -48,9 +49,9 @@ function LuggageBox() {
   const [shopLuggageData, setShopLuggageData] = useState([]);
   const handleShopLuggageModalOpen = () => setShopLuggageModal(true);
   const handleShopLuggageModalClose = () => setShopLuggageModal(false);
-  const [location, setLocation] = useState(""); // Define and initialize location
+  const [location, setLocation] = useState("");
+  const [time, setTime] = useState("");
   const { User } = useSelector((state) => state.auth);
-  const [time, setTime] = useState(dayjs());
 
   const rowsPerPage = 3;
 
@@ -63,77 +64,6 @@ function LuggageBox() {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
-
-  const isTimeValid = (selectedTime) => {
-    const minTime = dayjs('8:00 AM', 'h:mm A');
-    const maxTime = dayjs('10:00 PM', 'h:mm A');
-    return (
-      selectedTime.isAfter(minTime) && selectedTime.isBefore(maxTime)
-    );
-  };
-
-  const isTotalBagsValid = (totalBags, selectedTime) => {
-    if (totalBags > 20) {
-      const oneHourFromNow = dayjs().add(1, 'hour');
-      return selectedTime.isSame(oneHourFromNow, 'minute');
-    } else {
-      const fortyFiveMinutesPrior = dayjs().subtract(45, 'minutes');
-      return selectedTime.isSame(fortyFiveMinutesPrior, 'minute');
-    }
-  };
-  console.log("time", time)
-  const handleTimeChange = (newTime) => {
-    setTime(newTime);
-    if (data && data.totalBags !== undefined) {
-      if (isTimeValid(newTime) && isTotalBagsValid(data.totalBags, newTime)) {
-        // console.log("newTime2", newTime);
-        setTime(newTime);
-      } else {
-        if (!isTimeValid(newTime)) {
-          // console.log("newTime3", newTime);
-          toast.error('Invalid time. Time should be between 8:00 AM and 10:00 PM.');
-        } else {
-          // console.log("newTime4", newTime);
-          toast.error('Your Time should be betweeen 45 - 60 minutes prior.');
-        }
-      }
-    } else {
-      // Handle the case where data or data.totalBags is undefined
-      console.log("Data or data.totalBags is undefined.");
-    }
-
-  }
-  // console.log("User", User._id)
-  //   console.log("location", location)
-  //   console.log("time", time)
-  const handleDeliverySubmit = async () => {
-
-    // Perform the validation checks here
-    if (!location) {
-      toast.error('Invalid location. Please select a valid location.');
-      return; // Stop the function execution if location is invalid
-    }
-
-    if (!isTimeValid(time)) {
-      toast.error('Invalid time. Time should be between 8:00 AM and 10:00 PM.');
-      return; // Stop the function execution if time is invalid
-    }
-
-    try {
-      const result = await RequestTodayGoodsDelivery(User._id, location, time);
-      console.log("result", result);
-      toast.success("Your Request Is Being Processed");
-      setTime("");
-      setLocation("");
-      handleDeliveryModalClose();
-    } catch (err) {
-      console.error("Error Sending Request", err);
-      toast.error("Error Sending Request");
-    }
-  }
-
-
 
   // // Slice the data based on the current page and rows per page
   // const slicedData = shopLuggageData?.luggages?.slice(
@@ -156,6 +86,46 @@ function LuggageBox() {
     );
   };
 
+  const isTimeValid = (selectedTime) => {
+    const minTime = dayjs('8:00 AM', 'h:mm A');
+    const maxTime = dayjs('10:00 PM', 'h:mm A');
+    return (
+      selectedTime.isAfter(minTime) && selectedTime.isBefore(maxTime)
+    );
+  };
+
+  const isTotalBagsValid = (totalBags, selectedTime) => {
+    if (totalBags > 20) {
+      const oneHourFromNow = dayjs().add(1, 'hour');
+      return selectedTime.isSame(oneHourFromNow, 'minute');
+    } else {
+      const fortyFiveMinutesPrior = dayjs().subtract(45, 'minutes');
+      return selectedTime.isSame(fortyFiveMinutesPrior, 'minute');
+    }
+  };
+  // console.log("time", time)
+  const handleTimeChange = (newTime) => {
+    setTime(newTime);
+    if (data && data.totalBags !== undefined) {
+      if (isTimeValid(newTime) && isTotalBagsValid(data.totalBags, newTime)) {
+        // console.log("newTime2", newTime);
+        setTime(newTime);
+      } else {
+        if (!isTimeValid(newTime)) {
+          // console.log("newTime3", newTime);
+          toast.error('Invalid time. Time should be between 8:00 AM and 10:00 PM.');
+        } else {
+          // console.log("newTime4", newTime);
+          toast.error('Your Time should be betweeen 45 - 60 minutes prior.');
+        }
+      }
+    } else {
+      // Handle the case where data or data.totalBags is undefined
+      console.log("Data or data.totalBags is undefined.");
+    }
+
+  }
+
   // Custom CSS class names for different date types
   const tileClassName = ({ date }) => {
     if (isWeekend(date)) {
@@ -170,9 +140,9 @@ function LuggageBox() {
   const handleButtonClick = async (shopId) => {
     setShopId(shopId);
     try {
-      console.log("shopId", shopId)
-      console.log("userId", User._id)
-      await getAllLuggagesbyUserIDandShopID(shopId, User._id)
+      // console.log("shopId", shopId)
+      // console.log("userId", User._id)
+      await getAllForgottenLuggagesbyUserIDandShopID(shopId, User._id)
         .then((res) => {
           console.log("res", res);
           setShopLuggageData(res);
@@ -272,6 +242,34 @@ function LuggageBox() {
   function handleDownload(downloadLink) {
     window.location.href = downloadLink;
   }
+  // console.log("location", location)
+  // console.log("time", time)
+  const handleDeliverySubmit = async () => {
+    // Perform the validation checks here
+    if (!location) {
+      toast.error('Invalid location. Please select a valid location.');
+      return; // Stop the function execution if location is invalid
+    }
+
+    if (!isTimeValid(time)) {
+      toast.error('Invalid time. Time should be between 8:00 AM and 10:00 PM.');
+      return; // Stop the function execution if time is invalid
+    }
+
+    try {
+      const result = await RequestForgotGoodsDelivery(User._id, location, time);
+      console.log("result", result);
+      toast.success("Your Request Is Being Processed");
+      setTime("");
+      setLocation("");
+      handleDeliveryModalClose();
+    } catch (err) {
+      console.error("Error Sending Request", err);
+      toast.error("Error Sending Request");
+    }
+  }
+
+
   return (
     <div
     >
@@ -297,11 +295,11 @@ function LuggageBox() {
               fontSize: "30px",
             }}
           >
-            Your Baggages💼
+            Forgot Your Baggages💼?
           </Typography>
           <Button
             sx={{ marginRight: "15%", border: "1px solid black", borderRadius: "8px", marginTop: "2%", marginLeft: "2%" }}
-            onClick={() => { navigate("/") }}
+            onClick={() => navigate("/viewLuggage")}
           >
             <ArrowBackIcon style={{ marginLeft: "5px" }} />
             Back to Home
@@ -347,7 +345,7 @@ function LuggageBox() {
                   </Box>
                 </div>
               ) : (
-                "No baggage to be delivered"
+                "No baggage available"
               )}
             </Typography>
             <Button
@@ -364,7 +362,7 @@ function LuggageBox() {
               }}
               onClick={handleCustomerTokenModalOpen}
             >
-              View Your Token
+              View Your Customer ID
             </Button>
             <Button
               sx={{
@@ -381,24 +379,6 @@ function LuggageBox() {
               onClick={handleDeliveryModalOpen}
             >
               Deliver Baggages
-            </Button>
-            <Button
-              sx={{
-                mt: 2,
-                borderRadius: '18px', // Make this consistent with other borderRadius values
-                width: '20vw',
-                marginLeft: '3%',
-                color: 'white',
-                marginTop: '2.7%',
-                height: '4vh',
-                fontSize: '1.0rem',
-                backgroundColor: '#1769aa', // Move backgroundColor here
-              }}
-              onClick={() => {
-                navigate("/forgotluggages");
-              }}
-            >
-              Forgot Your Baggage?
             </Button>
           </div>
           <div
@@ -476,12 +456,12 @@ function LuggageBox() {
         onHide={handleCustomerTokenModalClose}
         style={{ marginTop: "8%" }}
       >
-        <Modal.Header closeButton>Your Token </Modal.Header>
+        <Modal.Header closeButton>Your Customer ID </Modal.Header>
 
         <Modal.Body style={{ textAlign: 'center' }}>
           {data
-            ? `Your Token: ${data.customerToken || "N/A"}`
-            : "No Token to be displayed"}
+            ? `Your ID: ${data.customerid || "N/A"}`
+            : "No ID to be displayed"}
 
         </Modal.Body>
       </Modal>
@@ -537,4 +517,5 @@ function LuggageBox() {
   );
 }
 
-export default LuggageBox;
+
+export default ForgotLuggages

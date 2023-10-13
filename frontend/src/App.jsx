@@ -30,6 +30,8 @@ import AvailableParkingSlots from "./pages/Administration/bookParking"
 import MiniDrawer from "./components/ShopDrawer/shopDrawer";
 import VerifyToken from "./pages/Shop/VerifyToken";
 import ShopLuggageHistory from "./pages/Shop/ShopLuggageHistory";
+import ForgotLuggages from "./pages/Luggage/ForgotLuggages";
+import RestingLocationReport from "./pages/Administration/Reports/resting-location";
 
 function App() {
   //Use Selector to getv logged role
@@ -57,6 +59,7 @@ function App() {
         <Route path="/addEmployee" element={<AddEmployee />} />
         <Route path="/addShop" element={<AddShop />} />
         <Route path="/addBaggageemployee" element={<AddBaggageEmployee />} />
+        <Route path="/forgotluggages" element={<ForgotLuggages />} />
         <Route path="/shopHome" element={<ShopHome />} />
         {isLoggedrole === "customer" && <Route path="/" element={<Home />} />}
         {isLoggedrole === "shop" && (
@@ -91,8 +94,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/signIn" element={<SignIn />} />
+
         <Route path="/createPost" element={<CreateBlogPost />} />
-        <Route path="/allShopBlogs" element={<ViewAllShopBlogs />} />
+        <Route path="/allShopBlogs" element={<ViewAllShopBlogs />} /
+
+        <Route path="/resting-report" element={<RestingLocationReport />} />
 
         {/* <Route path="*" element={<h1><center>Page Not Found</center></h1>} /> */}
       </Routes>

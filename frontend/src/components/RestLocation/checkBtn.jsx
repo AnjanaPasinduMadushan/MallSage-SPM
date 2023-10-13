@@ -47,7 +47,7 @@ const CheckBtn = ({ locationId }) => {
         <Tooltip title="To check pre-reserved qrCodes">
           <Button
             variant="outlined"
-            onClick={handlecheckSubmit}
+            onClick={handlecheckSubmit} style={{ fontWeight: 'bold' }}
           >
             Check
           </Button>
