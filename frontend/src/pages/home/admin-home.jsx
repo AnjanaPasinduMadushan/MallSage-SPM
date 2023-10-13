@@ -33,7 +33,7 @@ export const AdminHome = () => {
   //Testing api call(line no 8 - 25)
   const userProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/profile", {
+      const res = await axios.get("http://localhost:5050/user/profile", {
         withCredentials: true,
       })
 

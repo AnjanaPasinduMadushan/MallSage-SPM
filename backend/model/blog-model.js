@@ -8,22 +8,18 @@ const blogScema = new Schema({
     type: String,
     required: true
   },
-
-  content: {
-    type: String,
-    required: true
-  },
-
-  shop: {
-    type: String,
-    required: true
-  },
-
   author: {
     type: String,
     required: true
   },
-
+  shop: {
+    type: String,
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
   createdDate: {
     type: Date,
     required: true
