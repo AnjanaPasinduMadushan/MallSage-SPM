@@ -825,12 +825,12 @@ const RequestForgottenLuggageDelivery = async (req, res, next) => {
 
 //Get luggages ongoing assigned to baggage employee
 const BaggageEmployeeLuggagesHistory = async (req, res, next) => {
-  const id = req.params.userid;
+  const id = req.params.id;
 
   try {
     // Find the baggage employee by ID
     const baggageEmployee = await BaggageEmployee.findOne({ userId: id });
-
+    console.log("id", id)
     if (!baggageEmployee) {
       return res.status(404).json({ message: "Baggage employee not found" });
     }

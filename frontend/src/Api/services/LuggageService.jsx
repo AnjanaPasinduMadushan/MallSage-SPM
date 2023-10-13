@@ -138,3 +138,10 @@ export const getLuggagesByBaggage = async (userId) => {
   return response.data;
 };
 
+//Get History luggages for baggager
+export const getLuggagesHistoryByBaggage = async (userId) => {
+  const response = await apiClient.get(`luggage/getBaggageEmployeeLuggageHistory/${userId}`);
+  return response.data;
+};
+
+
