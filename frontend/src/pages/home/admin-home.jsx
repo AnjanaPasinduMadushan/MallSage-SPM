@@ -61,10 +61,10 @@ export const AdminHome = () => {
             <Item onClick={() => navigate('/showAllLocations')}>Resting Location Tracking System<InterestsIcon /></Item>
           </Grid>
           <Grid item xs={6}>
-            <Item>Car Parking Reservation System<LocalParkingIcon /></Item>
+            <Item onClick={() => navigate('/admin/viewParkingSlots')}>Car Parking Reservation System<LocalParkingIcon /></Item>
           </Grid>
           <Grid item xs={6}>
-            <Item onClick={() => navigate('/securityHome')}>Security Luggage Collection<BookIcon /></Item>
+            <Item onClick={() => navigate('/admin/availableParkingSlots')}>Reservation Booking<BookIcon /></Item>
           </Grid>
         </Grid>
       </Box>
