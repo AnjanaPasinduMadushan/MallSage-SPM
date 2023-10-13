@@ -16,7 +16,7 @@ const addLocation = async (req, res) => {
   console.log(req.body);
   console.log(availability)
   try {
-    if (!_.isNaN(availability)) {
+    if (!_.isNumber(parseInt(availability))) {
       return res.status(400).json({ message: "Invalid value for availability" });
     }
     const location = new RestingLocations({
@@ -169,13 +169,30 @@ const addNoReserved = async (req, res) => {
     }
 
     location.count += 1;
-
+    const currentDateTime = new Date();
+    const expirationTime = new Date(currentDateTime.getTime() + 20 * 60 * 1000); // Add 20 minutes
     if (userRole === "customer") {
       const emailDetails = {
         from: "mallsage34@gmail.com",
         to: email, // Use the customer's email
         subject: "Holding Space in a Resting Locations",
-        text: `Your reserved No for the ${locationName},  is ${uniqueNo}. Show this no when entering to the ${locationName} `,
+        html: `<p>Dear Customer,</p>
+        <p>Thank you for choosing ${locationName}! Your reservation is confirmed.</p>
+        
+        <p><strong>Reservation Details:</strong></p>
+        <ul>
+          <li>Location: ${locationName}</li>
+          <li>Reserved Number: <strong>${uniqueNo}</strong></li>
+          <li>Date and Time: ${currentDateTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</li>
+          <li>Expiration Time: ${expirationTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</li>
+        </ul>
+    
+        <p>Please make sure to show this reservation number (<strong>${uniqueNo}</strong>) when entering ${locationName}. Our team is excited to welcome you!</p>
+        <p><em>Note: Your reservation will expire at ${expirationTime.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}. Please ensure to use it before the expiration time.</em></p>
+        <p><em>This is a auto-genarated message. Do not reply to this email.</em></p>
+        <br>
+        <p>Mall-Sage</p>
+        `,
       };
 
       mailTransporter.sendMail(emailDetails, (err) => {

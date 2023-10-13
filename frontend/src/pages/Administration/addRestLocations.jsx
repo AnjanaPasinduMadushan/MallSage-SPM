@@ -14,6 +14,7 @@ import { useState } from 'react';
 import InterestsIcon from '@mui/icons-material/Interests';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const defaultTheme = createTheme();
 
@@ -163,6 +164,8 @@ const AddRestLocations = () => {
 
         </Container>
       </ThemeProvider>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnHover draggable pauseOnVisibilityChange />
+
     </>
   )
 }
