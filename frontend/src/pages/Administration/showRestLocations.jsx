@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import ShowAllLocations from "../../components/RestLocation/showAllLocations"
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 
 const ShowRestLocations = () => {
 
@@ -20,8 +20,14 @@ const ShowRestLocations = () => {
 
   return (
     <>
-      <Button onClick={handleNewLocation} variant="outlined">ADD A NEW RESTING LOCATION</Button>
-      <Button onClick={handleGenerateReport} variant="outlined" color="info"> Genarate Report</Button>
+      <Box display="flex" justifyContent="center" alignItems="center" gap={20} mt={2} style={{ position: "sticky", top: 0, zIndex: 100 }}>
+        <Button onClick={handleNewLocation} variant="outlined" color='error'>
+          NEW RESTING ZONE
+        </Button>
+        <Button onClick={handleGenerateReport} variant="outlined" color='error'>
+          GENERATE REPORT
+        </Button>
+      </Box>
       <ShowAllLocations handleOnClick={navigatePage} />
     </>
   )
