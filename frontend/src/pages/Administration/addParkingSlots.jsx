@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import LocalParkingIcon from '@mui/icons-material/LocalParking';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+
 
 const defaultTheme = createTheme();
 
@@ -49,11 +49,13 @@ const AddParkingSlot = () => {
         vehicleType: inputs.vehicleType,
       });
       const data = await res.data;
-      toast.success("Successfully Added");
+     // toast.success("Successfully Added");
       console.log(data);
       navigate('/admin/viewParkingSlots');
     } catch (err) {
-        toast.error("Error")
+      console.log(err)
+        //toast.error("Error")
+    }
   };
 
   return (
@@ -131,9 +133,10 @@ const AddParkingSlot = () => {
 
         </Container>
       </ThemeProvider>
+     
     </>
   )
 }
-}
+
 
 export default AddParkingSlot
