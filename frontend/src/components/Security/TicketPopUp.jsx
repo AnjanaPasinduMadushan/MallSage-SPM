@@ -7,10 +7,12 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
 import TextField from '@mui/material/TextField';
+import ReactToPrint from 'react-to-print';
+import PrintComponent from '../Ticket/Print';
+import { useRef } from 'react';
+import { formatDate } from "../../util/formatDate";
 
-
-
-export default function AlertDialog({id}) {
+export default function AlertDialog({id , available}) {
   const [open, setOpen] = React.useState(false);
  
   const [duration, setDuration] = React.useState('');
@@ -26,15 +28,13 @@ export default function AlertDialog({id}) {
       console.log(data.Slot);
       setDuration(data.duration);
       setTotalAmount(data.totalAmount);
-      setSlot(data.Slot);
-
-
-        
+      setSlot(data.Slot);       
     }catch(error){
       console.log(error);
     }
 
   };
+  const printRef = useRef();
 
   const handleClose = () => {
     setOpen(false);
@@ -42,7 +42,7 @@ export default function AlertDialog({id}) {
 
   return (
     <div>
-      <Button variant="contained" color="error" onClick={handleClickOpen}>
+      <Button variant="contained" color="error" onClick={handleClickOpen} disabled={available}>
         End
       </Button>
       <Dialog
@@ -59,69 +59,56 @@ export default function AlertDialog({id}) {
           <TextField
           disabled
           id="outlined-disabled"
-          label="Slot Number"
-          value={Slot.slotNumber}
+          value={"Slot Number - " + Slot.slotNumber}
           style={{ marginBottom: '10px', width: '100%' }}
         />
         <TextField
           disabled
           id="outlined-disabled"
-          label="Vehical Number"
-          value={Slot.vehicleNumber}
+          value={"Vehical Number - " + Slot.vehicleNumber}
           style={{ marginBottom: '10px', width: '100%' }}
         />
           <TextField
           disabled
           id="outlined-disabled"
-          label="Duration"
-          value={duration}
+          value={"Duration - s" + duration}
           style={{ marginBottom: '10px', width: '100%' }}
         />
          <TextField
           disabled
           id="outlined-disabled"
-          label="Amount"
-          value={totalAmount}
+          value={"Amount - Rs:" + totalAmount}
           style={{ marginBottom: '10px', width: '100%' }}
         />
         
         <TextField
           disabled
           id="outlined-disabled"
-          label="Disabled"
-          value={Slot.startTime}
+          value={`Start Time - ${formatDate(Slot.startTime,"HH:MM:ss")} `  }
           style={{ marginBottom: '10px', width: '100%' }}
         />
         <TextField
           disabled
           id="outlined-disabled"
-          label="Disabled"
-          value={Slot.endTime}
+          value={`Start Time - ${formatDate(Slot.endTime,"HH:MM:ss")} `}
           style={{ marginBottom: '10px', width: '100%' }}
         />
         
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() =>
-            print({
-              printable: Slot,
-              properties: [
-                { field: "slotNumber", displayName: "Paking Slot" },
-                {field: "vehicleNumber", displayName: "Vehical Name"},
-                { field: "duration", displayName: "Duration" },
-                { field: "totalAmount", displayName: "Total Amount" },
-                { field: "startTime", displayName: "Start Time" },
-                { field: "endTime", displayName: "End Time" },
-              ],
-              type: "json",
-            })
-          }>Print</Button>
+        <ReactToPrint
+            trigger={() => <Button>Print</Button>}
+            content={() => printRef.current}
+          />
           <Button onClick={handleClose} autoFocus>
-            Agree
+            Done
           </Button>
         </DialogActions>
       </Dialog>
+      <div style={{ display: 'none' }}>
+        <PrintComponent ref={printRef} Slot={Slot} duration={duration} totalAmount={totalAmount} />
+      </div>
     </div>
   );
 }

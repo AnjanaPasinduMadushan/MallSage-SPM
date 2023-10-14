@@ -114,7 +114,7 @@ const AvailableParkingSlots = () => {
         <PopUp Id={row._id} available={row.isAvailable} />
         </TableCell>
         <TableCell>
-       <PopUp2 id={row._id}/>
+       <PopUp2 id={row._id} available={row.isAvailable}/>
         </TableCell>
       </TableRow>
     ))
