@@ -200,8 +200,6 @@ const CreateUpdateBlogPost = () => {
         }
     }
 
-
-
     return (
         <>
             <ToastContainer />
