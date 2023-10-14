@@ -125,9 +125,10 @@ const getParkingSlotById = async (req, res) => {
       });
       const end = new Date();
       const start = parkingSlots.startTime;
-      const duration =((end-start)/1000);
+      const duration =(((end-start)/1000)/60).toFixed(2);
       
-      const totalAmount = (duration/60)*2.50;
+
+      const totalAmount = (duration*2.50).toFixed(2);
       if (parkingSlots.length==0) {
         return res.status(404).json({ message: 'Parking slots not found' });
       }

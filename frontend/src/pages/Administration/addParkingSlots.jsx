@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import LocalParkingIcon from '@mui/icons-material/LocalParking';
 import axios from 'axios';
-
+import { toast, ToastContainer } from 'react-toastify';
 
 const defaultTheme = createTheme();
 
@@ -26,22 +26,24 @@ const AddParkingSlot = () => {
     floor: "",
     vehicleType: "",
     
-  })
+  });
 
-  const handleChange = async (e) => {
-    const { name, value, checked } = e.target;
-      setInputs((previousState) => ({
-        ...previousState,
-        [name]: value,
-  }));
-    }
-    console.log(inputs)
-  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((previousState) => ({
+      ...previousState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
 
     e.preventDefault();
     console.log(inputs)
+    if (!validateInputs()) {
+      return;
+    }
+    
     try {
       const res = await axios.post('http://localhost:5050/slot/add', {
         slotNumber: inputs.number,
@@ -49,14 +51,34 @@ const AddParkingSlot = () => {
         vehicleType: inputs.vehicleType,
       });
       const data = await res.data;
-     // toast.success("Successfully Added");
+      toast.success('Successfully Added');
       console.log(data);
       navigate('/admin/viewParkingSlots');
     } catch (err) {
       console.log(err)
         //toast.error("Error")
     }
-  };
+};
+const validateInputs = () => {
+  let valid = true;
+
+  if (inputs.number.trim() === '') {
+    toast.error('Slot Number is required');
+    valid = false;
+  }
+  if(isNaN(inputs.number) || parseInt(inputs.number) <= 0){
+    toast.error('Slot Number must be a positive integer');
+    valid = false;
+  }
+  if (inputs.floor.trim() === '') {
+    toast.error('Floor is required');
+    valid = false;
+  } else if (isNaN(inputs.floor) || parseInt(inputs.floor) <= 0) {
+    toast.error('Floor must be a positive integer');
+    valid = false;
+  }
+  return valid;
+};
 
   return (
     <>
@@ -133,6 +155,7 @@ const AddParkingSlot = () => {
 
         </Container>
       </ThemeProvider>
+      <ToastContainer />
      
     </>
   )

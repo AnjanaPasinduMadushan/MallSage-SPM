@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 
 // eslint-disable-next-line react/prop-types
 export default function PopUp({Id , available}) {
@@ -27,34 +28,40 @@ export default function PopUp({Id , available}) {
     }));
   }
 
-  // eslint-disable-next-line no-unused-vars
-  const handleClose = async (e) => {
-    e.preventDefault();
-    console.log(input);
-    try {
-      const res = await axios.patch(`http://localhost:5050/slot/start/${Id}`, {
-        vehicleNumber: input.vehicleNumber,
-      });
-      const data = await res.data;
-      console.log(data);
-      setOpen(false);
-      location.reload();
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
- const isAvailable = ()=>{
-  if(available === "true"){
-    return false;
- }
- return true
-}
+
+const handleClose = async () => {
+  if (!input.vehicleNumber.trim()) {
+    toast.error('Vehicle Number is required.');
+    return;
+  }
+  try {
+    const res = await axios.patch(`http://localhost:5050/slot/start/${Id}`, {
+      vehicleNumber: input.vehicleNumber,
+    });
+    const data = await res.data;
+    console.log(data);
+    setOpen(false);
+    location.reload();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// ...
+
+
+// //  const isAvailable = ()=>{
+// //   if(available === "true"){
+// //     return false;
+// //  }
+//  return true
+// }
 
   return (
     <>
       <Tooltip title="To book a paking slot">
-        <Button variant="contained" onClick={handleClickOpen} disabled={isAvailable && isAvailable=== false} >
+        <Button variant="contained" onClick={handleClickOpen} disabled={!available} >
           Book
         </Button>
       </Tooltip>
@@ -78,9 +85,10 @@ export default function PopUp({Id , available}) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Booking</Button>
+          <Button onClick={()=>handleClose()}>Booking</Button>
         </DialogActions>
       </Dialog>
+      <ToastContainer/>
     </>
   );
 

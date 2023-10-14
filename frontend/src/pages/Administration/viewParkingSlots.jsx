@@ -16,6 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import Swal from 'sweetalert2';
 
 const defaultTheme = createTheme();
 
@@ -25,8 +26,7 @@ const ViewParkingSlots = () => {
   const [data, setData] = useState([]);
   
   useEffect(() => {
-
-    axios.get('http://localhost:5050/slot/getAll')
+       axios.get('http://localhost:5050/slot/getAll')
       .then((response) => {
         setData(response.data); 
       })
@@ -42,15 +42,27 @@ const ViewParkingSlots = () => {
   // Sort the data by slot number
 
   const deleteBook = async (id) => {
-    await axios.delete(`http://localhost:5050/slot/delete/${id}`)
-      .then((res) => {
-        console.log(`product ${id} deleted`); 
-        location.reload();      
-      })
-      .then((res) => {
-        console.log(res);
-        setData(res.data);
-      });
+    Swal.fire({
+      title: 'Delete Slot',
+      text: 'Do you want to delete this slot?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`http://localhost:5050/slot/delete/${id}`)
+          .then((res) => {
+            console.log(`Slot ${id} deleted`);
+            location.reload();
+          })
+          .then((res) => {
+            console.log(res);
+            setData(res.data);
+          });
+      }
+    });
   };
 
   const sortedData = data.sort((a, b) => a.slotNumber - b.slotNumber);
@@ -115,3 +127,4 @@ const ViewParkingSlots = () => {
 }
 
 export default ViewParkingSlots;
+
