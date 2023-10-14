@@ -52,9 +52,10 @@ function AdminHeader() {
       await dispatch(signOutAction())
         .then(() => navigate("/signIn"));
     } else {
-      alert("Page is not found")
+      alert("Pagr is not found")
     }
   };
+
 
   const navigateButton = (auths) => {
     console.log(auths)
@@ -151,7 +152,7 @@ function AdminHeader() {
           >
             MALL-SAGE | ADMIN
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          {/* <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -161,9 +162,9 @@ function AdminHeader() {
                 {page}
               </Button>
             ))}
-          </Box>
+          </Box> */}
 
-          {isLoggedrole ? (<Box sx={{ flexGrow: 0 }}>
+          {isLoggedrole ? (<Box sx={{ flexGrow: 0,marginLeft:"80vw" }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

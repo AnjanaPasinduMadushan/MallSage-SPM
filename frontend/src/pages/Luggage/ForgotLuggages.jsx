@@ -34,7 +34,7 @@ import { useNavigate } from "react-router-dom";
 function ForgotLuggages() {
   const customeremail = useSelector((state) => state.auth.User.email);
   const name = useSelector((state) => state.auth.User.name);
-  const { data, isLoading, error, isError } = useQuery({
+  const { data:forgotbaggages, isLoading, error, isError } = useQuery({
     queryFn: () => getAllForgottenLuggages(customeremail),
   });
   const [page, setPage] = useState(0);
@@ -196,8 +196,8 @@ function ForgotLuggages() {
 
   let mappedData = [];
 
-  if (data !== undefined) {
-    mappedData = data?.uniqueShops?.map((shop) => {
+  if (forgotbaggages !== undefined) {
+    mappedData = forgotbaggages?.uniqueShops?.map((shop) => {
       const row = {
         ShopName: shop.ShopName,
         Status: "",
@@ -224,12 +224,12 @@ function ForgotLuggages() {
         // <button onClick={() => handleButtonClick(shop.ShopID)}>View</button>
       );
 
-      if (data.shopcollected) {
-        console.log("isComplete", data.shopcollected);
+      if (forgotbaggages.shopcollected) {
+        console.log("isComplete", forgotbaggages.shopcollected);
         row.Status = "Collected From ShopShop 🛍️";
-      } else if (data.securitycollected) {
+      } else if (forgotbaggages.securitycollected) {
         row.Status = "Handed Over To Security 🛡️";
-      } else if (data.customercollected) {
+      } else if (forgotbaggages.customercollected) {
         row.Status = "Delivery Confirmed 🚚";
       } else {
         row.Status = "Pending";
@@ -268,7 +268,8 @@ function ForgotLuggages() {
       toast.error("Error Sending Request");
     }
   }
-
+console.log("mappedData", mappedData)
+console.log("forgotbaggages", forgotbaggages)
 
   return (
     <div
@@ -320,7 +321,7 @@ function ForgotLuggages() {
                 marginLeft: "2%",
               }}
             >
-              {data ? (
+              {forgotbaggages ? (
                 <div
                   style={{
                     display: "flex",
@@ -341,7 +342,7 @@ function ForgotLuggages() {
                       marginLeft: "6%",
                     }}
                   >
-                    {data.totalBags}
+                    {forgotbaggages.totalBags}
                   </Box>
                 </div>
               ) : (
@@ -459,8 +460,8 @@ function ForgotLuggages() {
         <Modal.Header closeButton>Your Customer ID </Modal.Header>
 
         <Modal.Body style={{ textAlign: 'center' }}>
-          {data
-            ? `Your ID: ${data.customerid || "N/A"}`
+          {forgotbaggages
+            ? `Your ID: ${forgotbaggages.customerid || "N/A"}`
             : "No ID to be displayed"}
 
         </Modal.Body>

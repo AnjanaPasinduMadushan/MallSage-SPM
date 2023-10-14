@@ -1,11 +1,11 @@
-import { addLuggage, getOneLuggage, getLuggages, deleteLuggage,getForgottenLuggagesByShopIdandUserID, gettotalLuggagesForOlderDates, getLuggagesByShopId, updateLuggage, getLuggagesByShopAndDate, getallLuggages, validateShopToken, getLuggageByCustomerEmail, gettotalLuggages, getLuggagesByShopIdandUserID, RequestLuggageDelivery, RequestForgottenLuggageDelivery, BaggageEmployeeLuggagesHistory, getLuggagesByEmployeeAndSecurity, deleteLuggageByID, updateLuggageForCustomerToken, updateLuggagesByCustomerID, getLuggagesForSecurity, updateIsSecurityConfirmed } from '../controller/luggage-controller.js';
+import { addLuggage, getOneLuggage, getLuggages, deleteLuggage,getForgottenLuggagesByShopIdandUserID, gettotalLuggagesForOlderDates, getLuggagesByShopId, updateLuggage, getLuggagesByShopAndDate, getallLuggages, validateShopToken, getLuggageByCustomerEmail, gettotalLuggages, getLuggagesByShopIdandUserID, RequestLuggageDelivery, RequestForgottenLuggageDelivery, BaggageEmployeeLuggagesHistory, getLuggagesByEmployeeAndSecurity, deleteLuggageByID, updateLuggageForCustomerToken, updateLuggagesByCustomerID, getLuggagesForSecurity, updateIsSecurityConfirmed, BaggageEmployeeLuggagesOngoing } from '../controller/luggage-controller.js';
 import { checkToken, checkAdmin } from '../middlewares/user.js';
 import express from 'express';
 
 const luggage_router = express.Router();
 
 luggage_router.get("/getallLuggagescustomer/:email", gettotalLuggages);
-luggage_router.get("/getLuggagesByBaggage/:id", BaggageEmployeeLuggagesHistory);
+luggage_router.get("/getLuggagesByBaggage/:id", BaggageEmployeeLuggagesOngoing);
 luggage_router.get("/getallOlderLuggagescustomer/:email", gettotalLuggagesForOlderDates);
 luggage_router.get("/getLuggagebyUsershop/:email", getallLuggages);
 luggage_router.post("/addLuggage", addLuggage);

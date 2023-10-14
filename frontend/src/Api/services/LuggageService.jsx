@@ -98,6 +98,13 @@ export const getAllLuggagesbyUserIDandShopID = async (shopID, userId) => {
   return response.data;
 };
 
+//Get All Luggages by Shop ID and user ID 
+// export const getAllForgotLuggagesbyUserIDandShopID = async (shopID, userId) => {
+//   const response = await apiClient.get(`luggage/getForgottenluggagesbyshopIDandUserID/${shopID}/${userId}`);
+//   return response.data;
+// };
+
+
 //Get All Forgotten Luggages by Shop ID and user ID 
 export const getAllForgottenLuggagesbyUserIDandShopID = async (shopID, userId) => {
   const response = await apiClient.get(`luggage/getForgottenluggagesbyshopIDandUserID/${shopID}/${userId}`);
@@ -163,6 +170,7 @@ export const getLuggagesByBaggage = async (userId) => {
 
 //Get History luggages for baggager
 export const getLuggagesHistoryByBaggage = async (userId) => {
+  console.log(userId)
   const response = await apiClient.get(`luggage/getBaggageEmployeeLuggageHistory/${userId}`);
   return response.data;
 };

@@ -5,6 +5,7 @@ axios.defaults.withCredentials = true;
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import SecurityIcon from '@mui/icons-material/Security';
 import Grid from '@mui/material/Grid';
 // import LuggageIcon from '@mui/icons-material/Luggage';
 import BookIcon from '@mui/icons-material/Book';
@@ -65,6 +66,9 @@ export const AdminHome = () => {
           </Grid>
           <Grid item xs={6}>
             <Item onClick={() => navigate('/admin/availableParkingSlots')}>Reservation Booking<BookIcon /></Item>
+          </Grid>
+          <Grid item xs={6}>
+            <Item onClick={() => navigate('/securityhome')}>Security<SecurityIcon /></Item>
           </Grid>
         </Grid>
       </Box>

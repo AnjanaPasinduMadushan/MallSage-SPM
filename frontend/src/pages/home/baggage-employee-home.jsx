@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -13,8 +13,9 @@ import { useSelector } from "react-redux";
 import { useQuery } from 'react-query';
 import MaterialReactTable from 'material-react-table';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import { Modal } from 'react-bootstrap';
+import { Modal, Table } from 'react-bootstrap';
 import HistoryIcon from '@mui/icons-material/History';
+import { toast } from 'react-toastify';
 function BaggageEmployeeHome() {
 
   const userid = useSelector((state) => state.auth.User._id);
@@ -28,9 +29,32 @@ function BaggageEmployeeHome() {
     queryFn: () => getLuggagesByBaggage(userid),
   });
 
-  const { data: historydata, isLoading: historyloading, error: historyerror, isError: historyisError } = useQuery({
-    queryFn: () => getLuggagesHistoryByBaggage(userid),
+  const { data: historydata, isLoading: historyloading, error: historyerror, isError: historyiserror } = useQuery({
+    queryKey: ['luggageHistory'], // Use the queryKey to set dependencies
+    queryFn: (_, userId) => getLuggagesHistoryByBaggage(userid),
+    enabled: data !== undefined, // Enable the query only if the first query has data
   });
+
+  // const getLuggageHistory = async () => {
+  //   try {
+  //     await getLuggagesHistoryByBaggage(userid)
+  //     .then((res) => {
+  //       toast.success("History Data Loaded Successfully");
+  //       setHistorydata(res.data);
+  //       console.log("historydata",historydata)
+
+  //     })
+  //   } catch (error) {
+  //     toast.error("Error in loading History Data");
+  //     console.log(error);
+  //   }
+  // }
+  
+  // useEffect(async () => {
+  //   getLuggageHistory
+  // }, []);
+
+
   const columns = [
     {
       header: "ShopName",
@@ -87,8 +111,8 @@ function BaggageEmployeeHome() {
 
 
   let mappedData2 = [];
-
-  if (data !== undefined) {
+  console.log("historydata", historydata?.luggageHistory);
+  if (historydata !== undefined) {
     mappedData2 = historydata?.luggages?.map((shop) => {
 
 
@@ -115,11 +139,12 @@ function BaggageEmployeeHome() {
   }
 
 
+console.log("data",data);
 
   let mappedData = [];
 
   if (data !== undefined) {
-    mappedData = data?.uniqueShops?.map((shop) => {
+    mappedData = data?.luggages?.map((shop) => {
       const originalTime = new Date(shop.RequestedDeliveryTime);
       const currentDateTime = new Date();
       const hours = originalTime.getHours();
@@ -169,7 +194,7 @@ function BaggageEmployeeHome() {
       return row;
     }) || [];
   }
-
+  console.log("mappedData",mappedData);
   const actions = [
     { icon: <FormatListBulletedIcon />, name: 'Ongoing', target: 'ongoing-section' },
     { icon: <HistoryIcon />, name: 'History', target: 'history-section' },
@@ -248,8 +273,8 @@ function BaggageEmployeeHome() {
             style={{ width: '90%', marginLeft: '4%', marginTop: '10%' }}
           >
             <MaterialReactTable
-              columns={columns2}
-              data={mappedData2}
+              columns={columns}
+              data={mappedData}
 
             />
           </div>

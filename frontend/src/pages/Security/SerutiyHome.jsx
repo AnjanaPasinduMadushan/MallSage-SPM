@@ -133,10 +133,10 @@ function SecurityHome() {
             borderRadius: '40px',
             boxShadow:
               '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-            width: '94%',
-            height: '80vh',
+            width: '85%',
+            height: '60vh',
             padding: '10px',
-            marginLeft: '3vw',
+            marginLeft: '8vw',
             marginTop: '5vh',
             display: 'flex',
             flexDirection: 'column', // Make it a column layout
@@ -191,6 +191,7 @@ function SecurityHome() {
                 width: '20vw',
                 height: '8vh',
                 marginTop: '5%',
+                marginLeft: '25%',
                 fontSize: '1.4rem',
                 backgroundColor: '#1769aa', 
               }}
@@ -213,10 +214,11 @@ function SecurityHome() {
             borderRadius: '40px',
             boxShadow:
               '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-            width: '94%',
-            height: '80vh',
+              width: '85%',
+              height: '60vh',
+              marginBottom: '5vh',
             padding: '10px',
-            marginLeft: '3vw',
+            marginLeft: '8vw',
             marginTop: '5vh',
             display: 'flex',
             flexDirection: 'column', // Make it a column layout
@@ -232,7 +234,7 @@ function SecurityHome() {
               marginBottom: '3vh',
             }}
           >
-            Pls Enter Customer ID (Forgottend Lugagges)
+            Pls Enter Customer ID (Forgotten Lugagges)
           </Typography>
 
           <TextField
@@ -269,6 +271,7 @@ function SecurityHome() {
                 mt: 2,
                 borderRadius: '8px',
                 width: '20vw',
+                marginLeft: '25%',
                 height: '8vh',
                 marginTop: '5%',
                 fontSize: '1.4rem',

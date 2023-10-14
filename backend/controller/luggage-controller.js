@@ -280,7 +280,7 @@ async function updateLuggageForCustomerToken(req, res) {
         luggageItem.isSecurityConfirmed = true;
         await luggageItem.save();
       }
- return res.status(200).json("Updated  luggage items for CustomerToken");
+      return res.status(200).json("Updated  luggage items for CustomerToken");
       console.log(`Updated ${luggageItems.length} luggage items for CustomerToken: ${customerToken}`);
     } else {
       return res.status(404).json({ message: 'No completed luggage found.' });
@@ -441,7 +441,18 @@ async function getLuggagesByShopIdandUserID(shopId, userId) {
     const luggages = await Luggage.find({
       ShopID: shopId,
       CustomerEmail: Customer.email,
-      Date: { $gte: formattedCurrentDate, $lt: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0] },
+      Date: {
+        $gte: new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate()
+        ),
+        $lt: new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          currentDate.getDate() + 1
+        ),
+      },
     });
     return luggages;
   } catch (error) {
@@ -462,15 +473,17 @@ async function getForgottenLuggagesByShopIdandUserID(shopId, userId) {
     const sevenDaysAgo = new Date(currentDate);
     sevenDaysAgo.setDate(currentDate.getDate() - 7);
     const formattedCurrentDate = currentDate.toISOString().split('T')[0];
-
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
 
     // Find all luggages with the specified ShopID
     const luggages = await Luggage.find({
       ShopID: shopId,
       CustomerEmail: Customer.email,
+      isCustomerConfirmed: false,
       Date: {
-        $gte: sevenDaysAgo.toISOString().split('T')[0],
-        $lt: currentDate.toISOString().split('T')[0],
+        $gte: new Date(sevenDaysAgo.getFullYear(), sevenDaysAgo.getMonth(), sevenDaysAgo.getDate()),
+        $lt: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()),
       },
 
     });
@@ -636,14 +649,22 @@ const gettotalLuggagesForOlderDates = async (req, res) => {
   try {
     const email = req.params.email;
     const currentDate = new Date();
-    const sevenDaysAgo = new Date(currentDate);
-    sevenDaysAgo.setDate(currentDate.getDate() - 7);
 
+    // Calculate the date for yesterday
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0); // Set the time to midnight (00:00:00)
+
+    const sevenDaysAgo = new Date(yesterday);
+    sevenDaysAgo.setDate(yesterday.getDate() - 6);
+    console.log("sevenDaysAgo", sevenDaysAgo)
+    console.log("yesterday", yesterday)
     const luggages = await Luggage.find({
       CustomerEmail: email,
+      isCustomerConfirmed: false,
       Date: {
-        $gte: sevenDaysAgo,
-        $lt: currentDate,
+        $gte: new Date(sevenDaysAgo.getFullYear(), sevenDaysAgo.getMonth(), sevenDaysAgo.getDate()),
+        $lt: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()),
       },
     });
 
@@ -653,37 +674,26 @@ const gettotalLuggagesForOlderDates = async (req, res) => {
       });
     }
 
-    // Calculate the total number of bags
-    const totalBags = luggages.reduce(
-      (acc, luggage) => acc + parseInt(luggage.BagNo),
-      0
-    );
-
-    // Create a Set to store unique ShopID and ShopName pairs
-    const uniqueShops = new Set();
-
-    // Initialize variables to store total bill and one customer token
+    // Initialize variables and process luggage data as before
+    let totalBags = 0;
+    let uniqueShops = new Set();
     let totalBill = 0;
     let customerid = null;
     let shopcollected = false;
     let securitycollected = false;
     let customercollected = false;
 
-    // Iterate through the luggages to collect unique ShopID and ShopName, calculate total bill, and get one customer token
     luggages.forEach((luggage) => {
-      const { ShopID, ShopName, Bill, CustomerID, isComplete, isSecurityConfirmed, isCustomerConfirmed } = luggage;
-      uniqueShops.add(JSON.stringify({ ShopID, ShopName }));
-      shopcollected = isComplete;
-      customerid = CustomerID;
-      securitycollected = isSecurityConfirmed;
-      customercollected = isCustomerConfirmed;
-      totalBill += parseFloat(Bill);
+      totalBags += parseInt(luggage.BagNo);
+      uniqueShops.add({ ShopID: luggage.ShopID, ShopName: luggage.ShopName });
+      shopcollected = luggage.isComplete;
+      customerid = luggage.CustomerID;
+      securitycollected = luggage.isSecurityConfirmed;
+      customercollected = luggage.isCustomerConfirmed;
+      totalBill += parseFloat(luggage.Bill);
     });
 
-    // Convert the unique ShopID and ShopName pairs back to an array
-    const uniqueShopList = Array.from(uniqueShops).map((pair) =>
-      JSON.parse(pair)
-    );
+    const uniqueShopList = Array.from(uniqueShops);
 
     res.status(200).json({
       totalBags,
@@ -693,13 +703,14 @@ const gettotalLuggagesForOlderDates = async (req, res) => {
       customercollected,
       totalBill,
       customerid,
-
     });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Error in getting the Luggages" });
   }
 };
+
+
 const deleteLuggage = async (req, res, next) => {
   const id = req.params.id;
   let luggage;
@@ -922,6 +933,56 @@ const RequestForgottenLuggageDelivery = async (req, res, next) => {
 };
 
 //Get luggages ongoing assigned to baggage employee
+const BaggageEmployeeLuggagesOngoing = async (req, res, next) => {
+  const id = req.params.id;
+
+  try {
+    // Find the baggage employee by ID
+    const baggageEmployee = await BaggageEmployee.findOne({ userId: id });
+    if (!baggageEmployee) {
+      return res.status(404).json({ message: "Baggage employee not found" });
+    }
+
+    // Retrieve all luggages assigned to the baggage employee that are not security confirmed
+    const ongoingLuggages = await Luggage.find({
+      AssignedBaggageEmployeeID: baggageEmployee.BaggageEmployeeID,
+      isComplete: false,
+    });
+
+    // Calculate the total baggage assigned
+    const totalBaggage = ongoingLuggages.reduce((acc, luggage) => {
+      return acc + luggage.BagNo;
+    }, 0);
+
+    // Create an array of luggages without grouping
+    const luggagesArray = ongoingLuggages.map((luggage) => {
+      return {
+        LuggageID: luggage.LuggageID,
+        ShopToken: luggage.ShopToken,
+        ShopName: luggage.ShopName,
+        RequestedDeliveryTime: luggage.RequestedDeliveryTime,
+      };
+    });
+
+    return res.status(200).json({
+      message: "Assigned luggages retrieved successfully",
+      totalBaggage: totalBaggage, // Add total baggage count to the response
+      luggages: luggagesArray,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "An error occurred while retrieving assigned luggage",
+    });
+  }
+};
+
+
+
+
+
+
+//Baggage Employee History
 const BaggageEmployeeLuggagesHistory = async (req, res, next) => {
   const id = req.params.id;
 
@@ -936,6 +997,7 @@ const BaggageEmployeeLuggagesHistory = async (req, res, next) => {
     // Retrieve all luggages assigned to the baggage employee that are not security confirmed
     const ongoingLuggages = await Luggage.find({
       AssignedBaggageEmployeeID: baggageEmployee.BaggageEmployeeID,
+      isComplete: true,
       isSecurityConfirmed: false,
     });
 
@@ -994,7 +1056,7 @@ const getLuggagesForSecurity = async (req, res) => {
       return res.status(404).json({
         message: "No luggages found for the specified criteria",
       });
-    }    
+    }
 
     // Create a mapping of unique shops using ShopToken as the key
     const uniqueShops = new Map();
@@ -1082,6 +1144,7 @@ export {
   gettotalLuggagesForOlderDates,
   getLuggagesForSecurity,
   getLuggagesByShopId,
+  BaggageEmployeeLuggagesOngoing,
   updateLuggage,
   getLuggageByCustomerEmail,
 };

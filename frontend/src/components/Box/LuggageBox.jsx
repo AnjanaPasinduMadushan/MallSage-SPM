@@ -170,8 +170,6 @@ function LuggageBox() {
   const handleButtonClick = async (shopId) => {
     setShopId(shopId);
     try {
-      console.log("shopId", shopId)
-      console.log("userId", User._id)
       await getAllLuggagesbyUserIDandShopID(shopId, User._id)
         .then((res) => {
           console.log("res", res);
