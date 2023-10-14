@@ -49,14 +49,14 @@ const ViewBlog = () => {
             }
             showPlayButton={false}
             showFullscreenButton={false}
-            showBullets={true}
+            showBullets={images.length > 1}
             autoPlay={true}
             slideInterval={8000} // show image
             slideDuration={800} // transition speed
           />
         </div>
       </center>
-      <hr />
+      {images.length > 0 && <hr />}
       <br />
       <div
         className="mx-5"

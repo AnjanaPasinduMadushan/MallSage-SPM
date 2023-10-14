@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ListBlogItem from "./local-Components/listBlogItem";
-import { deleteBlog, getAllBlogs } from "../../Api/services/blogService";
+import { deleteBlog, getShopBlogs } from "../../Api/services/blogService";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -10,7 +10,7 @@ const ShowShopBlogs = () => {
   const [blogs, setBlogs] = useState([]);
 
   const loadAllBlogs = async () => {
-    const data = await getAllBlogs();
+    const data = await getShopBlogs();
 
     if (data.message == "success") {
       setBlogs(data.data);

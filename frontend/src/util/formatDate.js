@@ -1,4 +1,4 @@
-export const formatDate = (inputDateStr, format = 'dd/mm/yyyy hh:MM:ss A') => {
+export const formatDate = (inputDateStr, format) => {
   const date = new Date(inputDateStr);
 
   const day = String(date.getDate()).padStart(2, "0");

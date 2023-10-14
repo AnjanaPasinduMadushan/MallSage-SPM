@@ -35,6 +35,7 @@ import SecurityHome from "./pages/Security/SerutiyHome";
 import RestingLocationReport from "./pages/Administration/Reports/resting-location";
 import CreateUpdateBlogPost from "./pages/Blog/createUpdateBlog";
 import ViewBlog from "./pages/Blog/viewSingleBlog";
+import BlogGrid from "./pages/Blog/blogsGrid";
 
 function App() {
   //Use Selector to getv logged role
@@ -102,6 +103,7 @@ function App() {
         <Route path="/blog/:id?" element={<CreateUpdateBlogPost />} />
         <Route path="/showBlogs" element={<ShowShopBlogs />} />
         <Route path="/viewBlog/:id" element={<ViewBlog />} />
+        <Route path="/blogs" element={<BlogGrid />} />
 
         <Route path="/resting-report" element={<RestingLocationReport />} />
         {/* <Route path="*" element={<h1><center>Page Not Found</center></h1>} /> */}
