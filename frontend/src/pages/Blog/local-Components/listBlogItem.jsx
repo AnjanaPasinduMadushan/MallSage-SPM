@@ -87,6 +87,7 @@ const ListBlogItem = ({ blog, onDeleteClick }) => {
                     height: "100%",
                     width: "100%"
                   }}
+                  onClick={() => navigate(`/viewBlog/${blog._id}`)}
                 >
                   <FontAwesomeIcon style={{ height: "100%", width: "100%" }} icon={faEye} />
                 </Button>

@@ -1,12 +1,14 @@
 //IT21013300
-import  { useState } from 'react';
+import { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 
 function BlogCard() {
+  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
 
   const handleCardHover = () => {
@@ -14,7 +16,7 @@ function BlogCard() {
   };
 
   return (
-    <div>
+    <div onClick={() => navigate('/blogs')}>
       <Card
         sx={{
           minWidth: 275,
@@ -37,8 +39,8 @@ function BlogCard() {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" href="/souv">
-           See Blogs
+          <Button size="small">
+            See Blogs
           </Button>
         </CardActions>
         <br />

@@ -11,10 +11,10 @@ const createBlog = async (req, res) => {
   try {
     // Loop through each uploaded image file
     for (const file of req.files) {
-      const imageBuffer = file.buffer; // Access the image data
+      const imageBuffer = file.buffer;
       const imageName = file.originalname;
 
-      // Generate a unique name for the image using current timestamp
+      // Generate a unique name for the image using the current timestamp
       const dateTime = Date.now();
       const imageFileName = `${dateTime}-${imageName}`;
 
@@ -48,7 +48,8 @@ const createBlog = async (req, res) => {
 
     // Save the Blog document to the database
     await blog.save();
-    // Respond with a success message
+
+    // Respond with a success message and a 201 status (Resource Created)
     return res.status(201).json({ message: "Blog successfully created!" });
   } catch (err) {
     // Handle errors and provide an error response
@@ -57,22 +58,29 @@ const createBlog = async (req, res) => {
   }
 };
 
+
 // Returns all blogs that were created by this user in this account
-const getAllBlogs = async (req, res) => {
+const getShopBlogs = async (req, res) => {
   const shop = req.userId;
+
   try {
+    // Attempt to find blogs for the specific shop
     const blogs = await Blog.find({ shop: shop });
 
-    if (!blogs) {
-      return res.status(404).json({ message: "Blogs not found" })
+    if (blogs && blogs.length > 0) {
+      // Check if any blogs were found for the shop
+      return res.status(200).json({ blogs });
     } else {
-      res.status(200).json({ blogs })
+      // If no blogs were found, return a 404 status
+      return res.status(404).json({ message: "No blogs found for the shop" });
     }
   } catch (err) {
-    console.log(err)
-    return res.status(500).json({ message: "Error in retrieving Blogs" })
+    // Handle database query errors
+    console.error(err);
+    return res.status(500).json({ message: "Error in retrieving Blogs", error: err });
   }
-}
+};
+
 
 //Delete a Blog and remove its images
 const deleteBlog = async (req, res, next) => {
@@ -80,26 +88,31 @@ const deleteBlog = async (req, res, next) => {
   let data;
 
   try {
+    // Attempt to delete the blog from the database
     data = await Blog.findByIdAndDelete(id);
   } catch (err) {
-    console.log(err)
-    return res.status(500).json({ msg: "Error in deleting Blog", err: err })
+    console.error(err);
+    return res.status(500).json({ message: "Error in deleting Blog", error: err });
   }
 
   if (!data) {
-    return res.status(404).json({ msg: "Blog not found!" })
+    return res.status(404).json({ message: "Blog not found!" });
   }
 
+  // Loop through and delete associated images from Firebase Storage
   data.images.forEach(img => {
-    FirebaseStorage.file(img.name).delete().then(() => {
-      console.log('File deleted successfully');
-    }).catch(() => {
-      console.error('Error deleting one or more images');
-    });
+    FirebaseStorage.file(img.name).delete()
+      .then(() => {
+        console.log('File deleted successfully');
+      })
+      .catch(err => {
+        console.error('Error deleting one or more images:', err);
+      });
   });
 
-  return res.status(200).json({ msg: "Blog deleted successfully" })
-}
+  return res.status(200).json({ message: "Blog deleted successfully" });
+};
+
 
 //update blog
 const updateBlog = async (req, res, next) => {
@@ -109,21 +122,58 @@ const updateBlog = async (req, res, next) => {
   const imageUrls = [];
   let blog;
 
-  const data = req.body;
+
+  // Loop through each uploaded image file
+  for (const file of req.files) {
+    const imageBuffer = file.buffer;
+    const imageName = file.originalname;
+
+    // Generate a unique name for the image using the current timestamp
+    const dateTime = Date.now();
+    const imageFileName = `${dateTime}-${imageName}`;
+
+    try {
+      // Upload the image buffer to Firebase Storage
+      const fireFile = FirebaseStorage.file(imageFileName);
+      await fireFile.save(imageBuffer, {
+        contentType: 'image/png', // Set the appropriate content type
+      });
+
+      // Generate a signed URL for the uploaded image (with an expiration date)
+      const signedUrl = await fireFile.getSignedUrl({
+        action: 'read',
+        expires: '03-01-2500', // Set an appropriate expiration date
+      });
+
+      // Store the signed URL in the array
+      imageUrls.push({ name: imageFileName, url: signedUrl.toString() });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Error in uploading image", error: err });
+    }
+  }
 
   try {
-    blog = await Blog.findByIdAndUpdate(id, req.body, { new: true })
+    // Attempt to update the blog in the database
+    blog = await Blog.findByIdAndUpdate(
+      id,
+      {
+        $set: { ...req.body },
+        $push: { images: { $each: imageUrls, $position: 0 } }
+      },
+      { new: true }
+    )
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found! Unable to update" });
+    }
+
+    return res.status(200).json({ message: "Blog updated successfully", blog: blog });
   } catch (err) {
-    console.log(err)
-    return res.status(500).json({ message: "error in updating blog!", error: err })
+    console.error(err);
+    return res.status(500).json({ message: "Error in updating blog", error: err });
   }
-
-  if (!blog) {
-    return res.status(404).json({ message: "Blog not found! Unable to update" })
-  }
-
-  return res.status(200).json({ message: "Blog Updated successfully" })
-}
+};
 
 //Deleting saved image from firebase
 const deleteImg = async (req, res, next) => {
@@ -131,38 +181,73 @@ const deleteImg = async (req, res, next) => {
   const id = req.params.id;
 
   try {
-    await Blog.findByIdAndUpdate(
+    // Remove the image reference from the blog in the database
+    const updatedBlog = await Blog.findByIdAndUpdate(
       id,
       { $pull: { images: { name: ImgName } } },
-      { newz: true }
-    )
+      { new: true } // Corrected option for returning the updated document
+    );
+
+    if (!updatedBlog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
   } catch (err) {
-    console.log(err)
-    return res.status(500).json({ message: "error in deleting saved image", error: err })
+    console.error(err);
+    return res.status(500).json({ message: "Error in deleting saved image", error: err });
   }
 
-  FirebaseStorage.file(ImgName).delete().then(() => {
-    return res.status(200).json({ message: "Image deleted successfully" })
-  }).catch(() => {
-    return res.status(500).json({ message: "Error in deleting image" })
-  });
-}
+  try {
+    // Delete the image from Firebase Storage
+    await FirebaseStorage.file(ImgName).delete();
+    return res.status(200).json({ message: "Image deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error in deleting image from storage", error: err });
+  }
+};
 
+
+// get a single Blog
 const getBlog = async (req, res) => {
   const blogId = req.params.id;
 
   try {
+    // Attempt to find the blog by ID
     const blog = await Blog.findById(blogId);
 
     if (!blog) {
-      return res.status(404).json({ message: "Blog not found!", id: blogId })
+      // If no blog is found, return a 404 status and a message
+      return res.status(404).json({ message: "Blog not found!", id: blogId });
+    }
+
+    // If the blog is found, return a 200 status and the blog data
+    return res.status(200).json({ blog });
+  } catch (err) {
+    // Handle any errors that occur during the database query
+    console.error(err);
+    return res.status(500).json({ message: "Error in getting Blog", error: err });
+  }
+};
+
+
+const getAllBlogs = async (req, res) => {
+  try {
+    // Fetch all blogs from the database
+    const blogs = await Blog.find();
+
+    // Check if any blogs were found
+    if (blogs && blogs.length > 0) {
+      return res.status(200).json({ blogs });
     } else {
-      return res.status(200).json({ blog })
+      // No blogs found
+      return res.status(404).json({ message: "No blogs found in the database" });
     }
   } catch (err) {
-    console.log(err)
-    return res.status(500).json({ message: "Error in getting Blog", error: err })
+    // Handle database query errors
+    console.error(err);
+    return res.status(500).json({ message: "Error in fetching blogs", error: err });
   }
-}
+};
 
-export { createBlog, getBlog, getAllBlogs, deleteBlog, updateBlog, deleteImg }
+
+export { createBlog, getBlog, getShopBlogs, deleteBlog, updateBlog, deleteImg, getAllBlogs }
