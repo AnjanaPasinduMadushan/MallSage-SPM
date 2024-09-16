@@ -10,7 +10,7 @@ const jwt = jsonwebtoken;
 
 //user id and user's role is passed with token
 const createToken = (_id, role) => {
-  console.log(process.env.SECRET)
+  // console.log(process.env.SECRET)
   return jwt.sign({ _id, role }, process.env.secret, { expiresIn: '1hr' })
 }
 
@@ -19,19 +19,19 @@ const signUp = async (req, res) => {
 
   const { name, mobile, email, password, role } = req.body;
   //validation for all the input fields
-  if (!name || !mobile || !email || !password || !role) {
+  if (!name || !mobile || !email || !password) {
     return res.status(422).json({ message: "All feilds should be filled" })
   }
 
   //validation
-  if (!checkingMobileValidation(mobile)) {
-    return res.status(400).json({ message: "Please provide valid mobile Number with 10 digits" })
-  }
+  // if (!checkingMobileValidation(mobile)) {
+  //   return res.status(400).json({ message: "Please provide valid mobile Number with 10 digits" })
+  // }
   else if (!validateEmail(email)) {
     return res.status(400).json({ message: "Please provide valid Email" })
   }
   else if (!validatePWD(password)) {
-    console.log(password)
+    console.log(`invalid password format: ${password}`)
     return res.status(400).json({ message: "Please provide valid Password" })
   }
 
@@ -78,10 +78,8 @@ const signUp = async (req, res) => {
 }
 
 const login = async (req, res) => {
-
   const { email, password } = req.body;
-
-  console.log(email, password)
+  console.log({ email: email, password: password })
 
   //checking whether pasword and login fields are filled or not 
   if (!email || !password) {
@@ -89,21 +87,21 @@ const login = async (req, res) => {
   }
 
   let loggedUser;
-
   try {
     loggedUser = await User.findOne({ email: email });
 
     if (!loggedUser) {
       return res.status(404).json({ message: "User is not found. Sign Up instead" })
     }
+
     //checking password and comare it with exist user's password in the db
     const isPasswordCorrect = bcrypt.compareSync(password, loggedUser.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid password" })
     }
-    const token = createToken(loggedUser._id, loggedUser.role)
 
     //Create and setting a cookie with the user's ID and token
+    const token = createToken(loggedUser._id, loggedUser.role)
     res.cookie(String(loggedUser._id), token, {
       path: "/",
       expires: new Date(Date.now() + 1000 * 60 * 60),
@@ -115,9 +113,8 @@ const login = async (req, res) => {
     return res.status(200).json({ message: "Successfully logged in", User: loggedUser, token })
   } catch (err) {
     console.log(err)
+    return res.status(500).json({ message: "Error occured during Login! Please contact server administrator", error: err });
   }
-
-
 }
 
 
@@ -148,6 +145,66 @@ const logout = (req, res) => {
   });
 };
 
-export { signUp }
-export { login }
-export { logout }
+
+const getOwnAcc = async (req, res) => {
+
+  const userId = req.userId;
+
+  try {
+
+    const user = await User.findById(userId, "-password")
+
+    if (!user) {
+      return res.status(404).json({ message: "User is not found" })
+    }
+    else {
+      res.status(200).json({ user })
+    }
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ message: "Error in getting your Account" })
+  }
+}
+
+
+const updateAcc = async (req, res) => {
+  const userId = req.userId;
+  const { name, mobile, email } = req.body;
+
+  //validation
+  if (!checkingMobileValidation(mobile)) {
+    return res.status(400).json({ message: "Please provide valid mobile Number with 10 digits" })
+  }
+  else if (!validateEmail(email)) {
+    return res.status(400).json({ message: "Please provide valid Email" })
+  }
+
+  try {
+    // Check if email or mobile already exist for another user
+    const existingUser = await User.findOne({ $or: [{ mobile: mobile }, { email: email }] });
+    if (existingUser && existingUser._id != userId) {
+      if (Number(existingUser.mobile) === Number(mobile)) {
+        return res.status(401).json({ message: "This mobile is already exists. use a different mobile " });
+      } else if (existingUser.email === email) {
+        return res.status(402).json({ message: "This email is already exists. use a different email " });
+      }
+    }
+
+    // Update user account
+    const user = await User.findByIdAndUpdate(userId,
+      {
+        name,
+        mobile,
+        email
+      }, { new: true });
+    if (!user) {
+      return res.status(404).json({ message: "User is not found!!!" });
+    }
+    return res.status(200).json({ message: "User is successfully updated!", user });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Error in updating user" });
+  }
+};
+
+export { signUp, login, logout, getOwnAcc, updateAcc, createToken }

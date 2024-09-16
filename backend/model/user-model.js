@@ -22,18 +22,17 @@ const userSchema = new Schema({
     required: true
   },
 
+  role: {
+    type: String,
+    enum: ["customer", "admin", "securityadmin", "securityofficer", "shop","baggageemployee"],
+    default: "customer"
+  },
+
   password: {
     type: String,
     required: true,
     minlength: 6
-  },
-
-  role: {
-    type: String,
-    enum: ["customer", "admin"],
-    default: "customer"
   }
-
 })
 
 const User = mongoose.model("User", userSchema);
