@@ -6,12 +6,12 @@ import  {getStorage} from "firebase/storage"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBo7JQ1qS7gVHQh09Kz8rhQmXQgVWvaNdc",
-  authDomain: "uploadingspmbill.firebaseapp.com",
-  projectId: "uploadingspmbill",
-  storageBucket: "uploadingspmbill.appspot.com",
-  messagingSenderId: "541016821117",
-  appId: "1:541016821117:web:30b36f2dc2415239f9d014"
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
 };
 
 // Initialize Firebase
